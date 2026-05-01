@@ -1,0 +1,152 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* 深棕黑编辑基调 */
+    --background: 48 85% 2%;
+    --foreground: 0 0% 89%;
+    --card: 48 29% 5%;
+    --card-foreground: 0 0% 89%;
+    --popover: 48 29% 5%;
+    --popover-foreground: 0 0% 89%;
+    --primary: 0 0% 89%;
+    --primary-foreground: 48 85% 2%;
+    --secondary: 0 0% 67%;
+    --secondary-foreground: 48 85% 2%;
+    --muted: 48 29% 5%;
+    --muted-foreground: 0 0% 67%;
+    /* 金黄强调色 — 唯一情绪出口 */
+    --accent: 46 100% 45%;
+    --accent-foreground: 48 85% 2%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89% / 0.12;
+    --input: 0 0% 89% / 0.12;
+    --ring: 46 100% 45%;
+    --radius: 0rem;
+  }
+
+  .light {
+    --background: 0 0% 98%;
+    --foreground: 48 85% 2%;
+    --card: 0 0% 100%;
+    --card-foreground: 48 85% 2%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 48 85% 2%;
+    --primary: 48 85% 2%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 33%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 40%;
+    --accent: 46 100% 40%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 48 85% 2% / 0.12;
+    --input: 48 85% 2% / 0.12;
+    --ring: 46 100% 40%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    cursor: none;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  ::selection {
+    background: hsl(var(--accent) / 0.3);
+    color: hsl(var(--foreground));
+  }
+
+  /* Respect user's motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  /* 方括号标签样式 */
+  .bracket {
+    @apply font-mono text-xs uppercase tracking-[0.1em] text-muted-foreground;
+  }
+
+  .bracket-hover {
+    @apply hover:text-accent transition-colors duration-300;
+  }
+
+  /* 编辑式细边框 */
+  .editorial-border {
+    @apply border border-[hsla(0,0%,89%,0.12)] transition-colors duration-300;
+  }
+
+  .editorial-border-hover:hover {
+    border-color: hsla(46, 100%, 45%, 0.4);
+  }
+
+  /* 巨型垂直装饰文字 */
+  .vertical-text {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    @apply font-sans font-extrabold tracking-tight text-muted-foreground/10 select-none;
+  }
+
+  /* 极简分割线 */
+  .hairline {
+    @apply h-px bg-[hsla(0,0%,89%,0.08)] w-full;
+  }
+
+  /* 下划线展开动画 */
+  .underline-expand {
+    position: relative;
+  }
+
+  .underline-expand::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: hsl(var(--accent));
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .underline-expand:hover::after {
+    width: 100%;
+  }
+
+  /* 移除旧的霓虹效果 */
+  .glow {
+    box-shadow: none;
+  }
+
+  .glow-text {
+    text-shadow: none;
+  }
+
+  .glass {
+    @apply bg-card border border-[hsla(0,0%,89%,0.12)];
+  }
+
+  .glass-strong {
+    @apply bg-card border border-[hsla(0,0%,89%,0.12)];
+  }
+}

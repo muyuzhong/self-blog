@@ -1,0 +1,44 @@
+{
+  "name": "self-blog",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@gsap/react": "^2.1.0",
+    "@hookform/resolvers": "^3.3.0",
+    "@react-three/drei": "^9.92.0",
+    "@react-three/fiber": "^8.15.0",
+    "@types/node": "^20.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "autoprefixer": "^10.4.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "framer-motion": "^11.0.0",
+    "gsap": "^3.12.0",
+    "lucide-react": "^0.400.0",
+    "next": "^15.0.0",
+    "next-mdx-remote": "^4.4.0",
+    "postcss": "^8.4.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-hook-form": "^7.51.0",
+    "shiki": "^1.0.0",
+    "tailwind-merge": "^2.6.1",
+    "tailwindcss": "^3.4.0",
+    "tailwindcss-animate": "^1.0.7",
+    "three": "^0.160.0",
+    "typescript": "^5.4.0",
+    "zod": "^3.22.0",
+    "sonner": "^2.0.7"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^15.0.0"
+  }
+}
