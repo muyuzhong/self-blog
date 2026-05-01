@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   title: "暮羽中 | 全栈开发者",
   description: "用代码构建数字世界的无限可能。专注于高性能 Web 应用和 AI 工具开发的全栈开发者。",
   openGraph: {
-    url: "https://muyuzhong.dev",
+    url: "https://muyuzhong.xyz",
     title: "暮羽中 | 全栈开发者",
     description: "用代码构建数字世界的无限可能。专注于高性能 Web 应用和 AI 工具开发。",
   },

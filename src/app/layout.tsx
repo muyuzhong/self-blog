@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   keywords: ["全栈开发者", "前端开发", "Next.js", "React", "TypeScript", "暮羽中", "个人网站", "作品集"],
   authors: [{ name: "暮羽中" }],
   creator: "暮羽中",
-  metadataBase: new URL("https://muyuzhong.dev"),
+  metadataBase: new URL("https://muyuzhong.xyz"),
   openGraph: {
     type: "website",
     locale: "zh_CN",
@@ -61,14 +61,14 @@ export default function RootLayout({
                 {
                   "@type": "WebSite",
                   name: "暮羽中个人网站",
-                  url: "https://muyuzhong.dev",
+                  url: "https://muyuzhong.xyz",
                   description: "用代码构建数字世界的无限可能。专注于高性能 Web 应用和 AI 工具开发。",
                   inLanguage: "zh-CN",
                 },
                 {
                   "@type": "Person",
                   name: "暮羽中",
-                  url: "https://muyuzhong.dev",
+                  url: "https://muyuzhong.xyz",
                   jobTitle: "全栈开发者",
                   sameAs: ["https://github.com/muyuzhong"],
                   description: "专注于高性能 Web 应用和 AI 工具开发的全栈开发者。",
