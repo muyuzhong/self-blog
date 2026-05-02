@@ -90,6 +90,17 @@ foreach ($file in $blogUiFiles) {
   }
 }
 
+$blogPostPage = Get-Content -LiteralPath (Join-Path $PSScriptRoot "src\app\blog\[slug]\page.tsx") -Raw -Encoding UTF8
+if ($blogPostPage -notmatch 'max-w-\[70ch\]') {
+  $failures.Add("Blog article page should use a readable 70ch text column")
+}
+if ($blogPostPage -match 'lg:grid-cols') {
+  $failures.Add("Blog article page should not use a competing two-column article layout")
+}
+if ($blogPostPage -notmatch 'ARTICLE INDEX') {
+  $failures.Add("Blog article page should expose a lightweight in-flow article index")
+}
+
 if ($failures.Count -gt 0) {
   foreach ($failure in $failures) {
     [Console]::Error.WriteLine($failure)
