@@ -6,6 +6,7 @@ import { Github, Mail, Menu, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { BracketLabel } from "@/components/shared/BracketLabel"
 import { ThemeToggle } from "@/components/theme/ThemeToggle"
+import { personalData } from "@/lib/data"
 
 const navLinks = [
   { label: "关于", href: "#about" },
@@ -17,7 +18,7 @@ const navLinks = [
 
 const socialLinks = [
   { label: "GITHUB", href: "https://github.com/muyuzhong", icon: Github },
-  { label: "MAIL", href: "mailto:muyuzhong@example.com", icon: Mail },
+  { label: "MAIL", href: `mailto:${personalData.email}`, icon: Mail },
 ]
 
 export function Navbar() {
@@ -58,9 +59,19 @@ export function Navbar() {
         <div className="max-w-7xl mx-auto px-6 lg:px-10 flex items-center justify-between h-16">
           <Link
             href="/"
-            className="font-mono text-sm uppercase tracking-[0.1em] text-muted-foreground hover:text-accent transition-colors"
+            className="group flex items-center gap-3 py-2 text-foreground transition-colors"
           >
-            [暮_羽_中]
+            <span className="flex h-9 w-9 items-center justify-center border border-accent/50 bg-accent/10 font-sans text-lg font-extrabold text-accent transition-colors group-hover:bg-accent group-hover:text-accent-foreground">
+              暮
+            </span>
+            <span className="flex flex-col leading-none">
+              <span className="font-sans text-base font-extrabold tracking-tight text-foreground">
+                暮羽中
+              </span>
+              <span className="mt-1 font-mono text-[0.58rem] uppercase tracking-[0.16em] text-muted-foreground transition-colors group-hover:text-accent">
+                FULL STACK / AI TOOLS
+              </span>
+            </span>
           </Link>
 
           <div className="hidden md:flex items-center gap-8">

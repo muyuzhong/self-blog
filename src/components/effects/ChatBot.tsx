@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react"
 import { MessageCircle, X, Send, Bot, User } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { personalData } from "@/lib/data"
 
 interface Message {
   role: "user" | "bot"
@@ -24,7 +25,7 @@ const faq = [
   },
   {
     keywords: ["联系", "邮箱", "email", "怎么找"],
-    response: "可以通过页面底部的联系表单发送消息，或者直接发送邮件到 muyuzhong@example.com。",
+    response: `可以通过页面底部的联系表单打开邮件客户端，或者直接发送邮件到 ${personalData.email}。`,
   },
   {
     keywords: ["博客", "文章", "blog"],

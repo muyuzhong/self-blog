@@ -1,19 +1,19 @@
 "use client"
 
-import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { toast } from "sonner"
 import { useScrollAnimation } from "@/hooks/useScrollAnimation"
-import { Github, Mail, Twitter, Linkedin, ArrowRight, Loader2 } from "lucide-react"
+import { Github, Mail, Twitter, Linkedin, ArrowRight } from "lucide-react"
 import { SectionLabel } from "@/components/shared/SectionLabel"
 import { BracketLabel } from "@/components/shared/BracketLabel"
+import { personalData } from "@/lib/data"
 
 const socials = [
-  { label: "GITHUB", href: "https://github.com/muyuzhong", icon: Github },
-  { label: "TWITTER", href: "https://twitter.com/muyuzhong", icon: Twitter },
-  { label: "MAIL", href: "mailto:muyuzhong@example.com", icon: Mail },
+  { label: "GITHUB", href: personalData.github, icon: Github },
+  { label: "TWITTER", href: personalData.twitter, icon: Twitter },
+  { label: "MAIL", href: `mailto:${personalData.email}`, icon: Mail },
   { label: "LINKEDIN", href: "https://linkedin.com/in/muyuzhong", icon: Linkedin },
 ]
 
@@ -27,7 +27,6 @@ type ContactForm = z.infer<typeof contactSchema>
 
 export function Contact() {
   const sectionRef = useScrollAnimation({ selector: ".contact-content" })
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const {
     register,
@@ -38,21 +37,22 @@ export function Contact() {
     resolver: zodResolver(contactSchema),
   })
 
-  const onSubmit = async (data: ContactForm) => {
-    setIsSubmitting(true)
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-      toast.success("留言已发送", {
-        description: "感谢您的留言，我会尽快回复！",
-      })
-      reset()
-    } catch {
-      toast.error("发送失败", {
-        description: "请检查网络后重试，或直接通过邮件联系我。",
-      })
-    } finally {
-      setIsSubmitting(false)
-    }
+  const onSubmit = (data: ContactForm) => {
+    const subject = encodeURIComponent(`来自个人网站的留言 - ${data.name}`)
+    const body = encodeURIComponent(
+      [
+        `姓名：${data.name}`,
+        `邮箱：${data.email}`,
+        "",
+        data.message,
+      ].join("\n")
+    )
+
+    window.location.href = `mailto:${personalData.email}?subject=${subject}&body=${body}`
+    toast.success("已打开邮件客户端", {
+      description: "请在邮件客户端中确认并发送这封邮件。",
+    })
+    reset()
   }
 
   return (
@@ -97,7 +97,6 @@ export function Contact() {
               </label>
               <input
                 type="text"
-                disabled={isSubmitting}
                 {...register("name")}
                 className={`w-full bg-transparent border-b py-3 text-foreground focus:outline-none focus:border-accent transition-colors placeholder:text-muted-foreground/50 ${
                   errors.name ? "border-red-500" : "border-[hsla(0,0%,89%,0.12)]"
@@ -114,7 +113,6 @@ export function Contact() {
               </label>
               <input
                 type="email"
-                disabled={isSubmitting}
                 {...register("email")}
                 className={`w-full bg-transparent border-b py-3 text-foreground focus:outline-none focus:border-accent transition-colors placeholder:text-muted-foreground/50 ${
                   errors.email ? "border-red-500" : "border-[hsla(0,0%,89%,0.12)]"
@@ -131,7 +129,6 @@ export function Contact() {
               </label>
               <textarea
                 rows={4}
-                disabled={isSubmitting}
                 {...register("message")}
                 className={`w-full bg-transparent border-b py-3 text-foreground focus:outline-none focus:border-accent transition-colors resize-none placeholder:text-muted-foreground/50 ${
                   errors.message ? "border-red-500" : "border-[hsla(0,0%,89%,0.12)]"
@@ -144,18 +141,13 @@ export function Contact() {
             </div>
             <button
               type="submit"
-              disabled={isSubmitting}
-              className="group inline-flex items-center gap-3 font-mono text-sm uppercase tracking-[0.1em] text-foreground hover:text-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="group inline-flex items-center gap-3 font-mono text-sm uppercase tracking-[0.1em] text-foreground hover:text-accent transition-colors"
               data-cursor-hover
             >
               <BracketLabel hover={false} className="group-hover:text-accent transition-colors">
-                {isSubmitting ? "SENDING" : "SEND"}
+                OPEN MAIL
               </BracketLabel>
-              {isSubmitting ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              )}
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
           </form>
         </div>

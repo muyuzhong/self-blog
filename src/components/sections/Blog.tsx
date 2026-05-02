@@ -36,19 +36,19 @@ export function Blog() {
               className="blog-row group flex flex-col md:flex-row md:items-center gap-4 md:gap-8 py-6 hover:bg-white/[0.02] transition-colors -mx-4 px-4"
               data-cursor-hover
             >
-              <BracketLabel hover={false} className="shrink-0 w-28">
-                {post.date}
-              </BracketLabel>
-              <h3 className="flex-1 font-sans font-medium text-lg text-foreground group-hover:text-accent transition-colors underline-expand">
-                {post.title}
-              </h3>
-              <div className="flex gap-2 shrink-0">
+              <div className="flex gap-2 shrink-0 md:w-44">
                 {post.tags.slice(0, 2).map((tag) => (
                   <BracketLabel key={tag} hover={false} className="text-[0.6rem]">
                     {tag}
                   </BracketLabel>
                 ))}
               </div>
+              <h3 className="flex-1 font-sans font-medium text-lg text-foreground group-hover:text-accent transition-colors underline-expand">
+                {post.title}
+              </h3>
+              <BracketLabel hover={false} className="shrink-0 text-[0.6rem]">
+                MARKDOWN
+              </BracketLabel>
             </Link>
           ))}
         </div>

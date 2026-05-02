@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "verify:site": "powershell -ExecutionPolicy Bypass -File ./verify-site.ps1",
     "lint": "next lint"
   },
   "dependencies": {
