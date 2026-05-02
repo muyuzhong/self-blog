@@ -58,80 +58,102 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   if (!post) notFound()
 
   const headings = getMarkdownHeadings(post.content)
+  const topLevelHeadings = headings.filter((heading) => heading.depth === 2)
   const seenHeadingIds = new Map<string, number>()
 
   return (
-    <main className="px-5 pb-24 pt-24 sm:px-8 lg:px-10">
-      <div className="mx-auto max-w-[70ch]">
+    <main className="px-5 pb-28 pt-24 sm:px-8 lg:px-10">
+      <div className="mx-auto max-w-[72ch]">
         <Link
           href="/blog"
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.12em] text-muted-foreground transition-colors hover:text-accent"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-3.5 w-3.5" />
           返回博客
         </Link>
 
-        <header className="mt-10 border-b border-border pb-9">
-          <div className="mb-5 flex flex-wrap items-center gap-2.5">
+        <header className="mt-12 pb-10">
+          <div className="mb-6 flex flex-wrap items-center gap-x-3 gap-y-2">
             <BracketLabel hover={false} className="text-accent">
-              MARKDOWN
+              ARTICLE
             </BracketLabel>
-            <BracketLabel hover={false} className="text-[0.65rem]">
+            <span className="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground">
               {post.readingMinutes} MIN READ
-            </BracketLabel>
-            {post.tags.slice(0, 3).map((tag) => (
-              <BracketLabel key={tag} hover={false} className="text-[0.6rem]">
-                {tag}
-              </BracketLabel>
-            ))}
+            </span>
+            {post.tags.length > 0 ? (
+              <>
+                <span className="text-muted-foreground/40">/</span>
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                  {post.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="font-mono text-[0.65rem] uppercase tracking-[0.12em] text-muted-foreground"
+                    >
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              </>
+            ) : null}
           </div>
 
-          <h1 className="font-sans text-3xl font-bold leading-[1.22] tracking-tight text-foreground sm:text-4xl">
+          <h1 className="font-sans text-[2.1rem] font-bold leading-[1.2] tracking-tight text-foreground sm:text-[2.5rem]">
             {post.title}
           </h1>
+
           {post.excerpt ? (
-            <p className="mt-6 text-base leading-8 text-foreground/68">{post.excerpt}</p>
+            <p className="mt-6 text-[1.05rem] leading-[1.85] text-foreground/70">
+              {post.excerpt}
+            </p>
           ) : null}
+
+          <div className="mt-8 h-px w-full bg-gradient-to-r from-transparent via-[hsla(0,0%,89%,0.18)] to-transparent" />
         </header>
 
-        {headings.length > 0 ? (
-          <section className="my-10 border-y border-border bg-white/[0.02] py-5">
-            <BracketLabel hover={false} className="text-accent">
-              ARTICLE INDEX
-            </BracketLabel>
-            <nav className="mt-4 grid gap-2.5">
-              {headings
-                .filter((heading) => heading.depth === 2)
-                .map((heading) => (
-                  <a
-                    key={heading.id}
-                    href={`#${heading.id}`}
-                    className="text-sm leading-relaxed text-muted-foreground transition-colors hover:text-accent"
-                  >
-                    {heading.text}
-                  </a>
-                ))}
+        {topLevelHeadings.length > 0 ? (
+          <section className="mb-14">
+            <div className="mb-4 flex items-center gap-3">
+              <BracketLabel hover={false} className="text-accent">
+                CONTENTS
+              </BracketLabel>
+              <span className="h-px flex-1 bg-[hsla(0,0%,89%,0.08)]" />
+            </div>
+            <nav className="article-toc">
+              {topLevelHeadings.map((heading, index) => (
+                <a key={heading.id} href={`#${heading.id}`}>
+                  <span className="toc-num">{String(index + 1).padStart(2, "0")}</span>
+                  {heading.text}
+                </a>
+              ))}
             </nav>
           </section>
         ) : null}
 
-        <article className="max-w-[70ch]">
-          <div className="prose prose-invert prose-zinc max-w-none prose-headings:scroll-mt-24 prose-headings:font-sans prose-headings:font-bold prose-headings:tracking-tight prose-h2:mb-4 prose-h2:mt-14 prose-h2:border-t prose-h2:border-border prose-h2:pt-8 prose-h2:text-2xl prose-h2:leading-snug prose-h3:mb-3 prose-h3:mt-9 prose-h3:text-xl prose-h3:leading-snug prose-p:my-5 prose-p:text-[1rem] prose-p:leading-8 prose-p:text-foreground/82 prose-strong:font-semibold prose-strong:text-foreground prose-ul:my-5 prose-ol:my-5 prose-li:my-1.5 prose-li:pl-1 prose-li:text-foreground/82 prose-blockquote:my-7 prose-blockquote:border-l-2 prose-blockquote:border-accent prose-blockquote:bg-white/[0.03] prose-blockquote:px-5 prose-blockquote:py-3 prose-blockquote:not-italic prose-blockquote:text-foreground/72 prose-a:text-accent hover:prose-a:underline prose-hr:my-10 prose-hr:border-border prose-code:rounded-none prose-code:bg-white/[0.06] prose-code:px-1.5 prose-code:py-0.5 prose-code:text-accent prose-pre:border prose-pre:border-border prose-pre:bg-card">
-            <MDXRemote
-              source={post.content}
-              components={{
-                h2: ({ children }) => {
-                  const text = textFromNode(children)
-                  return <h2 id={nextHeadingId(text, seenHeadingIds)}>{children}</h2>
-                },
-                h3: ({ children }) => {
-                  const text = textFromNode(children)
-                  return <h3 id={nextHeadingId(text, seenHeadingIds)}>{children}</h3>
-                },
-              }}
-            />
-          </div>
+        <article className="article-content">
+          <MDXRemote
+            source={post.content}
+            components={{
+              h2: ({ children }) => {
+                const text = textFromNode(children)
+                return <h2 id={nextHeadingId(text, seenHeadingIds)}>{children}</h2>
+              },
+              h3: ({ children }) => {
+                const text = textFromNode(children)
+                return <h3 id={nextHeadingId(text, seenHeadingIds)}>{children}</h3>
+              },
+            }}
+          />
         </article>
+
+        <footer className="mt-20 border-t border-[hsla(0,0%,89%,0.1)] pt-8">
+          <Link
+            href="/blog"
+            className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.12em] text-muted-foreground transition-colors hover:text-accent"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            回到文章列表
+          </Link>
+        </footer>
       </div>
     </main>
   )
