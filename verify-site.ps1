@@ -6,6 +6,7 @@ $dataPath = Join-Path $PSScriptRoot "src\lib\data.ts"
 $blogComponentPath = Join-Path $PSScriptRoot "src\components\sections\Blog.tsx"
 $blogIndexPath = Join-Path $PSScriptRoot "src\app\blog\page.tsx"
 $contactPath = Join-Path $PSScriptRoot "src\components\sections\Contact.tsx"
+$blogContentPath = Join-Path $PSScriptRoot "content\blog"
 
 $data = Get-Content -LiteralPath $dataPath -Raw -Encoding UTF8
 $slugs = [regex]::Matches($data, 'slug:\s*"([^"]+)"') | ForEach-Object { $_.Groups[1].Value }
@@ -29,11 +30,46 @@ foreach ($file in $sourceFiles) {
     $relative = Resolve-Path -LiteralPath $file.FullName -Relative
     $failures.Add("Placeholder example.com contact found in $relative")
   }
+  if ($text -cmatch '\bblogPosts\b') {
+    $relative = Resolve-Path -LiteralPath $file.FullName -Relative
+    $failures.Add("Old manual blogPosts source found in $relative")
+  }
 }
 
 $contactSource = Get-Content -LiteralPath $contactPath -Raw -Encoding UTF8
 if ($contactSource -match 'setTimeout') {
   $failures.Add("Contact form still uses setTimeout fake submission")
+}
+
+if (-not (Test-Path -LiteralPath $blogContentPath)) {
+  $failures.Add("Markdown blog directory is missing: content\blog")
+} else {
+  $markdownPosts = Get-ChildItem -LiteralPath $blogContentPath -File -Include *.md,*.mdx
+  if ($markdownPosts.Count -eq 0) {
+    $failures.Add("Markdown blog directory has no .md or .mdx posts")
+  }
+
+  foreach ($post in $markdownPosts) {
+    $source = Get-Content -LiteralPath $post.FullName -Raw -Encoding UTF8
+    if ($source -notmatch '(?s)^---\s.*?\btitle:\s*.+?\s---') {
+      $relative = Resolve-Path -LiteralPath $post.FullName -Relative
+      $failures.Add("Markdown post must include frontmatter title in $relative")
+    }
+  }
+}
+
+$blogSourceFiles = @(
+  (Join-Path $PSScriptRoot "src\components\sections\Blog.tsx"),
+  (Join-Path $PSScriptRoot "src\app\blog\page.tsx"),
+  (Join-Path $PSScriptRoot "src\app\blog\[slug]\page.tsx")
+)
+
+foreach ($file in $blogSourceFiles) {
+  $text = Get-Content -LiteralPath $file -Raw -Encoding UTF8
+  if ($text -cmatch '\bblogPosts\b') {
+    $relative = Resolve-Path -LiteralPath $file -Relative
+    $failures.Add("Blog UI should read posts from content\blog, not blogPosts in $relative")
+  }
 }
 
 $blogUiFiles = @(

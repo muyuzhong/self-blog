@@ -62,7 +62,7 @@ Home
 
 ```text
 /blog/                博客归档页
-/blog/[slug]/         MDX 文章详情页
+/blog/[slug]/         Markdown 文章详情页
 /robots.txt           搜索引擎规则
 /sitemap.xml          站点地图
 ```
@@ -140,12 +140,13 @@ Home
 
 ### 5.4 Blog
 
-博客数据源必须和 `src/content/posts/*.mdx` 保持一致：
+博客内容以 `content/blog/*.md` 或 `content/blog/*.mdx` 为唯一数据源：
 
-- `blogPosts` 中出现的 slug 必须有对应 MDX 文件。
-- `/blog` 归档页必须存在。
-- sitemap 只收录真实可访问文章。
-- 列表不能展示会进入“文章内容加载失败”的文章。
+- 文件名就是文章 slug，例如 `content/blog/agent-notes.md` 对应 `/blog/agent-notes`。
+- 每篇文章必须包含 frontmatter 的 `title`，建议包含 `excerpt` 和 `tags`。
+- 页面不展示发布日期，文章排序默认按 slug 降序；如需固定顺序，可用 frontmatter 的 `order`。
+- `/blog`、首页博客模块和 `sitemap.xml` 都必须从 `content/blog` 自动读取真实文章。
+- 不再维护 `src/lib/data.ts` 里的手写博客数组，避免写完 Markdown 后还要改代码。
 
 ### 5.5 Contact
 
@@ -188,7 +189,7 @@ Home
 | 样式 | Tailwind CSS |
 | 动画 | GSAP / Framer Motion |
 | 图标 | Lucide React |
-| 内容 | MDX |
+| 内容 | Markdown / MDX from `content/blog` |
 | 导出 | Next.js static export |
 | 部署 | GitHub Pages + `muyuzhong.xyz` |
 

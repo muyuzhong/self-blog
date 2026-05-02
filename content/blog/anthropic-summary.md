@@ -1,8 +1,7 @@
 ---
 title: "一个初级Agent开发者读Anthropic工程博文：原来我一直在踩的坑，人家早就写明白了"
-date: "2026-05-01"
+excerpt: "一个初级 Agent 开发者读完 Anthropic 工程博文后的踩坑复盘：模型不是全部，基础设施、评估和默认行为才是关键。"
 tags: ["AI", "Agent", "Anthropic", "Engineering", "踩坑记录"]
-slug: "anthropic-summary"
 ---
 
 说实话，半年前我第一次听到"Agent"这个词的时候，脑子里只有一个模糊的概念：就是让AI帮我写代码、做决策、自动执行任务嘛。听起来很酷，但真正动手做的时候，才发现根本不是那么回事。

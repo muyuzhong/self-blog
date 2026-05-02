@@ -1,11 +1,28 @@
+import { promises as fs } from "fs"
+import path from "path"
+
 export interface HeadingItem {
   id: string
   text: string
   depth: 2 | 3
 }
 
+export interface BlogPost {
+  slug: string
+  title: string
+  excerpt: string
+  tags: string[]
+  content: string
+  readingMinutes: number
+}
+
+export type BlogPostSummary = Omit<BlogPost, "content">
+
+const BLOG_DIR = path.join(process.cwd(), "content", "blog")
+const POST_EXTENSIONS = [".md", ".mdx"]
+
 export function stripFrontmatter(source: string) {
-  return source.replace(/^---\s*\n[\s\S]*?\n---\s*\n/, "")
+  return source.replace(/^---\s*\r?\n[\s\S]*?\r?\n---\s*(?:\r?\n|$)/, "")
 }
 
 export function getReadingMinutes(source: string) {
@@ -43,4 +60,117 @@ export function getMarkdownHeadings(source: string): HeadingItem[] {
   }
 
   return headings
+}
+
+function parseScalar(value: string) {
+  const trimmed = value.trim()
+  const quoted = trimmed.match(/^["'](.*)["']$/)
+  return quoted ? quoted[1] : trimmed
+}
+
+function parseTags(value: string) {
+  const trimmed = value.trim()
+  if (!trimmed) return []
+  if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+    return trimmed
+      .slice(1, -1)
+      .split(",")
+      .map((tag) => parseScalar(tag))
+      .filter(Boolean)
+  }
+  return [parseScalar(trimmed)].filter(Boolean)
+}
+
+function parseFrontmatter(source: string) {
+  const match = source.match(/^---\s*\r?\n([\s\S]*?)\r?\n---\s*(?:\r?\n|$)/)
+  const data: { title?: string; excerpt?: string; tags?: string[]; order?: number } = {}
+
+  if (!match) return data
+
+  for (const line of match[1].split(/\r?\n/)) {
+    const field = line.match(/^([A-Za-z0-9_-]+):\s*(.*)$/)
+    if (!field) continue
+
+    const [, key, rawValue] = field
+    if (key === "title") data.title = parseScalar(rawValue)
+    if (key === "excerpt") data.excerpt = parseScalar(rawValue)
+    if (key === "tags") data.tags = parseTags(rawValue)
+    if (key === "order") data.order = Number.parseInt(rawValue, 10)
+  }
+
+  return data
+}
+
+function excerptFromContent(content: string) {
+  const paragraph = content
+    .split(/\r?\n\s*\r?\n/)
+    .map((part) => part.trim())
+    .find((part) => part && !part.startsWith("#") && !part.startsWith("---"))
+
+  return paragraph?.replace(/[#*_>`]/g, "").slice(0, 120) ?? ""
+}
+
+async function findPostFile(slug: string) {
+  if (!/^[a-zA-Z0-9][a-zA-Z0-9_-]*$/.test(slug)) return null
+
+  for (const extension of POST_EXTENSIONS) {
+    const filePath = path.join(BLOG_DIR, `${slug}${extension}`)
+    try {
+      await fs.access(filePath)
+      return filePath
+    } catch {
+      // Try the next supported Markdown extension.
+    }
+  }
+
+  return null
+}
+
+async function readPostFromFile(filePath: string): Promise<BlogPost & { order?: number }> {
+  const source = await fs.readFile(filePath, "utf-8")
+  const content = stripFrontmatter(source)
+  const frontmatter = parseFrontmatter(source)
+  const slug = path.basename(filePath, path.extname(filePath))
+
+  return {
+    slug,
+    title: frontmatter.title ?? slug.replace(/[-_]/g, " "),
+    excerpt: frontmatter.excerpt ?? excerptFromContent(content),
+    tags: frontmatter.tags ?? [],
+    content,
+    readingMinutes: getReadingMinutes(source),
+    order: frontmatter.order,
+  }
+}
+
+export async function getAllBlogPosts(): Promise<BlogPostSummary[]> {
+  let entries: string[]
+  try {
+    entries = await fs.readdir(BLOG_DIR)
+  } catch {
+    return []
+  }
+
+  const postFiles = entries
+    .filter((entry) => POST_EXTENSIONS.includes(path.extname(entry).toLowerCase()))
+    .map((entry) => path.join(BLOG_DIR, entry))
+
+  const posts = await Promise.all(postFiles.map(readPostFromFile))
+
+  return posts
+    .sort((a, b) => {
+      if (a.order !== undefined || b.order !== undefined) {
+        return (a.order ?? Number.MAX_SAFE_INTEGER) - (b.order ?? Number.MAX_SAFE_INTEGER)
+      }
+      return b.slug.localeCompare(a.slug)
+    })
+    .map(({ order, ...post }) => post)
+}
+
+export async function getBlogPost(slug: string): Promise<BlogPost | null> {
+  const filePath = await findPostFile(slug)
+  if (!filePath) return null
+
+  const { order, ...post } = await readPostFromFile(filePath)
+  return post
 }

@@ -6,6 +6,7 @@ import { TechStack } from "@/components/sections/TechStack"
 import { Blog } from "@/components/sections/Blog"
 import { Contact } from "@/components/sections/Contact"
 import { Footer } from "@/components/sections/Footer"
+import { getAllBlogPosts } from "@/lib/blog"
 
 export const metadata: Metadata = {
   title: "暮羽中 | 全栈开发者",
@@ -17,14 +18,16 @@ export const metadata: Metadata = {
   },
 }
 
-export default function Home() {
+export default async function Home() {
+  const posts = await getAllBlogPosts()
+
   return (
     <main>
       <Hero />
       <About />
       <Projects />
       <TechStack />
-      <Blog />
+      <Blog posts={posts} />
       <Contact />
       <Footer />
     </main>

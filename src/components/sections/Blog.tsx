@@ -4,10 +4,14 @@ import { useScrollAnimation } from "@/hooks/useScrollAnimation"
 import { ArrowRight } from "lucide-react"
 import { SectionLabel } from "@/components/shared/SectionLabel"
 import { BracketLabel } from "@/components/shared/BracketLabel"
-import { blogPosts } from "@/lib/data"
+import type { BlogPostSummary } from "@/lib/blog"
 import Link from "next/link"
 
-export function Blog() {
+interface BlogProps {
+  posts: BlogPostSummary[]
+}
+
+export function Blog({ posts }: BlogProps) {
   const sectionRef = useScrollAnimation({ selector: ".blog-row", y: 30, duration: 0.6, stagger: 0.1 })
 
   return (
@@ -29,14 +33,14 @@ export function Blog() {
         </div>
 
         <div className="divide-y divide-[hsla(0,0%,89%,0.08)]">
-          {blogPosts.slice(0, 4).map((post) => (
+          {posts.slice(0, 4).map((post) => (
             <Link
               key={post.slug}
               href={`/blog/${post.slug}`}
-              className="blog-row group flex flex-col md:flex-row md:items-center gap-4 md:gap-8 py-6 hover:bg-white/[0.02] transition-colors -mx-4 px-4"
+              className="blog-row group grid gap-4 py-7 transition-colors hover:bg-white/[0.02] md:-mx-4 md:grid-cols-[11rem_minmax(0,1fr)_7rem] md:items-center md:px-4"
               data-cursor-hover
             >
-              <div className="flex gap-2 shrink-0 md:w-44">
+              <div className="flex flex-wrap gap-2">
                 {post.tags.slice(0, 2).map((tag) => (
                   <BracketLabel key={tag} hover={false} className="text-[0.6rem]">
                     {tag}

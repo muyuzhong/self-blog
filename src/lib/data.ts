@@ -1,4 +1,4 @@
-export const personalData = {
+﻿export const personalData = {
   name: "暮羽中",
   title: "全栈开发者 & 开源爱好者",
   tagline: "用代码构建数字世界的无限可能",
@@ -101,12 +101,3 @@ export const techStack = [
 
 export const skills = techStack
 
-export const blogPosts = [
-  {
-    title: "Anthropic 博文总结：Agent 工程不是魔法，是基础设施",
-    excerpt: "读完 Anthropic 过去半年 9 篇工程博文后的核心洞察：真正的战场不在模型能力，而在工程基础设施。",
-    date: "2026-05-01",
-    tags: ["AI", "Agent", "Anthropic", "Engineering"],
-    slug: "anthropic-summary",
-  },
-]
