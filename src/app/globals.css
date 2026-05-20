@@ -4,27 +4,26 @@
 
 @layer base {
   :root {
-    /* 深棕黑编辑基调 */
-    --background: 48 85% 2%;
-    --foreground: 0 0% 89%;
-    --card: 48 29% 5%;
-    --card-foreground: 0 0% 89%;
-    --popover: 48 29% 5%;
-    --popover-foreground: 0 0% 89%;
-    --primary: 0 0% 89%;
-    --primary-foreground: 48 85% 2%;
-    --secondary: 0 0% 67%;
-    --secondary-foreground: 48 85% 2%;
-    --muted: 48 29% 5%;
-    --muted-foreground: 0 0% 67%;
-    /* 金黄强调色 — 唯一情绪出口 */
-    --accent: 46 100% 45%;
-    --accent-foreground: 48 85% 2%;
+    /* 电子杂志 x 电子墨水 · 靛蓝瓷 */
+    --background: 215 30% 7%;
+    --foreground: 42 28% 91%;
+    --card: 214 27% 10%;
+    --card-foreground: 42 28% 91%;
+    --popover: 214 27% 10%;
+    --popover-foreground: 42 28% 91%;
+    --primary: 42 28% 91%;
+    --primary-foreground: 215 30% 7%;
+    --secondary: 214 18% 28%;
+    --secondary-foreground: 42 28% 91%;
+    --muted: 214 22% 13%;
+    --muted-foreground: 42 13% 65%;
+    --accent: 215 64% 45%;
+    --accent-foreground: 42 35% 95%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89% / 0.12;
-    --input: 0 0% 89% / 0.12;
-    --ring: 46 100% 45%;
+    --border: 42 28% 91% / 0.11;
+    --input: 42 28% 91% / 0.12;
+    --ring: 215 64% 45%;
     --radius: 0rem;
   }
 
@@ -41,8 +40,8 @@
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 96%;
     --muted-foreground: 0 0% 40%;
-    --accent: 46 100% 40%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 213 72% 22%;
+    --accent-foreground: 42 35% 95%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
     --border: 48 85% 2% / 0.12;
@@ -57,7 +56,11 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
-    cursor: none;
+    background-image:
+      linear-gradient(90deg, hsl(var(--foreground) / 0.035) 1px, transparent 1px),
+      linear-gradient(180deg, hsl(var(--foreground) / 0.025) 1px, transparent 1px),
+      radial-gradient(circle at 18% 8%, hsl(var(--accent) / 0.18), transparent 34rem);
+    background-size: 88px 88px, 88px 88px, auto;
   }
 
   html {
@@ -148,6 +151,50 @@
 
   .glass-strong {
     @apply bg-card border border-[hsla(0,0%,89%,0.12)];
+  }
+
+  .font-editorial {
+    font-family: "Noto Serif SC", "Playfair Display", serif;
+  }
+
+  .font-editorial-latin {
+    font-family: "Playfair Display", "Noto Serif SC", serif;
+  }
+
+  .magazine-page {
+    @apply relative overflow-hidden border-y border-foreground/10;
+    background:
+      linear-gradient(180deg, hsl(var(--foreground) / 0.035), transparent 18rem),
+      hsl(var(--background));
+  }
+
+  .magazine-paper {
+    background:
+      linear-gradient(135deg, hsl(var(--foreground) / 0.055) 0 1px, transparent 1px 22px),
+      hsl(var(--card));
+  }
+
+  .magazine-rule {
+    @apply h-px w-full bg-foreground/10;
+  }
+
+  .magazine-kicker {
+    @apply font-mono text-[0.68rem] uppercase tracking-[0.18em] text-muted-foreground;
+  }
+
+  .ink-contour {
+    background-image:
+      repeating-radial-gradient(
+        ellipse at 70% 20%,
+        hsl(var(--foreground) / 0.13) 0 1px,
+        transparent 1px 18px
+      );
+    mask-image: linear-gradient(90deg, transparent, black 22%, black 75%, transparent);
+  }
+
+  .editorial-number {
+    font-family: "Playfair Display", "Noto Serif SC", serif;
+    @apply text-7xl font-bold leading-none text-foreground/[0.045] select-none lg:text-9xl;
   }
 }
 
@@ -401,4 +448,160 @@
     color: hsl(var(--accent) / 0.75);
     margin-right: 0.55rem;
   }
+}
+
+/* ================================================
+   瑞士国际主义风格 · 装饰系统
+   ================================================ */
+
+/* 点阵矩阵 (Dot Matrix) */
+.swiss-dots {
+  background-image: radial-gradient(currentColor 1px, transparent 1px);
+  background-size: 14px 14px;
+  background-position: 0 0;
+  opacity: 0.12;
+}
+
+/* 细点阵 */
+.swiss-dots-fine {
+  background-image: radial-gradient(currentColor 1px, transparent 1px);
+  background-size: 8px 8px;
+  background-position: 0 0;
+  opacity: 0.08;
+}
+
+/* 发丝线 (Hairline Rule) */
+.swiss-rule {
+  height: 1px;
+  background: hsl(var(--accent));
+  opacity: 0.5;
+}
+
+.swiss-rule-horizontal {
+  width: 100%;
+  height: 1px;
+  background: hsl(var(--foreground) / 0.08);
+}
+
+.swiss-rule-accent {
+  width: 100%;
+  height: 2px;
+  background: hsl(var(--accent));
+  opacity: 1;
+}
+
+/* 强调色块 (Accent Block) */
+.swiss-accent-block {
+  background: hsl(var(--accent));
+  color: hsl(var(--accent-foreground));
+  border: none;
+  border-radius: 0;
+}
+
+/* 节奏交替背景 */
+.swiss-paper {
+  background: hsl(var(--background));
+}
+
+.swiss-steel {
+  background: hsl(var(--card));
+}
+
+.swiss-void {
+  background: hsl(215 33% 5%);
+}
+
+/* 收紧字距 */
+.tracking-swiss {
+  letter-spacing: 0;
+}
+
+/* 瑞士风大标题 */
+.font-swiss-display {
+  font-weight: 200;
+  letter-spacing: 0;
+  line-height: 0.92;
+}
+
+/* 瑞士风正文 */
+.font-swiss-body {
+  font-weight: 300;
+  letter-spacing: 0;
+  line-height: 1.65;
+}
+
+/* 瑞士风标签 */
+.font-swiss-label {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-weight: 400;
+  font-size: 0.7rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/* Section 之间的 1px 分隔线 */
+.swiss-section-divider {
+  width: 100%;
+  height: 1px;
+  background: hsl(var(--foreground) / 0.06);
+}
+
+/* 选中样式更新 */
+::selection {
+  background: hsl(var(--accent) / 0.35);
+  color: hsl(var(--foreground));
+}
+
+/* ================================================
+   动态背景系统 · Grid Flow + Floating Orbs
+   ================================================ */
+
+/* 流动网格背景 — 深蓝灰底 + 缓慢移动的网格线 */
+.swiss-grid-flow {
+  background-color: hsl(var(--background));
+  background-image:
+    linear-gradient(to right, hsl(var(--accent) / 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, hsl(var(--accent) / 0.035) 1px, transparent 1px);
+  background-size: 80px 80px;
+  animation: gridFlow 25s linear infinite;
+}
+
+@keyframes gridFlow {
+  0%   { background-position: 0 0; }
+  100% { background-position: 80px 80px; }
+}
+
+/* 浮动光晕 — 缓慢漂移的 IKB 色散 */
+.swiss-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.12;
+  pointer-events: none;
+  animation: orbFloat 18s ease-in-out infinite alternate;
+}
+
+.swiss-orb-1 {
+  width: 500px;
+  height: 500px;
+  background: hsl(var(--accent));
+  top: 5%;
+  right: 10%;
+  animation-delay: 0s;
+}
+
+.swiss-orb-2 {
+  width: 350px;
+  height: 350px;
+  background: hsl(var(--accent));
+  bottom: 15%;
+  left: 8%;
+  animation-delay: -9s;
+  animation-duration: 22s;
+}
+
+@keyframes orbFloat {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(40px, -30px) scale(1.08); }
+  100% { transform: translate(-25px, 20px) scale(0.95); }
 }

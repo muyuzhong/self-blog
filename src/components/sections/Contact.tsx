@@ -56,20 +56,21 @@ export function Contact() {
   }
 
   return (
-    <section id="contact" ref={sectionRef} className="py-32 lg:py-40 px-6 lg:px-10">
-      <div className="max-w-7xl mx-auto">
+    <section id="contact" ref={sectionRef} className="magazine-page relative px-6 py-32 lg:px-10 lg:py-40">
+      <div className="absolute left-0 top-0 h-full w-1/2 text-foreground/25 swiss-dots-fine pointer-events-none" />
+      <div className="max-w-7xl mx-auto relative z-10">
         <div className="contact-content">
           <SectionLabel number="05" title="CONTACT" />
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24">
+        <div className="grid gap-16 lg:grid-cols-[minmax(0,0.95fr)_minmax(28rem,1.05fr)] lg:gap-24">
           <div className="contact-content">
-            <h2 className="font-sans font-bold text-display-l text-foreground tracking-tight mb-6">
+            <h2 className="font-editorial mb-8 text-5xl font-black leading-[0.98] tracking-normal text-foreground md:text-6xl lg:text-7xl">
               一起创造
               <br />
               点什么。
             </h2>
-            <p className="text-muted-foreground leading-relaxed max-w-md">
+            <p className="max-w-md border-l border-accent/70 pl-6 leading-8 text-muted-foreground">
               如果您有任何项目合作、技术交流或工作机会，欢迎随时联系我。我很乐意与您探讨任何有趣的想法。
             </p>
 
@@ -90,7 +91,7 @@ export function Contact() {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="contact-content space-y-8" noValidate>
+          <form onSubmit={handleSubmit(onSubmit)} className="contact-content magazine-paper border border-foreground/12 p-6 sm:p-8 space-y-8" noValidate>
             <div>
               <label className="font-mono text-xs uppercase tracking-[0.1em] text-muted-foreground block mb-3">
                 [NAME]
@@ -141,7 +142,7 @@ export function Contact() {
             </div>
             <button
               type="submit"
-              className="group inline-flex items-center gap-3 font-mono text-sm uppercase tracking-[0.1em] text-foreground hover:text-accent transition-colors"
+              className="group inline-flex items-center gap-3 border border-foreground/15 px-5 py-3 font-mono text-sm uppercase tracking-[0.1em] text-foreground hover:border-accent/60 hover:text-accent transition-colors"
               data-cursor-hover
             >
               <BracketLabel hover={false} className="group-hover:text-accent transition-colors">

@@ -51,9 +51,11 @@ export function CustomCursor() {
     <div
       ref={cursorRef}
       className={cn(
-        "fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-difference hidden md:block",
-        "transition-[width,height,border] duration-200 ease-out",
-        hovering ? "w-5 h-5 -ml-2.5 -mt-2.5 border border-white rounded-full" : "w-1 h-1 -ml-0.5 -mt-0.5 bg-white rounded-full"
+        "fixed left-0 top-0 z-[9999] hidden pointer-events-none md:block",
+        "transition-[width,height,border-color,background-color,opacity] duration-200 ease-out",
+        hovering
+          ? "h-7 w-7 -ml-3.5 -mt-3.5 border border-accent/80 bg-transparent opacity-90"
+          : "h-2 w-2 -ml-1 -mt-1 border border-accent/70 bg-accent/30 opacity-75"
       )}
       style={{ transform: "translate(-100px, -100px)" }}
     />

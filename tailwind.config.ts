@@ -37,8 +37,8 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontSize: {
-        "display-xl": ["clamp(4rem, 12vw, 10rem)", { lineHeight: "0.9", letterSpacing: "-0.04em", fontWeight: "800" }],
-        "display-l": ["clamp(3rem, 8vw, 6rem)", { lineHeight: "0.95", letterSpacing: "-0.03em", fontWeight: "800" }],
+        "display-xl": ["6rem", { lineHeight: "0.9", letterSpacing: "0", fontWeight: "800" }],
+        "display-l": ["4.5rem", { lineHeight: "0.95", letterSpacing: "0", fontWeight: "800" }],
         "bracket": ["0.7rem", { lineHeight: "1", letterSpacing: "0.1em", fontWeight: "400" }],
       },
       animation: {

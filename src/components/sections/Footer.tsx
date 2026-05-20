@@ -18,11 +18,11 @@ export function Footer() {
   }
 
   return (
-    <footer className="border-t border-[hsla(0,0%,89%,0.08)] px-6 lg:px-10 py-8">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+    <footer className="border-t border-foreground/10 px-6 py-8 lg:px-10">
+      <div className="mx-auto flex max-w-7xl items-center justify-between">
         <div className="flex items-center gap-3">
           <BracketLabel>© {new Date().getFullYear()}</BracketLabel>
-          <span className="font-mono text-xs text-muted-foreground">
+          <span className="font-swiss-label text-muted-foreground">
             访客 #{count.toLocaleString()}
           </span>
         </div>

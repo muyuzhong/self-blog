@@ -1,52 +1,74 @@
 "use client"
 
 import { useScrollAnimation } from "@/hooks/useScrollAnimation"
-import { ArrowUpRight } from "lucide-react"
+import { ArrowUpRight, BookOpen } from "lucide-react"
 import { SectionLabel } from "@/components/shared/SectionLabel"
 import { VerticalText } from "@/components/shared/VerticalText"
 import { BracketLabel } from "@/components/shared/BracketLabel"
 import { projects } from "@/lib/data"
 
 export function Projects() {
-  const sectionRef = useScrollAnimation({ selector: ".project-card", y: 50, stagger: 0.15 })
+  const sectionRef = useScrollAnimation({ selector: ".project-card", y: 50, stagger: 0.12 })
 
   return (
-    <section id="projects" ref={sectionRef} className="relative py-32 lg:py-40 px-6 lg:px-10 overflow-hidden">
-      <VerticalText text="PROJECTS" side="right" className="opacity-50" />
+    <section id="projects" ref={sectionRef} className="magazine-page relative px-6 py-32 lg:px-10 lg:py-40">
+      <div className="absolute left-0 top-0 h-full w-full text-foreground/25 swiss-dots-fine pointer-events-none" />
+      <VerticalText text="PROJECTS" side="right" className="opacity-40" />
 
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-16">
-          <SectionLabel number="02" title="PROJECTS" />
-          <h2 className="font-sans font-bold text-display-l text-foreground tracking-tight">
-            精选项目
-          </h2>
+      <div className="relative z-10 mx-auto max-w-7xl">
+        <div className="mb-16 grid gap-8 lg:grid-cols-[minmax(0,1fr)_28rem] lg:items-end">
+          <div>
+            <SectionLabel number="02" title="PROJECTS" />
+            <h2 className="font-editorial text-5xl font-black leading-[0.98] tracking-normal text-foreground md:text-6xl lg:text-7xl">
+              精选项目
+            </h2>
+          </div>
+          <p className="border-l border-accent/70 pl-6 text-sm leading-7 text-muted-foreground">
+            把项目当作一组可阅读的展板：先给问题和技术面，再给入口。没有图片时，用目录化排版保持作品集的可信度。
+          </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((project) => (
+        {projects.length > 0 ? (
+          <div className="grid gap-5 lg:grid-cols-12">
+            {projects.map((project, index) => (
             <div
               key={project.title}
-              className="project-card group relative bg-card editorial-border editorial-border-hover p-8 transition-all duration-300 hover:-translate-y-1"
+              className={`project-card group relative overflow-hidden border border-foreground/12 bg-background/55 p-7 transition-all duration-300 hover:-translate-y-1 hover:border-accent/55 ${
+                index === 0 ? "lg:col-span-6 lg:row-span-2 lg:min-h-[34rem]" : "lg:col-span-3"
+              }`}
             >
-              <div className="flex items-center gap-2 mb-6">
-                <BracketLabel hover={false}>{project.category}</BracketLabel>
-                <BracketLabel hover={false} className="text-[0.6rem]">{project.date}</BracketLabel>
+              <div className="absolute right-5 top-4 font-editorial-latin text-7xl font-bold leading-none text-foreground/[0.04]">
+                {String(index + 1).padStart(2, "0")}
               </div>
 
-              <div className="mb-8 h-32 flex items-center justify-center border border-[hsla(0,0%,89%,0.06)]">
-                <span className="font-sans font-extrabold text-7xl text-muted-foreground/[0.06] select-none">
-                  {project.title.charAt(0)}
+              <div className="relative z-10 mb-8 flex items-center gap-2">
+                <BracketLabel hover={false}>{project.category}</BracketLabel>
+                <BracketLabel hover={false} className="text-[0.6rem]">
+                  {project.date}
+                </BracketLabel>
+              </div>
+
+              <div
+                className={`relative mb-8 flex items-end border border-foreground/10 bg-card/70 p-5 ${
+                  index === 0 ? "h-56 lg:h-72" : "h-36"
+                }`}
+              >
+                <span className="font-editorial-latin text-6xl font-bold leading-none text-accent/35 select-none lg:text-8xl">
+                  {project.title.slice(0, 1)}
+                </span>
+                <span className="absolute bottom-5 right-5 max-w-[8rem] text-right font-mono text-[0.6rem] uppercase tracking-[0.16em] text-muted-foreground">
+                  {project.technologies.slice(0, 2).join(" / ")}
                 </span>
               </div>
 
-              <h3 className="font-sans font-bold text-xl text-foreground tracking-tight mb-3 group-hover:text-accent transition-colors">
+              <h3 className="font-editorial text-3xl font-semibold tracking-normal text-foreground transition-colors group-hover:text-accent">
                 {project.title}
               </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+              <p className="mt-4 text-sm leading-7 text-muted-foreground">
                 {project.description}
               </p>
 
-              <div className="flex flex-wrap gap-2 mb-6">
+              <div className="my-7 flex flex-wrap gap-2">
                 {project.technologies.map((tech) => (
                   <BracketLabel key={tech} hover={false} className="text-[0.6rem]">
                     {tech}
@@ -62,11 +84,27 @@ export function Projects() {
                 data-cursor-hover
               >
                 <span>OPEN</span>
-                <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </a>
             </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="project-card magazine-paper grid min-h-[24rem] place-items-center border border-foreground/12 p-8 text-center">
+            <div className="max-w-xl">
+              <BookOpen className="mx-auto mb-8 h-8 w-8 text-accent" />
+              <BracketLabel hover={false} className="text-accent">
+                PROJECTS WILL BE ADDED LATER
+              </BracketLabel>
+              <h3 className="mt-6 font-editorial text-4xl font-semibold leading-tight text-foreground">
+                项目先留空。
+              </h3>
+              <p className="mt-5 text-sm leading-7 text-muted-foreground">
+                我会等到有真实代码、真实问题和可说明的个人贡献后，再把 Agent 相关项目放到这里。
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   )

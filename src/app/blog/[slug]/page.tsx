@@ -63,7 +63,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   return (
     <main className="px-5 pb-28 pt-24 sm:px-8 lg:px-10">
-      <div className="mx-auto max-w-[72ch]">
+      <div className="mx-auto max-w-[70ch]">
         <Link
           href="/blog"
           className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.12em] text-muted-foreground transition-colors hover:text-accent"
@@ -114,7 +114,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <section className="mb-14">
             <div className="mb-4 flex items-center gap-3">
               <BracketLabel hover={false} className="text-accent">
-                CONTENTS
+                ARTICLE INDEX
               </BracketLabel>
               <span className="h-px flex-1 bg-[hsla(0,0%,89%,0.08)]" />
             </div>

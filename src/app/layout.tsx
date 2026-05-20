@@ -13,9 +13,9 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: { default: "暮羽中 | 全栈开发者", template: "%s | 暮羽中" },
-  description: "用代码构建数字世界的无限可能。专注于高性能 Web 应用和 AI 工具开发的全栈开发者。",
-  keywords: ["全栈开发者", "前端开发", "Next.js", "React", "TypeScript", "暮羽中", "个人网站", "作品集"],
+  title: { default: "暮羽中 | Agent 开发学习者", template: "%s | 暮羽中" },
+  description: "暮羽中的个人网站，记录 Agent 开发学习、技术笔记和实习准备。",
+  keywords: ["Agent 开发", "AI Agent", "实习", "Next.js", "React", "TypeScript", "暮羽中", "个人网站", "技术博客"],
   authors: [{ name: "暮羽中" }],
   creator: "暮羽中",
   metadataBase: new URL("https://muyuzhong.xyz"),
@@ -24,13 +24,13 @@ export const metadata: Metadata = {
     locale: "zh_CN",
     url: "/",
     siteName: "暮羽中个人网站",
-    title: "暮羽中 | 全栈开发者",
-    description: "用代码构建数字世界的无限可能。专注于高性能 Web 应用和 AI 工具开发。",
+    title: "暮羽中 | Agent 开发学习者",
+    description: "记录 Agent 开发学习、技术笔记和实习准备。",
   },
   twitter: {
     card: "summary_large_image",
-    title: "暮羽中 | 全栈开发者",
-    description: "用代码构建数字世界的无限可能。",
+    title: "暮羽中 | Agent 开发学习者",
+    description: "记录 Agent 开发学习、技术笔记和实习准备。",
   },
   robots: {
     index: true,
@@ -49,7 +49,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Noto+Serif+SC:wght@500;600;700;900&family=Playfair+Display:wght@600;700;800&display=swap"
           rel="stylesheet"
         />
         <script
@@ -62,16 +62,16 @@ export default function RootLayout({
                   "@type": "WebSite",
                   name: "暮羽中个人网站",
                   url: "https://muyuzhong.xyz",
-                  description: "用代码构建数字世界的无限可能。专注于高性能 Web 应用和 AI 工具开发。",
+                  description: "记录 Agent 开发学习、技术笔记和实习准备。",
                   inLanguage: "zh-CN",
                 },
                 {
                   "@type": "Person",
                   name: "暮羽中",
                   url: "https://muyuzhong.xyz",
-                  jobTitle: "全栈开发者",
+                  jobTitle: "Agent 开发学习者",
                   sameAs: ["https://github.com/muyuzhong"],
-                  description: "专注于高性能 Web 应用和 AI 工具开发的全栈开发者。",
+                  description: "正在学习 Agent 开发并寻找相关实习机会。",
                 },
               ],
             }),

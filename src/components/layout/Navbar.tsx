@@ -53,23 +53,20 @@ export function Navbar() {
       <nav
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
-          scrolled ? "bg-background/90 backdrop-blur-sm border-b border-[hsla(0,0%,89%,0.08)]" : "bg-transparent"
+          scrolled ? "bg-background/92 backdrop-blur-sm border-b border-foreground/10" : "bg-transparent"
         )}
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-10 flex items-center justify-between h-16">
           <Link
             href="/"
-            className="group flex items-center gap-3 py-2 text-foreground transition-colors"
+            className="group flex items-center py-2 text-foreground transition-colors"
           >
-            <span className="flex h-9 w-9 items-center justify-center border border-accent/50 bg-accent/10 font-sans text-lg font-extrabold text-accent transition-colors group-hover:bg-accent group-hover:text-accent-foreground">
-              暮
-            </span>
             <span className="flex flex-col leading-none">
-              <span className="font-sans text-base font-extrabold tracking-tight text-foreground">
+              <span className="font-editorial text-base font-black tracking-normal text-foreground">
                 暮羽中
               </span>
               <span className="mt-1 font-mono text-[0.58rem] uppercase tracking-[0.16em] text-muted-foreground transition-colors group-hover:text-accent">
-                FULL STACK / AI TOOLS
+                AGENT INTERN / LEARNING
               </span>
             </span>
           </Link>
@@ -116,8 +113,8 @@ export function Navbar() {
       {/* Mobile overlay */}
       <div
         className={cn(
-          "fixed inset-0 z-[60] bg-background/98 backdrop-blur-md flex flex-col items-center justify-center md:hidden",
-          menuOpen ? "pointer-events-auto" : "pointer-events-none"
+          "fixed inset-0 z-[60] bg-background/98 backdrop-blur-md flex flex-col items-center justify-center transition-opacity duration-300 md:hidden",
+          menuOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
         )}
         onClick={(e) => { if (e.target === e.currentTarget) setMenuOpen(false) }}
         aria-hidden={!menuOpen}
