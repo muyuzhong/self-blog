@@ -1,31 +1,87 @@
 "use client"
 
-import { useScrollAnimation } from "@/hooks/useScrollAnimation"
+import { useRef, useState } from "react"
 import { gsap } from "gsap"
 import { useGSAP } from "@gsap/react"
-import { ArrowUpRight, BookOpen } from "lucide-react"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { ArrowUpRight, BookOpen, Rotate3D } from "lucide-react"
 import { SectionLabel } from "@/components/shared/SectionLabel"
 import { VerticalText } from "@/components/shared/VerticalText"
 import { BracketLabel } from "@/components/shared/BracketLabel"
 import { projects } from "@/lib/data"
+import { cn } from "@/lib/utils"
 
-gsap.registerPlugin(useGSAP)
+gsap.registerPlugin(useGSAP, ScrollTrigger)
 
 export function Projects() {
-  const sectionRef = useScrollAnimation({ selector: ".project-card", y: 50, stagger: 0.12 })
+  const sectionRef = useRef<HTMLElement>(null)
+  const trackRef = useRef<HTMLDivElement>(null)
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [flipped, setFlipped] = useState<Record<string, boolean>>({})
 
   useGSAP((context, contextSafe) => {
-    const cards = (context.selector?.(".project-motion-card") ?? []) as HTMLElement[]
-    if (cards.length === 0) return
+    const track = trackRef.current
+    const cards = (context.selector?.(".project-river-card") ?? []) as HTMLElement[]
+    if (!track || cards.length === 0) return
 
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     const safe = contextSafe ?? (<T extends (...args: any[]) => any>(fn: T) => fn)
 
+    gsap.set(cards, {
+      transformPerspective: 1200,
+      transformOrigin: "50% 50%",
+      z: (index) => (index % 2 === 0 ? 80 : -120),
+      rotationY: (index) => (index % 2 === 0 ? -10 : 12),
+      rotationZ: (index) => (index % 3 - 1) * 2,
+    })
+
+    if (!prefersReduced) {
+      gsap.from(cards, {
+        autoAlpha: 0,
+        y: 90,
+        z: -420,
+        rotationX: -18,
+        duration: 1.05,
+        stagger: 0.08,
+        ease: "expo.out",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 70%",
+        },
+      })
+    }
+
+    const mm = gsap.matchMedia()
+    mm.add("(min-width: 1024px)", () => {
+      if (prefersReduced) return
+
+      const travel = () => Math.max(0, track.scrollWidth - window.innerWidth * 0.72)
+
+      gsap.to(track, {
+        x: () => -travel(),
+        ease: "none",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top top",
+          end: () => `+=${Math.max(1800, track.scrollWidth * 1.05)}`,
+          pin: true,
+          scrub: 0.9,
+          invalidateOnRefresh: true,
+          onUpdate: (self) => {
+            const next = Math.min(projects.length - 1, Math.round(self.progress * (projects.length - 1)))
+            setActiveIndex(next)
+          },
+        },
+      })
+    })
+
     const disposers = cards.map((card) => {
-      const mx = gsap.quickTo(card, "--mx", { duration: prefersReduced ? 0 : 0.28, ease: "power3.out" })
-      const my = gsap.quickTo(card, "--my", { duration: prefersReduced ? 0 : 0.28, ease: "power3.out" })
-      const tiltX = gsap.quickTo(card, "rotationX", { duration: prefersReduced ? 0 : 0.35, ease: "power3.out" })
-      const tiltY = gsap.quickTo(card, "rotationY", { duration: prefersReduced ? 0 : 0.35, ease: "power3.out" })
+      const xTo = gsap.quickTo(card, "x", { duration: prefersReduced ? 0 : 0.35, ease: "power3.out" })
+      const yTo = gsap.quickTo(card, "y", { duration: prefersReduced ? 0 : 0.35, ease: "power3.out" })
+      const rotateXTo = gsap.quickTo(card, "rotationX", { duration: prefersReduced ? 0 : 0.34, ease: "power3.out" })
+      const rotateYTo = gsap.quickTo(card, "rotationY", { duration: prefersReduced ? 0 : 0.34, ease: "power3.out" })
+      const mx = gsap.quickTo(card, "--mx", { duration: prefersReduced ? 0 : 0.22, ease: "power3.out" })
+      const my = gsap.quickTo(card, "--my", { duration: prefersReduced ? 0 : 0.22, ease: "power3.out" })
 
       const move = safe((event: PointerEvent) => {
         const rect = card.getBoundingClientRect()
@@ -33,43 +89,48 @@ export function Projects() {
         const py = (event.clientY - rect.top) / rect.height
         mx(px * 100)
         my(py * 100)
-        if (!prefersReduced) {
-          tiltX((0.5 - py) * 4)
-          tiltY((px - 0.5) * 5)
-        }
+        xTo((px - 0.5) * 38)
+        yTo((py - 0.5) * 24)
+        rotateXTo((0.5 - py) * 9)
+        rotateYTo((px - 0.5) * 14)
       })
 
       const enter = safe(() => {
-        gsap.to(card.querySelector(".project-preview"), {
-          y: prefersReduced ? 0 : -8,
-          scale: prefersReduced ? 1 : 1.025,
-          duration: 0.38,
-          ease: "power3.out",
+        card.style.zIndex = "20"
+        gsap.to(card, {
+          scale: prefersReduced ? 1 : 1.08,
+          z: prefersReduced ? 0 : 180,
+          duration: 0.42,
+          ease: "expo.out",
         })
-        gsap.to(card.querySelectorAll(".project-token"), {
-          y: prefersReduced ? 0 : -3,
-          opacity: 1,
-          duration: 0.28,
+        gsap.to(card.querySelectorAll(".project-river-token"), {
+          y: prefersReduced ? 0 : -5,
+          autoAlpha: 1,
+          duration: 0.26,
           stagger: 0.025,
           ease: "power3.out",
         })
       })
 
       const leave = safe(() => {
+        const index = Number(card.dataset.index ?? 0)
+        card.style.zIndex = ""
         mx(50)
         my(50)
-        tiltX(0)
-        tiltY(0)
-        gsap.to(card.querySelector(".project-preview"), {
-          y: 0,
+        xTo(0)
+        yTo(0)
+        rotateXTo(0)
+        rotateYTo(index % 2 === 0 ? -10 : 12)
+        gsap.to(card, {
           scale: 1,
-          duration: 0.32,
+          z: index % 2 === 0 ? 80 : -120,
+          duration: 0.36,
           ease: "power3.out",
         })
-        gsap.to(card.querySelectorAll(".project-token"), {
+        gsap.to(card.querySelectorAll(".project-river-token"), {
           y: 0,
-          opacity: 0.78,
-          duration: 0.22,
+          autoAlpha: 0.78,
+          duration: 0.2,
           ease: "power3.out",
         })
       })
@@ -86,102 +147,147 @@ export function Projects() {
     })
 
     return () => {
+      mm.revert()
       disposers.forEach((dispose) => dispose())
     }
   }, { scope: sectionRef })
 
+  const toggleFlip = (title: string) => {
+    setFlipped((current) => ({ ...current, [title]: !current[title] }))
+  }
+
   return (
-    <section id="projects" ref={sectionRef} className="magazine-page relative px-6 py-32 lg:px-10 lg:py-40">
-      <div className="absolute left-0 top-0 h-full w-full text-foreground/25 swiss-dots-fine pointer-events-none" />
+    <section
+      id="projects"
+      ref={sectionRef}
+      className="project-river-section magazine-page relative min-h-screen overflow-hidden px-6 py-24 lg:px-10 lg:py-0"
+    >
+      <div className="absolute inset-0 text-foreground/25 swiss-dots-fine pointer-events-none" />
+      <div className="project-river-orbit project-river-orbit-a" />
+      <div className="project-river-orbit project-river-orbit-b" />
       <VerticalText text="PROJECTS" side="right" className="opacity-40" />
 
-      <div className="relative z-10 mx-auto max-w-7xl">
-        <div className="mb-16 grid gap-8 lg:grid-cols-[minmax(0,1fr)_28rem] lg:items-end">
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col justify-center gap-12">
+        <div className="project-river-heading grid gap-8 lg:grid-cols-[24rem_minmax(0,1fr)] lg:items-end">
           <div>
             <SectionLabel number="02" title="PROJECTS" />
             <h2 className="font-editorial text-5xl font-black leading-[0.98] tracking-normal text-foreground md:text-6xl lg:text-7xl">
-              精选项目
+              Project River
             </h2>
           </div>
-          <p className="border-l border-accent/70 pl-6 text-sm leading-7 text-muted-foreground">
-            把项目当作一组可阅读的展板：先给问题和技术面，再给入口。没有图片时，用目录化排版保持作品集的可信度。
-          </p>
+          <div className="grid gap-5 border-l border-accent/70 pl-6 lg:grid-cols-[minmax(0,1fr)_7rem] lg:items-end">
+            <p className="text-sm leading-7 text-muted-foreground">
+              Scroll through a floating archive stream. Hover a card to pull it out of the current; click it to flip the dossier.
+            </p>
+            <div className="hidden text-right lg:block">
+              <span className="font-editorial-latin text-6xl font-bold leading-none text-accent">
+                {String(activeIndex + 1).padStart(2, "0")}
+              </span>
+              <span className="mt-2 block font-mono text-[0.62rem] uppercase tracking-[0.16em] text-muted-foreground">
+                / {String(projects.length).padStart(2, "0")}
+              </span>
+            </div>
+          </div>
         </div>
 
         {projects.length > 0 ? (
-          <div className="grid gap-5 lg:grid-cols-12">
-            {projects.map((project, index) => (
-            <div
-              key={project.title}
-              className={`project-card project-motion-card group relative overflow-hidden border border-foreground/12 bg-background/55 p-7 transition-colors duration-300 hover:border-accent/55 ${
-                index === 0 ? "lg:col-span-6 lg:row-span-2 lg:min-h-[34rem]" : "lg:col-span-3"
-              }`}
-            >
-              <div className="project-index absolute right-5 top-4 font-editorial-latin text-7xl font-bold leading-none text-foreground/[0.04]">
-                {String(index + 1).padStart(2, "0")}
-              </div>
+          <div className="project-river-viewport">
+            <div ref={trackRef} className="project-river-track">
+              {projects.map((project, index) => {
+                const isFlipped = Boolean(flipped[project.title])
 
-              <div className="relative z-10 mb-8 flex items-center gap-2">
-                <BracketLabel hover={false}>{project.category}</BracketLabel>
-                <BracketLabel hover={false} className="text-[0.6rem]">
-                  {project.date}
-                </BracketLabel>
-              </div>
+                return (
+                  <article
+                    key={project.title}
+                    data-index={index}
+                    className={cn(
+                      "project-river-card group",
+                      index === activeIndex && "project-river-card-active",
+                      isFlipped && "is-flipped"
+                    )}
+                    data-cursor-hover
+                  >
+                    <button
+                      type="button"
+                      className="project-river-flip"
+                      onClick={() => toggleFlip(project.title)}
+                      aria-label={`Flip ${project.title}`}
+                    >
+                      <span className="project-river-face project-river-front">
+                        <span className="project-river-meta">
+                          <BracketLabel hover={false}>{project.category}</BracketLabel>
+                          <BracketLabel hover={false} className="text-[0.6rem]">
+                            {project.date}
+                          </BracketLabel>
+                        </span>
+                        <span className="project-river-number">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                        <span className="project-river-preview">
+                          <span className="project-river-letter">{project.title.slice(0, 1)}</span>
+                          <span className="project-river-scan" />
+                          <Rotate3D className="absolute right-5 top-5 h-5 w-5 text-accent/70" />
+                        </span>
+                        <span className="block text-left">
+                          <span className="block font-editorial text-4xl font-semibold leading-tight tracking-normal text-foreground transition-colors group-hover:text-accent">
+                            {project.title}
+                          </span>
+                          <span className="mt-4 block text-sm leading-7 text-muted-foreground">
+                            {project.description}
+                          </span>
+                        </span>
+                        <span className="project-river-token-row">
+                          {project.technologies.map((tech) => (
+                            <span key={tech} className="project-river-token">
+                              [{tech}]
+                            </span>
+                          ))}
+                        </span>
+                      </span>
 
-              <div
-                className={`project-preview relative mb-8 flex items-end border border-foreground/10 bg-card/70 p-5 ${
-                  index === 0 ? "h-56 lg:h-72" : "h-36"
-                }`}
-              >
-                <span className="font-editorial-latin text-6xl font-bold leading-none text-accent/35 select-none lg:text-8xl">
-                  {project.title.slice(0, 1)}
-                </span>
-                <span className="absolute bottom-5 right-5 max-w-[8rem] text-right font-mono text-[0.6rem] uppercase tracking-[0.16em] text-muted-foreground">
-                  {project.technologies.slice(0, 2).join(" / ")}
-                </span>
-              </div>
+                      <span className="project-river-face project-river-back">
+                        <span className="project-river-back-grid" />
+                        <span className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-accent">
+                          Dossier / {String(index + 1).padStart(2, "0")}
+                        </span>
+                        <span className="mt-8 block font-editorial text-4xl font-semibold leading-tight text-foreground">
+                          {project.title}
+                        </span>
+                        <span className="mt-6 block text-left text-sm leading-7 text-muted-foreground">
+                          This side is reserved for future evidence, screenshots, architecture notes, and links.
+                        </span>
+                        <span className="mt-auto inline-flex items-center gap-2 self-start font-mono text-xs uppercase tracking-[0.12em] text-foreground">
+                          Flip back
+                          <ArrowUpRight className="h-3.5 w-3.5" />
+                        </span>
+                      </span>
+                    </button>
 
-              <h3 className="font-editorial text-3xl font-semibold tracking-normal text-foreground transition-colors group-hover:text-accent">
-                {project.title}
-              </h3>
-              <p className="mt-4 text-sm leading-7 text-muted-foreground">
-                {project.description}
-              </p>
-
-              <div className="my-7 flex flex-wrap gap-2">
-                {project.technologies.map((tech) => (
-                  <BracketLabel key={tech} hover={false} className="project-token text-[0.6rem]">
-                    {tech}
-                  </BracketLabel>
-                ))}
-              </div>
-
-              <a
-                href={project.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.1em] text-muted-foreground hover:text-accent transition-colors"
-                data-cursor-hover
-              >
-                <span>OPEN</span>
-                <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </a>
+                    <a
+                      href={project.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="project-river-link"
+                      data-cursor-hover
+                    >
+                      OPEN
+                      <ArrowUpRight className="h-3.5 w-3.5" />
+                    </a>
+                  </article>
+                )
+              })}
             </div>
-            ))}
           </div>
         ) : (
-          <div className="project-card magazine-paper grid min-h-[24rem] place-items-center border border-foreground/12 p-8 text-center">
+          <div className="magazine-paper grid min-h-[24rem] place-items-center border border-foreground/12 p-8 text-center">
             <div className="max-w-xl">
               <BookOpen className="mx-auto mb-8 h-8 w-8 text-accent" />
               <BracketLabel hover={false} className="text-accent">
                 PROJECTS WILL BE ADDED LATER
               </BracketLabel>
               <h3 className="mt-6 font-editorial text-4xl font-semibold leading-tight text-foreground">
-                项目先留空。
+                Projects are intentionally empty for now.
               </h3>
-              <p className="mt-5 text-sm leading-7 text-muted-foreground">
-                我会等到有真实代码、真实问题和可说明的个人贡献后，再把 Agent 相关项目放到这里。
-              </p>
             </div>
           </div>
         )}

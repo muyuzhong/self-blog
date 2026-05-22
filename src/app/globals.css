@@ -250,6 +250,283 @@
   .project-token {
     opacity: 0.78;
   }
+
+  .project-river-section {
+    perspective: 1400px;
+  }
+
+  .project-river-viewport {
+    margin-inline: calc(50% - 50vw);
+    overflow: visible;
+    padding: 4rem 0 6rem;
+    perspective: 1500px;
+  }
+
+  .project-river-track {
+    display: flex;
+    width: max-content;
+    gap: clamp(1.25rem, 3vw, 3rem);
+    padding-inline: max(1.5rem, calc((100vw - 80rem) / 2));
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  .project-river-card {
+    --mx: 50;
+    --my: 50;
+    position: relative;
+    width: min(82vw, 27rem);
+    min-height: 34rem;
+    flex: 0 0 auto;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  .project-river-card:nth-child(2n) {
+    margin-top: 5rem;
+  }
+
+  .project-river-card:nth-child(3n) {
+    margin-top: 2rem;
+  }
+
+  .project-river-flip {
+    position: relative;
+    display: block;
+    width: 100%;
+    min-height: 34rem;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    text-align: left;
+    transform-style: preserve-3d;
+    transition: transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
+    cursor: pointer;
+  }
+
+  .project-river-card.is-flipped .project-river-flip {
+    transform: rotateY(180deg);
+  }
+
+  .project-river-face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    min-height: 34rem;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid hsl(var(--foreground) / 0.16);
+    background:
+      radial-gradient(circle at calc(var(--mx) * 1%) calc(var(--my) * 1%), hsl(var(--accent) / 0.26), transparent 11rem),
+      linear-gradient(135deg, hsl(var(--foreground) / 0.075), transparent 42%),
+      hsl(var(--card) / 0.94);
+    padding: 1.45rem;
+    backface-visibility: hidden;
+    box-shadow:
+      0 28px 80px hsl(215 42% 2% / 0.48),
+      inset 0 0 0 1px hsl(var(--foreground) / 0.035);
+  }
+
+  .project-river-face::before,
+  .project-river-face::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .project-river-face::before {
+    inset: 0;
+    opacity: 0;
+    background:
+      linear-gradient(90deg, transparent, hsl(var(--foreground) / 0.18), transparent),
+      repeating-linear-gradient(0deg, hsl(var(--foreground) / 0.055) 0 1px, transparent 1px 12px);
+    transform: translateX(-55%);
+    transition:
+      opacity 320ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 560ms cubic-bezier(0.22, 1, 0.36, 1);
+    mix-blend-mode: screen;
+  }
+
+  .project-river-face::after {
+    inset: 1px;
+    border: 1px solid hsl(var(--accent) / 0.36);
+    opacity: 0;
+    clip-path: polygon(0 0, 30% 0, 30% 1px, 1px 1px, 1px 30%, 0 30%, 0 0, 100% 100%, 70% 100%, 70% calc(100% - 1px), calc(100% - 1px) calc(100% - 1px), calc(100% - 1px) 70%, 100% 70%, 100% 100%);
+    transition: opacity 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .project-river-card:hover .project-river-face::before,
+  .project-river-card-active .project-river-face::before {
+    opacity: 1;
+    transform: translateX(55%);
+  }
+
+  .project-river-card:hover .project-river-face::after,
+  .project-river-card-active .project-river-face::after {
+    opacity: 1;
+  }
+
+  .project-river-front {
+    transform: rotateY(0deg);
+  }
+
+  .project-river-back {
+    transform: rotateY(180deg);
+  }
+
+  .project-river-meta {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .project-river-number {
+    position: absolute;
+    right: 1.2rem;
+    top: 0.85rem;
+    font-family: "Playfair Display", "Noto Serif SC", serif;
+    font-size: 6rem;
+    font-weight: 700;
+    line-height: 1;
+    color: hsl(var(--foreground) / 0.045);
+    user-select: none;
+  }
+
+  .project-river-preview {
+    position: relative;
+    margin: 3.5rem 0 2rem;
+    display: flex;
+    min-height: 12rem;
+    align-items: flex-end;
+    overflow: hidden;
+    border: 1px solid hsl(var(--foreground) / 0.11);
+    background:
+      linear-gradient(135deg, hsl(var(--foreground) / 0.09) 0 1px, transparent 1px 20px),
+      hsl(var(--background) / 0.5);
+    padding: 1.25rem;
+    transform: translateZ(34px);
+  }
+
+  .project-river-letter {
+    font-family: "Playfair Display", "Noto Serif SC", serif;
+    font-size: clamp(4.75rem, 9vw, 8rem);
+    font-weight: 800;
+    line-height: 0.82;
+    color: hsl(var(--accent) / 0.46);
+    transform: translateZ(24px);
+  }
+
+  .project-river-scan {
+    position: absolute;
+    inset: auto 1rem 1rem auto;
+    width: 42%;
+    height: 54%;
+    border: 1px solid hsl(var(--foreground) / 0.12);
+    background:
+      repeating-linear-gradient(90deg, hsl(var(--accent) / 0.22) 0 1px, transparent 1px 9px),
+      repeating-linear-gradient(0deg, hsl(var(--foreground) / 0.12) 0 1px, transparent 1px 12px);
+    opacity: 0.55;
+    transform: skewX(-8deg) translateZ(18px);
+  }
+
+  .project-river-token-row {
+    position: relative;
+    z-index: 2;
+    margin-top: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    padding-top: 1.5rem;
+  }
+
+  .project-river-token {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+    opacity: 0.78;
+    will-change: transform, opacity;
+  }
+
+  .project-river-back-grid {
+    position: absolute;
+    inset: 0;
+    opacity: 0.38;
+    background:
+      radial-gradient(circle at 50% 35%, hsl(var(--accent) / 0.24), transparent 15rem),
+      linear-gradient(90deg, hsl(var(--foreground) / 0.07) 1px, transparent 1px),
+      linear-gradient(0deg, hsl(var(--foreground) / 0.06) 1px, transparent 1px);
+    background-size: auto, 34px 34px, 34px 34px;
+  }
+
+  .project-river-link {
+    position: absolute;
+    bottom: 1.45rem;
+    right: 1.45rem;
+    z-index: 8;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    color: hsl(var(--muted-foreground));
+    transition:
+      color 200ms ease,
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .project-river-link:hover {
+    color: hsl(var(--accent));
+    transform: translate3d(3px, -3px, 0);
+  }
+
+  .project-river-orbit {
+    position: absolute;
+    pointer-events: none;
+    border: 1px solid hsl(var(--foreground) / 0.08);
+    opacity: 0.72;
+    transform: rotateX(64deg) rotateZ(-16deg);
+  }
+
+  .project-river-orbit-a {
+    right: -16rem;
+    top: 12%;
+    width: 48rem;
+    height: 18rem;
+  }
+
+  .project-river-orbit-b {
+    left: -22rem;
+    bottom: 4%;
+    width: 58rem;
+    height: 20rem;
+  }
+
+  @media (max-width: 1023px) {
+    .project-river-viewport {
+      margin-inline: -1.5rem;
+      overflow-x: auto;
+      overflow-y: visible;
+      padding: 2rem 1.5rem 3rem;
+      scroll-snap-type: x mandatory;
+    }
+
+    .project-river-track {
+      padding-inline: 0;
+    }
+
+    .project-river-card {
+      scroll-snap-align: center;
+    }
+
+    .project-river-card:nth-child(n) {
+      margin-top: 0;
+    }
+  }
 }
 
 /* ---------------------------------------------------------------- *
