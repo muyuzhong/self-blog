@@ -300,13 +300,14 @@
     background: transparent;
     color: inherit;
     text-align: left;
+    transform-origin: 50% 50%;
     transform-style: preserve-3d;
     transition: transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
     cursor: pointer;
   }
 
   .project-river-card.is-flipped .project-river-flip {
-    transform: rotateY(180deg);
+    transform: rotateX(180deg);
   }
 
   .project-river-face {
@@ -368,11 +369,11 @@
   }
 
   .project-river-front {
-    transform: rotateY(0deg);
+    transform: rotateX(0deg);
   }
 
   .project-river-back {
-    transform: rotateY(180deg);
+    transform: rotateX(180deg);
   }
 
   .project-river-meta {
