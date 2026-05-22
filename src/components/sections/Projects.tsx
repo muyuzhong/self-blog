@@ -226,12 +226,12 @@ export function Projects() {
           <div>
             <SectionLabel number="02" title="PROJECTS" />
             <h2 className="font-editorial text-5xl font-black leading-[0.98] tracking-normal text-foreground md:text-6xl lg:text-7xl">
-              Project River
+              精选项目
             </h2>
           </div>
           <div className="grid gap-5 border-l border-accent/70 pl-6 lg:grid-cols-[minmax(0,1fr)_7rem] lg:items-end">
             <p className="text-sm leading-7 text-muted-foreground">
-              Use the arrows, index rail, or move your pointer near the left and right edges to drift through the archive stream.
+              保留流动式档案卡的动效，但把浏览方式交给明确的左右切换、编号索引和边缘感应，避免影响页面正常上下滚动。
             </p>
             <div className="hidden text-right lg:block">
               <span className="font-editorial-latin text-6xl font-bold leading-none text-accent">
@@ -325,16 +325,16 @@ export function Projects() {
                       <span className="project-river-face project-river-back">
                         <span className="project-river-back-grid" />
                         <span className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-accent">
-                          Dossier / {String(index + 1).padStart(2, "0")}
+                          DOSSIER / {String(index + 1).padStart(2, "0")}
                         </span>
                         <span className="mt-8 block font-editorial text-4xl font-semibold leading-tight text-foreground">
                           {project.title}
                         </span>
                         <span className="mt-6 block text-left text-sm leading-7 text-muted-foreground">
-                          This side is reserved for future evidence, screenshots, architecture notes, and links.
+                          这一面先留给之后的项目证据、截图、架构说明和真实链接。现在只作为交互动效占位。
                         </span>
                         <span className="mt-auto inline-flex items-center gap-2 self-start font-mono text-xs uppercase tracking-[0.12em] text-foreground">
-                          Flip back
+                          返回正面
                           <ArrowUpRight className="h-3.5 w-3.5" />
                         </span>
                       </span>
@@ -362,7 +362,7 @@ export function Projects() {
                   type="button"
                   className={cn("project-river-dot", index === activeIndex && "is-active")}
                   onClick={() => selectProject(index)}
-                  aria-label={`Show ${project.title}`}
+                  aria-label={`查看 ${project.title}`}
                   aria-current={index === activeIndex ? "true" : undefined}
                 >
                   <span>{String(index + 1).padStart(2, "0")}</span>
