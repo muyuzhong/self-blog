@@ -654,100 +654,275 @@
     }
   }
 
-  .tech-signal-section {
+  .capability-section {
     overflow: hidden;
   }
 
-  .tech-signal-grid-bg {
+  .capability-field-bg {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    opacity: 0.5;
+    opacity: 0.52;
     background:
-      linear-gradient(90deg, hsl(var(--foreground) / 0.035) 1px, transparent 1px),
-      linear-gradient(0deg, hsl(var(--foreground) / 0.026) 1px, transparent 1px);
-    background-size: 72px 72px;
-    mask-image: linear-gradient(90deg, transparent, black 18%, black 80%, transparent);
+      radial-gradient(circle at 50% 44%, hsl(var(--accent) / 0.16), transparent 30rem),
+      linear-gradient(90deg, hsl(var(--foreground) / 0.03) 1px, transparent 1px),
+      linear-gradient(0deg, hsl(var(--foreground) / 0.024) 1px, transparent 1px);
+    background-size: auto, 72px 72px, 72px 72px;
+    mask-image: linear-gradient(90deg, transparent, black 18%, black 82%, transparent);
   }
 
-  .tech-signal-list {
-    position: relative;
+  .capability-group-rail {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
   }
 
-  .tech-signal-row {
-    --mx: 50;
-    --my: 50;
-    position: relative;
-    display: grid;
-    width: 100%;
-    grid-template-columns: 4rem minmax(0, 1fr);
-    gap: 0.9rem;
-    overflow: hidden;
-    border-bottom: 1px solid hsl(var(--foreground) / 0.1);
-    padding: 1.15rem 0;
-    text-align: left;
+  .capability-group {
+    border: 1px solid hsl(var(--foreground) / 0.12);
+    padding: 0.62rem 0.85rem;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 0.66rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
     transition:
+      border-color 220ms ease,
       background-color 220ms ease,
-      border-color 220ms ease;
-    will-change: transform;
+      color 220ms ease,
+      transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .tech-signal-row:last-child {
-    border-bottom: 0;
+  .capability-group:hover,
+  .capability-group.is-active {
+    border-color: hsl(var(--accent) / 0.55);
+    background-color: hsl(var(--foreground) / 0.04);
+    color: hsl(var(--accent));
+    transform: translateY(-2px);
   }
 
-  .tech-signal-row::before {
+  .capability-map {
+    --map-x: 0;
+    --map-y: 0;
+    position: relative;
+    min-height: clamp(31rem, 62vw, 43rem);
+    overflow: hidden;
+    border: 1px solid hsl(var(--foreground) / 0.12);
+    background:
+      radial-gradient(circle at calc(50% + var(--map-x) * 4%) calc(48% + var(--map-y) * 4%), hsl(var(--accent) / 0.18), transparent 22rem),
+      linear-gradient(135deg, hsl(var(--foreground) / 0.065), transparent 36%),
+      hsl(var(--card) / 0.55);
+    perspective: 1200px;
+  }
+
+  .capability-map::before,
+  .capability-map::after {
     content: "";
     position: absolute;
-    inset: 0;
+    left: 50%;
+    top: 50%;
     pointer-events: none;
-    opacity: 0;
-    background:
-      radial-gradient(circle at calc(var(--mx) * 1%) calc(var(--my) * 1%), hsl(var(--accent) / 0.18), transparent 11rem),
-      linear-gradient(90deg, transparent, hsl(var(--foreground) / 0.075), transparent);
-    transform: translateX(-30%);
-    transition:
-      opacity 260ms cubic-bezier(0.22, 1, 0.36, 1),
-      transform 460ms cubic-bezier(0.22, 1, 0.36, 1);
+    border: 1px solid hsl(var(--foreground) / 0.09);
+    transform:
+      translate(-50%, -50%)
+      rotateX(calc(62deg + var(--map-y) * 2deg))
+      rotateZ(calc(-18deg + var(--map-x) * 3deg));
   }
 
-  .tech-signal-row:hover,
-  .tech-signal-row.is-active {
-    background-color: hsl(var(--foreground) / 0.026);
-    border-color: hsl(var(--accent) / 0.34);
+  .capability-map::before {
+    width: 72%;
+    height: 24%;
   }
 
-  .tech-signal-row:hover::before,
-  .tech-signal-row.is-active::before {
-    opacity: 1;
-    transform: translateX(20%);
+  .capability-map::after {
+    width: 92%;
+    height: 35%;
   }
 
-  .tech-signal-row > * {
-    position: relative;
-    z-index: 1;
+  .capability-orbit {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    pointer-events: none;
+    border: 1px solid hsl(var(--accent) / 0.16);
+    opacity: 0.8;
+    transform:
+      translate(-50%, -50%)
+      rotateX(calc(62deg + var(--map-y) * 2deg))
+      rotateZ(calc(var(--orbit-rotate) + var(--map-x) * 4deg));
   }
 
-  .tech-signal-level {
-    display: none;
-    height: 1px;
-    overflow: hidden;
-    background: hsl(var(--foreground) / 0.12);
+  .capability-orbit-a {
+    --orbit-rotate: -26deg;
+    width: 82%;
+    height: 29%;
   }
 
-  .tech-signal-level span {
-    display: block;
+  .capability-orbit-b {
+    --orbit-rotate: 21deg;
+    width: 64%;
+    height: 42%;
+  }
+
+  .capability-orbit-c {
+    --orbit-rotate: 82deg;
+    width: 38%;
+    height: 76%;
+  }
+
+  .capability-lines {
+    position: absolute;
+    inset: 0;
     height: 100%;
-    width: var(--level);
-    transform-origin: 0 50%;
-    background: hsl(var(--accent));
-    transition: width 420ms cubic-bezier(0.22, 1, 0.36, 1);
+    width: 100%;
+    pointer-events: none;
   }
 
-  .tech-signal-panel {
+  .capability-line {
+    stroke: hsl(var(--foreground) / 0.1);
+    stroke-width: 0.18;
+    vector-effect: non-scaling-stroke;
+    transition:
+      stroke 240ms ease,
+      stroke-width 240ms ease,
+      opacity 240ms ease;
+  }
+
+  .capability-line.is-active {
+    stroke: hsl(var(--accent) / 0.62);
+    stroke-width: 0.45;
+  }
+
+  .capability-core {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 8;
+    display: grid;
+    min-height: 6.5rem;
+    width: 12rem;
+    place-items: center;
+    border: 1px solid hsl(var(--accent) / 0.45);
+    background:
+      linear-gradient(135deg, hsl(var(--foreground) / 0.08), transparent),
+      hsl(var(--background) / 0.76);
+    color: hsl(var(--foreground));
+    transform:
+      translate(-50%, -50%)
+      translate3d(calc(var(--map-x) * -0.45rem), calc(var(--map-y) * -0.35rem), 42px);
+    transform-style: preserve-3d;
+  }
+
+  .capability-core span:first-child {
+    font-family: "Playfair Display", "Noto Serif SC", serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    line-height: 1;
+    color: hsl(var(--accent));
+  }
+
+  .capability-core span:last-child {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .capability-node {
+    position: absolute;
+    z-index: 10;
+    display: grid;
+    min-width: 8rem;
+    max-width: 11rem;
+    transform:
+      translate(-50%, -50%)
+      translate3d(calc(var(--map-x) * -0.65rem), calc(var(--map-y) * -0.45rem), calc(var(--level) * 1px));
+    transform-style: preserve-3d;
+    justify-items: center;
+    gap: 0.45rem;
+    color: hsl(var(--muted-foreground));
+    transition:
+      color 220ms ease,
+      opacity 220ms ease,
+      filter 220ms ease;
+    will-change: transform, opacity;
+  }
+
+  .capability-node.is-muted {
+    opacity: 0.24;
+    filter: grayscale(0.6);
+  }
+
+  .capability-node-dot {
+    position: relative;
+    height: 0.72rem;
+    width: 0.72rem;
+    border: 1px solid hsl(var(--accent) / 0.7);
+    background: hsl(var(--background));
+    transform: rotate(45deg);
+    transition:
+      background-color 240ms ease,
+      box-shadow 240ms ease,
+      transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .capability-node-dot::after {
+    content: "";
+    position: absolute;
+    inset: -0.6rem;
+    border: 1px solid hsl(var(--accent) / 0.12);
+    opacity: 0;
+    transition:
+      opacity 240ms ease,
+      transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .capability-node-label {
+    border: 1px solid hsl(var(--foreground) / 0.11);
+    background: hsl(var(--background) / 0.62);
+    padding: 0.48rem 0.62rem;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    line-height: 1.35;
+    text-align: center;
+    backdrop-filter: blur(8px);
+    transition:
+      border-color 220ms ease,
+      background-color 220ms ease,
+      color 220ms ease;
+  }
+
+  .capability-node:hover,
+  .capability-node.is-active {
+    color: hsl(var(--foreground));
+  }
+
+  .capability-node:hover .capability-node-dot,
+  .capability-node.is-active .capability-node-dot {
+    background: hsl(var(--accent));
+    box-shadow: 0 0 0 0.75rem hsl(var(--accent) / 0.12);
+    transform: rotate(45deg) scale(1.55);
+  }
+
+  .capability-node:hover .capability-node-dot::after,
+  .capability-node.is-active .capability-node-dot::after {
+    opacity: 1;
+    transform: scale(1.25);
+  }
+
+  .capability-node:hover .capability-node-label,
+  .capability-node.is-active .capability-node-label {
+    border-color: hsl(var(--accent) / 0.55);
+    background: hsl(var(--card) / 0.86);
+    color: hsl(var(--accent));
+  }
+
+  .capability-dossier {
     position: relative;
     display: flex;
-    min-height: 31rem;
+    min-height: clamp(31rem, 62vw, 43rem);
     flex-direction: column;
     overflow: hidden;
     border: 1px solid hsl(var(--foreground) / 0.13);
@@ -760,7 +935,7 @@
       inset 0 0 0 1px hsl(var(--foreground) / 0.035);
   }
 
-  .tech-signal-panel::after {
+  .capability-dossier::after {
     content: "";
     position: absolute;
     inset: 1px;
@@ -769,87 +944,48 @@
     clip-path: polygon(0 0, 36% 0, 36% 1px, 1px 1px, 1px 36%, 0 36%, 0 0, 100% 100%, 64% 100%, 64% calc(100% - 1px), calc(100% - 1px) calc(100% - 1px), calc(100% - 1px) 64%, 100% 64%, 100% 100%);
   }
 
-  .tech-signal-scope {
+  .capability-dossier-map {
     position: absolute;
     inset: 1.2rem;
-    opacity: 0.85;
+    opacity: 0.75;
     background:
-      radial-gradient(circle at 50% 45%, hsl(var(--accent) / 0.16), transparent 12rem),
-      repeating-radial-gradient(circle at 50% 45%, hsl(var(--foreground) / 0.1) 0 1px, transparent 1px 3.8rem);
+      radial-gradient(circle at 52% 34%, hsl(var(--accent) / 0.22), transparent 12rem),
+      repeating-radial-gradient(circle at 52% 34%, hsl(var(--foreground) / 0.1) 0 1px, transparent 1px 3.6rem),
+      linear-gradient(90deg, hsl(var(--foreground) / 0.06) 1px, transparent 1px),
+      linear-gradient(0deg, hsl(var(--foreground) / 0.05) 1px, transparent 1px);
+    background-size: auto, auto, 34px 34px, 34px 34px;
   }
 
-  .tech-signal-scope::before,
-  .tech-signal-scope::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 45%;
-    border: 1px solid hsl(var(--foreground) / 0.12);
-    transform: translate(-50%, -50%) rotateX(62deg) rotateZ(-18deg);
-  }
-
-  .tech-signal-scope::before {
-    width: 18rem;
-    height: 7rem;
-  }
-
-  .tech-signal-scope::after {
-    width: 25rem;
-    height: 10rem;
-  }
-
-  .tech-signal-node {
-    position: absolute;
-    left: var(--node-x);
-    top: var(--node-y);
-    height: 0.45rem;
-    width: 0.45rem;
-    border: 1px solid hsl(var(--accent) / 0.65);
-    background: hsl(var(--background));
-    transform: translate(-50%, -50%) rotate(45deg);
-    transition:
-      background-color 260ms ease,
-      box-shadow 260ms ease,
-      transform 340ms cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .tech-signal-node.is-active {
-    background: hsl(var(--accent));
-    box-shadow: 0 0 0 0.5rem hsl(var(--accent) / 0.12);
-    transform: translate(-50%, -50%) rotate(45deg) scale(1.7);
-  }
-
-  .tech-signal-meter {
-    height: 0.35rem;
+  .capability-meter {
+    height: 0.38rem;
     overflow: hidden;
     border: 1px solid hsl(var(--foreground) / 0.12);
     background: hsl(var(--background) / 0.62);
   }
 
-  .tech-signal-meter span {
+  .capability-meter span {
     display: block;
     height: 100%;
     width: var(--level);
     background:
-      linear-gradient(90deg, hsl(var(--accent) / 0.9), hsl(var(--foreground) / 0.72)),
+      linear-gradient(90deg, hsl(var(--accent) / 0.95), hsl(var(--foreground) / 0.72)),
       hsl(var(--accent));
     transition: width 520ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  @media (min-width: 768px) {
-    .tech-signal-row {
-      grid-template-columns: 4rem minmax(0, 1fr) 9rem minmax(6rem, 10rem) 7rem;
-      align-items: center;
-    }
-
-    .tech-signal-level {
-      display: block;
-    }
-  }
-
   @media (max-width: 1023px) {
-    .tech-signal-panel {
-      min-height: 24rem;
+    .capability-map,
+    .capability-dossier {
+      min-height: 30rem;
+    }
+
+    .capability-node {
+      min-width: 6.5rem;
+      max-width: 8rem;
+    }
+
+    .capability-node-label {
+      font-size: 0.56rem;
     }
   }
 }
