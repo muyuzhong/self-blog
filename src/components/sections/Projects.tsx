@@ -141,8 +141,8 @@ export function Projects() {
       const enter = safe(() => {
         card.style.zIndex = "20"
         gsap.to(card, {
-          scale: prefersReduced ? 1 : 1.08,
-          z: prefersReduced ? 0 : 180,
+          scale: prefersReduced ? 1 : 1.035,
+          z: prefersReduced ? 0 : 110,
           duration: 0.42,
           ease: "expo.out",
         })

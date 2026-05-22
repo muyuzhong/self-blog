@@ -276,26 +276,26 @@
     --mx: 50;
     --my: 50;
     position: relative;
-    width: min(82vw, 27rem);
-    min-height: 34rem;
+    width: min(74vw, 22.5rem);
+    min-height: 28.25rem;
     flex: 0 0 auto;
     transform-style: preserve-3d;
     will-change: transform;
   }
 
   .project-river-card:nth-child(2n) {
-    margin-top: 5rem;
+    margin-top: 3.5rem;
   }
 
   .project-river-card:nth-child(3n) {
-    margin-top: 2rem;
+    margin-top: 1.4rem;
   }
 
   .project-river-flip {
     position: relative;
     display: block;
     width: 100%;
-    min-height: 34rem;
+    min-height: 28.25rem;
     border: 0;
     background: transparent;
     color: inherit;
@@ -314,7 +314,7 @@
     position: absolute;
     inset: 0;
     display: flex;
-    min-height: 34rem;
+    min-height: 28.25rem;
     flex-direction: column;
     overflow: hidden;
     border: 1px solid hsl(var(--foreground) / 0.16);
@@ -322,7 +322,7 @@
       radial-gradient(circle at calc(var(--mx) * 1%) calc(var(--my) * 1%), hsl(var(--accent) / 0.26), transparent 11rem),
       linear-gradient(135deg, hsl(var(--foreground) / 0.075), transparent 42%),
       hsl(var(--card) / 0.94);
-    padding: 1.45rem;
+    padding: 1.25rem;
     backface-visibility: hidden;
     box-shadow:
       0 28px 80px hsl(215 42% 2% / 0.48),
@@ -386,10 +386,10 @@
 
   .project-river-number {
     position: absolute;
-    right: 1.2rem;
-    top: 0.85rem;
+    right: 1rem;
+    top: 0.75rem;
     font-family: "Playfair Display", "Noto Serif SC", serif;
-    font-size: 6rem;
+    font-size: 5.15rem;
     font-weight: 700;
     line-height: 1;
     color: hsl(var(--foreground) / 0.045);
@@ -398,22 +398,22 @@
 
   .project-river-preview {
     position: relative;
-    margin: 3.5rem 0 2rem;
+    margin: 2.7rem 0 1.45rem;
     display: flex;
-    min-height: 12rem;
+    min-height: 9.25rem;
     align-items: flex-end;
     overflow: hidden;
     border: 1px solid hsl(var(--foreground) / 0.11);
     background:
       linear-gradient(135deg, hsl(var(--foreground) / 0.09) 0 1px, transparent 1px 20px),
       hsl(var(--background) / 0.5);
-    padding: 1.25rem;
+    padding: 1rem;
     transform: translateZ(34px);
   }
 
   .project-river-letter {
     font-family: "Playfair Display", "Noto Serif SC", serif;
-    font-size: clamp(4.75rem, 9vw, 8rem);
+    font-size: clamp(3.75rem, 6.4vw, 6.1rem);
     font-weight: 800;
     line-height: 0.82;
     color: hsl(var(--accent) / 0.46);
@@ -466,8 +466,8 @@
 
   .project-river-link {
     position: absolute;
-    bottom: 1.45rem;
-    right: 1.45rem;
+    bottom: 1.25rem;
+    right: 1.25rem;
     z-index: 8;
     display: inline-flex;
     align-items: center;
@@ -1205,6 +1205,22 @@
     z-index: 1;
   }
 
+  .tech-card-name {
+    position: relative;
+    z-index: 1;
+    margin-top: 0.95rem;
+    display: block;
+    max-width: 100%;
+    overflow-wrap: normal;
+    text-wrap: balance;
+    font-family: "Noto Serif SC", "Playfair Display", serif;
+    font-size: clamp(0.88rem, 1.05vw, 1.08rem);
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: 0;
+    color: hsl(var(--foreground));
+  }
+
   .tech-card-meter {
     position: relative;
     margin-top: 1.3rem;
@@ -1305,6 +1321,10 @@
     .tech-card:hover,
     .tech-card.is-active {
       transform: translateY(-6px) scale(1.02);
+    }
+
+    .tech-card-name {
+      font-size: clamp(0.95rem, 4vw, 1.25rem);
     }
   }
 

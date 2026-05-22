@@ -205,7 +205,7 @@ export function TechStack() {
                         <span className="font-mono text-[0.58rem] uppercase tracking-[0.16em] text-accent">
                           {card.category}
                         </span>
-                        <span className="mt-4 block font-editorial text-2xl font-semibold leading-none text-foreground">
+                        <span className="tech-card-name">
                           {card.name}
                         </span>
                         <span className="tech-card-meter" aria-hidden="true">
