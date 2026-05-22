@@ -1,14 +1,94 @@
 "use client"
 
 import { useScrollAnimation } from "@/hooks/useScrollAnimation"
+import { gsap } from "gsap"
+import { useGSAP } from "@gsap/react"
 import { ArrowUpRight, BookOpen } from "lucide-react"
 import { SectionLabel } from "@/components/shared/SectionLabel"
 import { VerticalText } from "@/components/shared/VerticalText"
 import { BracketLabel } from "@/components/shared/BracketLabel"
 import { projects } from "@/lib/data"
 
+gsap.registerPlugin(useGSAP)
+
 export function Projects() {
   const sectionRef = useScrollAnimation({ selector: ".project-card", y: 50, stagger: 0.12 })
+
+  useGSAP((context, contextSafe) => {
+    const cards = (context.selector?.(".project-motion-card") ?? []) as HTMLElement[]
+    if (cards.length === 0) return
+
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    const safe = contextSafe ?? (<T extends (...args: any[]) => any>(fn: T) => fn)
+
+    const disposers = cards.map((card) => {
+      const mx = gsap.quickTo(card, "--mx", { duration: prefersReduced ? 0 : 0.28, ease: "power3.out" })
+      const my = gsap.quickTo(card, "--my", { duration: prefersReduced ? 0 : 0.28, ease: "power3.out" })
+      const tiltX = gsap.quickTo(card, "rotationX", { duration: prefersReduced ? 0 : 0.35, ease: "power3.out" })
+      const tiltY = gsap.quickTo(card, "rotationY", { duration: prefersReduced ? 0 : 0.35, ease: "power3.out" })
+
+      const move = safe((event: PointerEvent) => {
+        const rect = card.getBoundingClientRect()
+        const px = (event.clientX - rect.left) / rect.width
+        const py = (event.clientY - rect.top) / rect.height
+        mx(px * 100)
+        my(py * 100)
+        if (!prefersReduced) {
+          tiltX((0.5 - py) * 4)
+          tiltY((px - 0.5) * 5)
+        }
+      })
+
+      const enter = safe(() => {
+        gsap.to(card.querySelector(".project-preview"), {
+          y: prefersReduced ? 0 : -8,
+          scale: prefersReduced ? 1 : 1.025,
+          duration: 0.38,
+          ease: "power3.out",
+        })
+        gsap.to(card.querySelectorAll(".project-token"), {
+          y: prefersReduced ? 0 : -3,
+          opacity: 1,
+          duration: 0.28,
+          stagger: 0.025,
+          ease: "power3.out",
+        })
+      })
+
+      const leave = safe(() => {
+        mx(50)
+        my(50)
+        tiltX(0)
+        tiltY(0)
+        gsap.to(card.querySelector(".project-preview"), {
+          y: 0,
+          scale: 1,
+          duration: 0.32,
+          ease: "power3.out",
+        })
+        gsap.to(card.querySelectorAll(".project-token"), {
+          y: 0,
+          opacity: 0.78,
+          duration: 0.22,
+          ease: "power3.out",
+        })
+      })
+
+      card.addEventListener("pointermove", move)
+      card.addEventListener("pointerenter", enter)
+      card.addEventListener("pointerleave", leave)
+
+      return () => {
+        card.removeEventListener("pointermove", move)
+        card.removeEventListener("pointerenter", enter)
+        card.removeEventListener("pointerleave", leave)
+      }
+    })
+
+    return () => {
+      disposers.forEach((dispose) => dispose())
+    }
+  }, { scope: sectionRef })
 
   return (
     <section id="projects" ref={sectionRef} className="magazine-page relative px-6 py-32 lg:px-10 lg:py-40">
@@ -33,11 +113,11 @@ export function Projects() {
             {projects.map((project, index) => (
             <div
               key={project.title}
-              className={`project-card group relative overflow-hidden border border-foreground/12 bg-background/55 p-7 transition-all duration-300 hover:-translate-y-1 hover:border-accent/55 ${
+              className={`project-card project-motion-card group relative overflow-hidden border border-foreground/12 bg-background/55 p-7 transition-colors duration-300 hover:border-accent/55 ${
                 index === 0 ? "lg:col-span-6 lg:row-span-2 lg:min-h-[34rem]" : "lg:col-span-3"
               }`}
             >
-              <div className="absolute right-5 top-4 font-editorial-latin text-7xl font-bold leading-none text-foreground/[0.04]">
+              <div className="project-index absolute right-5 top-4 font-editorial-latin text-7xl font-bold leading-none text-foreground/[0.04]">
                 {String(index + 1).padStart(2, "0")}
               </div>
 
@@ -49,7 +129,7 @@ export function Projects() {
               </div>
 
               <div
-                className={`relative mb-8 flex items-end border border-foreground/10 bg-card/70 p-5 ${
+                className={`project-preview relative mb-8 flex items-end border border-foreground/10 bg-card/70 p-5 ${
                   index === 0 ? "h-56 lg:h-72" : "h-36"
                 }`}
               >
@@ -70,7 +150,7 @@ export function Projects() {
 
               <div className="my-7 flex flex-wrap gap-2">
                 {project.technologies.map((tech) => (
-                  <BracketLabel key={tech} hover={false} className="text-[0.6rem]">
+                  <BracketLabel key={tech} hover={false} className="project-token text-[0.6rem]">
                     {tech}
                   </BracketLabel>
                 ))}

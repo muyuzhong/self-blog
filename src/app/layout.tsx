@@ -5,6 +5,7 @@ import { CustomCursor } from "@/components/effects/CustomCursor"
 import { ThemeProvider } from "@/components/theme/ThemeProvider"
 import { Toaster } from "@/components/ui/sonner"
 import { ChatBot } from "@/components/effects/ChatBot"
+import { MotionProgress } from "@/components/effects/MotionProgress"
 
 export const viewport: Viewport = {
   themeColor: "#1b1b1b",
@@ -82,6 +83,7 @@ export default function RootLayout({
         <ThemeProvider>
           <CustomCursor />
           <Navbar />
+          <MotionProgress />
           {children}
         </ThemeProvider>
         <Toaster />

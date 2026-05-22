@@ -1,51 +1,47 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
+import { gsap } from "gsap"
+import { useGSAP } from "@gsap/react"
 import { cn } from "@/lib/utils"
+
+gsap.registerPlugin(useGSAP)
 
 export function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null)
   const [hovering, setHovering] = useState(false)
-  const [mounted, setMounted] = useState(false)
 
-  useEffect(() => {
-    setMounted(true)
-    let raf: number
+  useGSAP(() => {
+    const cursor = cursorRef.current
+    if (!cursor) return
+
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    const xTo = gsap.quickTo(cursor, "x", { duration: prefersReduced ? 0 : 0.22, ease: "power3.out" })
+    const yTo = gsap.quickTo(cursor, "y", { duration: prefersReduced ? 0 : 0.22, ease: "power3.out" })
 
     const move = (e: MouseEvent) => {
-      cancelAnimationFrame(raf)
-      raf = requestAnimationFrame(() => {
-        cursorRef.current?.style.setProperty(
-          "transform",
-          `translate(${e.clientX}px, ${e.clientY}px)`
-        )
-      })
+      xTo(e.clientX)
+      yTo(e.clientY)
     }
 
-    const enter = () => setHovering(true)
-    const leave = () => setHovering(false)
-
-    window.addEventListener("mousemove", move)
-
-    const addListeners = () => {
-      document.querySelectorAll("a, button, [data-cursor-hover]").forEach((el) => {
-        el.addEventListener("mouseenter", enter)
-        el.addEventListener("mouseleave", leave)
-      })
+    const updateHover = (target: EventTarget | null, next: boolean) => {
+      if (!(target instanceof Element)) return
+      if (target.closest("a, button, [data-cursor-hover]")) setHovering(next)
     }
 
-    addListeners()
-    const observer = new MutationObserver(addListeners)
-    observer.observe(document.body, { childList: true, subtree: true })
+    const enter = (e: PointerEvent) => updateHover(e.target, true)
+    const leave = (e: PointerEvent) => updateHover(e.target, false)
+
+    window.addEventListener("mousemove", move, { passive: true })
+    document.addEventListener("pointerover", enter, { passive: true })
+    document.addEventListener("pointerout", leave, { passive: true })
 
     return () => {
       window.removeEventListener("mousemove", move)
-      cancelAnimationFrame(raf)
-      observer.disconnect()
+      document.removeEventListener("pointerover", enter)
+      document.removeEventListener("pointerout", leave)
     }
   }, [])
-
-  if (!mounted) return null
 
   return (
     <div
@@ -57,7 +53,7 @@ export function CustomCursor() {
           ? "h-7 w-7 -ml-3.5 -mt-3.5 border border-accent/80 bg-transparent opacity-90"
           : "h-2 w-2 -ml-1 -mt-1 border border-accent/70 bg-accent/30 opacity-75"
       )}
-      style={{ transform: "translate(-100px, -100px)" }}
+      style={{ transform: "translate3d(-100px, -100px, 0)" }}
     />
   )
 }

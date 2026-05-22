@@ -1,10 +1,13 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useRef } from "react"
 import { gsap } from "gsap"
+import { useGSAP } from "@gsap/react"
 import { ArrowDown, ArrowUpRight } from "lucide-react"
 import { BracketLabel } from "@/components/shared/BracketLabel"
 import { FlowSandBackground } from "@/components/effects/FlowSandBackground"
+
+gsap.registerPlugin(useGSAP)
 
 const notes = [
   "Agent 开发",
@@ -18,36 +21,42 @@ export function Hero() {
   const titleRef = useRef<HTMLHeadingElement>(null)
   const subRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
+  useGSAP((context) => {
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    const select = context.selector
     const revealTargets = [
       ...(titleRef.current?.querySelectorAll(".line") ?? []),
       subRef.current,
-      document.querySelector(".scroll-hint"),
+      ...(select ? select(".hero-focus-row, .scroll-hint, .hero-kicker") : []),
     ].filter(Boolean)
 
     if (prefersReduced) {
-      gsap.set(revealTargets, { opacity: 1, y: 0 })
+      gsap.set(revealTargets, { opacity: 1, y: 0, clipPath: "inset(0% 0% 0% 0%)" })
       return
     }
 
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } })
-      tl.from(titleRef.current?.querySelectorAll(".line") || [], {
-        y: 64,
-        opacity: 0,
-        duration: 1,
-        stagger: 0.12,
-      })
-      tl.from(subRef.current, { y: 28, opacity: 0, duration: 0.75 }, "-=0.35")
-      tl.from(".scroll-hint", { y: 18, opacity: 0, duration: 0.55 }, "-=0.2")
-    }, containerRef)
+    gsap.set(titleRef.current?.querySelectorAll(".line") || [], {
+      clipPath: "inset(0% 0% 100% 0%)",
+      y: 42,
+      opacity: 0,
+    })
 
-    return () => ctx.revert()
-  }, [])
+    const tl = gsap.timeline({ defaults: { ease: "expo.out" } })
+    tl.to(titleRef.current?.querySelectorAll(".line") || [], {
+      y: 0,
+      opacity: 1,
+      clipPath: "inset(0% 0% 0% 0%)",
+      duration: 1.05,
+      stagger: 0.1,
+    })
+    tl.from(subRef.current, { y: 28, opacity: 0, duration: 0.72 }, "-=0.45")
+    tl.from(".hero-focus-row", { x: 28, opacity: 0, duration: 0.58, stagger: 0.07 }, "-=0.42")
+    tl.from(".scroll-hint", { y: 18, opacity: 0, duration: 0.5 }, "-=0.2")
+  }, { scope: containerRef })
 
   return (
     <section
+      id="home"
       ref={containerRef}
       className="magazine-page relative min-h-screen px-6 pt-24 lg:px-10 lg:pt-28"
     >
@@ -59,7 +68,7 @@ export function Hero() {
       <div className="relative z-10 mx-auto grid min-h-[calc(100vh-7rem)] max-w-7xl grid-rows-[1fr_auto]">
         <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_22rem]">
           <div className="max-w-5xl">
-            <div className="mb-8 flex items-center gap-4">
+              <div className="hero-kicker mb-8 flex items-center gap-4">
               <BracketLabel hover={false} className="text-accent">
                 PERSONAL SITE
               </BracketLabel>
@@ -109,7 +118,7 @@ export function Hero() {
               </div>
               <div className="space-y-5">
                 {notes.map((note, index) => (
-                  <div key={note} className="grid grid-cols-[2rem_1fr] items-baseline gap-4 border-t border-foreground/10 pt-4">
+                  <div key={note} className="hero-focus-row grid grid-cols-[2rem_1fr] items-baseline gap-4 border-t border-foreground/10 pt-4">
                     <span className="font-mono text-[0.65rem] text-muted-foreground">
                       {String(index + 1).padStart(2, "0")}
                     </span>

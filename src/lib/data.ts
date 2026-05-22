@@ -35,7 +35,48 @@ export const projects: Array<{
   image: string
   link: string
   demo?: string
-}> = []
+}> = [
+  {
+    title: "Motion Prototype 01",
+    category: "Interaction",
+    date: "Draft",
+    description: "Placeholder card for testing layered GSAP motion and pointer response.",
+    technologies: ["GSAP", "ScrollTrigger", "React"],
+    tags: ["prototype"],
+    image: "",
+    link: "https://github.com/muyuzhong",
+  },
+  {
+    title: "Motion Prototype 02",
+    category: "Interface",
+    date: "Draft",
+    description: "Placeholder card reserved for future project evidence and richer content.",
+    technologies: ["Next.js", "Timeline", "UI"],
+    tags: ["prototype"],
+    image: "",
+    link: "https://github.com/muyuzhong",
+  },
+  {
+    title: "Motion Prototype 03",
+    category: "Archive",
+    date: "Draft",
+    description: "Placeholder card used to validate hover depth, stagger, and visual rhythm.",
+    technologies: ["GSAP", "Pointer", "CSS"],
+    tags: ["prototype"],
+    image: "",
+    link: "https://github.com/muyuzhong",
+  },
+  {
+    title: "Motion Prototype 04",
+    category: "System",
+    date: "Draft",
+    description: "Placeholder card for experimenting with motion without final project copy.",
+    technologies: ["React", "GSAP", "Motion"],
+    tags: ["prototype"],
+    image: "",
+    link: "https://github.com/muyuzhong",
+  },
+]
 
 export const techStack = [
   { name: "Agent 工作流", category: "Agent", level: 75 },
