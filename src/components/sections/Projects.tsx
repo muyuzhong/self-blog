@@ -4,7 +4,7 @@ import { useRef, useState } from "react"
 import { gsap } from "gsap"
 import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { ArrowUpRight, BookOpen, Rotate3D } from "lucide-react"
+import { ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, Rotate3D } from "lucide-react"
 import { SectionLabel } from "@/components/shared/SectionLabel"
 import { VerticalText } from "@/components/shared/VerticalText"
 import { BracketLabel } from "@/components/shared/BracketLabel"
@@ -15,17 +15,43 @@ gsap.registerPlugin(useGSAP, ScrollTrigger)
 
 export function Projects() {
   const sectionRef = useRef<HTMLElement>(null)
+  const viewportRef = useRef<HTMLDivElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
+  const activeIndexRef = useRef(0)
+  const moveProjectRef = useRef<(index: number, immediate?: boolean) => void>(() => {})
   const [activeIndex, setActiveIndex] = useState(0)
   const [flipped, setFlipped] = useState<Record<string, boolean>>({})
 
   useGSAP((context, contextSafe) => {
     const track = trackRef.current
+    const viewport = viewportRef.current
     const cards = (context.selector?.(".project-river-card") ?? []) as HTMLElement[]
-    if (!track || cards.length === 0) return
+    if (!track || !viewport || cards.length === 0) return
 
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     const safe = contextSafe ?? (<T extends (...args: any[]) => any>(fn: T) => fn)
+    const clampIndex = (index: number) => gsap.utils.clamp(0, projects.length - 1, index)
+    const trackTo = gsap.quickTo(track, "x", {
+      duration: prefersReduced ? 0 : 0.72,
+      ease: "expo.out",
+    })
+
+    const moveToIndex = (index: number, immediate = false) => {
+      const next = clampIndex(index)
+      const card = cards[next]
+      if (!card) return
+
+      const maxTravel = Math.max(0, track.scrollWidth - viewport.clientWidth)
+      const centered = card.offsetLeft - (viewport.clientWidth - card.offsetWidth) / 2
+      const x = -gsap.utils.clamp(0, maxTravel, centered)
+
+      activeIndexRef.current = next
+      setActiveIndex(next)
+      if (immediate) gsap.set(track, { x })
+      else trackTo(x)
+    }
+
+    moveProjectRef.current = moveToIndex
 
     gsap.set(cards, {
       transformPerspective: 1200,
@@ -51,29 +77,46 @@ export function Projects() {
       })
     }
 
-    const mm = gsap.matchMedia()
-    mm.add("(min-width: 1024px)", () => {
-      if (prefersReduced) return
+    moveToIndex(activeIndexRef.current, true)
 
-      const travel = () => Math.max(0, track.scrollWidth - window.innerWidth * 0.72)
+    const onResize = () => moveToIndex(activeIndexRef.current, true)
+    window.addEventListener("resize", onResize)
 
-      gsap.to(track, {
-        x: () => -travel(),
-        ease: "none",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          end: () => `+=${Math.max(1800, track.scrollWidth * 1.05)}`,
-          pin: true,
-          scrub: 0.9,
-          invalidateOnRefresh: true,
-          onUpdate: (self) => {
-            const next = Math.min(projects.length - 1, Math.round(self.progress * (projects.length - 1)))
-            setActiveIndex(next)
-          },
-        },
+    let edgeDirection = 0
+    let edgeDelay: gsap.core.Tween | null = null
+
+    const scheduleEdgeMove = () => {
+      edgeDelay?.kill()
+      edgeDelay = gsap.delayedCall(0.42, () => {
+        if (edgeDirection === 0) return
+        moveToIndex(activeIndexRef.current + edgeDirection)
+        scheduleEdgeMove()
       })
+    }
+
+    const startEdgeMove = (direction: number) => {
+      if (direction === 0 || direction === edgeDirection) return
+      edgeDirection = direction
+      scheduleEdgeMove()
+    }
+
+    const stopEdgeMove = () => {
+      edgeDirection = 0
+      edgeDelay?.kill()
+      edgeDelay = null
+    }
+
+    const onViewportMove = safe((event: PointerEvent) => {
+      if (window.innerWidth < 1024) return
+      const rect = viewport.getBoundingClientRect()
+      const px = (event.clientX - rect.left) / rect.width
+      if (px < 0.16) startEdgeMove(-1)
+      else if (px > 0.84) startEdgeMove(1)
+      else stopEdgeMove()
     })
+
+    viewport.addEventListener("pointermove", onViewportMove)
+    viewport.addEventListener("pointerleave", stopEdgeMove)
 
     const disposers = cards.map((card) => {
       const xTo = gsap.quickTo(card, "x", { duration: prefersReduced ? 0 : 0.35, ease: "power3.out" })
@@ -147,10 +190,21 @@ export function Projects() {
     })
 
     return () => {
-      mm.revert()
+      window.removeEventListener("resize", onResize)
+      viewport.removeEventListener("pointermove", onViewportMove)
+      viewport.removeEventListener("pointerleave", stopEdgeMove)
+      stopEdgeMove()
       disposers.forEach((dispose) => dispose())
     }
   }, { scope: sectionRef })
+
+  const moveProject = (offset: number) => {
+    moveProjectRef.current(activeIndexRef.current + offset)
+  }
+
+  const selectProject = (index: number) => {
+    moveProjectRef.current(index)
+  }
 
   const toggleFlip = (title: string) => {
     setFlipped((current) => ({ ...current, [title]: !current[title] }))
@@ -177,7 +231,7 @@ export function Projects() {
           </div>
           <div className="grid gap-5 border-l border-accent/70 pl-6 lg:grid-cols-[minmax(0,1fr)_7rem] lg:items-end">
             <p className="text-sm leading-7 text-muted-foreground">
-              Scroll through a floating archive stream. Hover a card to pull it out of the current; click it to flip the dossier.
+              Use the arrows, index rail, or move your pointer near the left and right edges to drift through the archive stream.
             </p>
             <div className="hidden text-right lg:block">
               <span className="font-editorial-latin text-6xl font-bold leading-none text-accent">
@@ -191,7 +245,30 @@ export function Projects() {
         </div>
 
         {projects.length > 0 ? (
-          <div className="project-river-viewport">
+          <div ref={viewportRef} className="project-river-viewport">
+            <button
+              type="button"
+              className="project-river-nav project-river-nav-prev"
+              onClick={() => moveProject(-1)}
+              disabled={activeIndex === 0}
+              aria-label="Previous project"
+              data-cursor-hover
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </button>
+            <button
+              type="button"
+              className="project-river-nav project-river-nav-next"
+              onClick={() => moveProject(1)}
+              disabled={activeIndex === projects.length - 1}
+              aria-label="Next project"
+              data-cursor-hover
+            >
+              <ArrowRight className="h-5 w-5" />
+            </button>
+            <div className="project-river-edge project-river-edge-left" aria-hidden="true" />
+            <div className="project-river-edge project-river-edge-right" aria-hidden="true" />
+
             <div ref={trackRef} className="project-river-track">
               {projects.map((project, index) => {
                 const isFlipped = Boolean(flipped[project.title])
@@ -276,6 +353,21 @@ export function Projects() {
                   </article>
                 )
               })}
+            </div>
+
+            <div className="project-river-controls" aria-label="Project selector">
+              {projects.map((project, index) => (
+                <button
+                  key={project.title}
+                  type="button"
+                  className={cn("project-river-dot", index === activeIndex && "is-active")}
+                  onClick={() => selectProject(index)}
+                  aria-label={`Show ${project.title}`}
+                  aria-current={index === activeIndex ? "true" : undefined}
+                >
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                </button>
+              ))}
             </div>
           </div>
         ) : (

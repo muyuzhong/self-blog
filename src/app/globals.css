@@ -256,9 +256,10 @@
   }
 
   .project-river-viewport {
+    position: relative;
     margin-inline: calc(50% - 50vw);
-    overflow: visible;
-    padding: 4rem 0 6rem;
+    overflow: hidden;
+    padding: 4rem 0 7.5rem;
     perspective: 1500px;
   }
 
@@ -484,6 +485,118 @@
     transform: translate3d(3px, -3px, 0);
   }
 
+  .project-river-nav {
+    position: absolute;
+    top: 48%;
+    z-index: 30;
+    display: grid;
+    height: 3.25rem;
+    width: 3.25rem;
+    place-items: center;
+    border: 1px solid hsl(var(--foreground) / 0.16);
+    background:
+      linear-gradient(135deg, hsl(var(--foreground) / 0.08), transparent),
+      hsl(var(--background) / 0.82);
+    color: hsl(var(--foreground));
+    backdrop-filter: blur(10px);
+    transition:
+      border-color 220ms ease,
+      color 220ms ease,
+      opacity 220ms ease,
+      transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .project-river-nav:hover {
+    border-color: hsl(var(--accent) / 0.62);
+    color: hsl(var(--accent));
+    transform: translateY(-2px);
+  }
+
+  .project-river-nav:disabled {
+    pointer-events: none;
+    opacity: 0.25;
+  }
+
+  .project-river-nav-prev {
+    left: max(1rem, calc((100vw - 80rem) / 2));
+  }
+
+  .project-river-nav-next {
+    right: max(1rem, calc((100vw - 80rem) / 2));
+  }
+
+  .project-river-edge {
+    position: absolute;
+    bottom: 6.5rem;
+    top: 3rem;
+    z-index: 12;
+    width: min(16vw, 12rem);
+    pointer-events: none;
+    opacity: 0.86;
+  }
+
+  .project-river-edge-left {
+    left: 0;
+    background: linear-gradient(90deg, hsl(var(--background)), transparent);
+  }
+
+  .project-river-edge-right {
+    right: 0;
+    background: linear-gradient(270deg, hsl(var(--background)), transparent);
+  }
+
+  .project-river-controls {
+    position: absolute;
+    bottom: 2.35rem;
+    left: 50%;
+    z-index: 30;
+    display: flex;
+    max-width: calc(100vw - 3rem);
+    transform: translateX(-50%);
+    border: 1px solid hsl(var(--foreground) / 0.12);
+    background: hsl(var(--background) / 0.74);
+    backdrop-filter: blur(10px);
+  }
+
+  .project-river-dot {
+    position: relative;
+    min-width: 3.15rem;
+    border-right: 1px solid hsl(var(--foreground) / 0.1);
+    padding: 0.72rem 0.8rem;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    color: hsl(var(--muted-foreground));
+    transition:
+      color 220ms ease,
+      background-color 220ms ease;
+  }
+
+  .project-river-dot:last-child {
+    border-right: 0;
+  }
+
+  .project-river-dot::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    height: 1px;
+    background: hsl(var(--accent));
+    transform: scaleX(0);
+    transform-origin: 50% 50%;
+    transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .project-river-dot:hover,
+  .project-river-dot.is-active {
+    background-color: hsl(var(--foreground) / 0.045);
+    color: hsl(var(--accent));
+  }
+
+  .project-river-dot.is-active::after {
+    transform: scaleX(1);
+  }
+
   .project-river-orbit {
     position: absolute;
     pointer-events: none;
@@ -513,6 +626,18 @@
       overflow-y: visible;
       padding: 2rem 1.5rem 3rem;
       scroll-snap-type: x mandatory;
+    }
+
+    .project-river-nav,
+    .project-river-edge {
+      display: none;
+    }
+
+    .project-river-controls {
+      position: static;
+      margin: 1.5rem auto 0;
+      width: fit-content;
+      transform: none;
     }
 
     .project-river-track {
