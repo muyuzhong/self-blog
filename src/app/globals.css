@@ -988,6 +988,327 @@
       font-size: 0.56rem;
     }
   }
+
+  .tech-card-table-section {
+    overflow: hidden;
+  }
+
+  .tech-card-table {
+    --tilt-x: 0;
+    --tilt-y: 0;
+    position: relative;
+    min-height: clamp(34rem, 58vw, 43rem);
+    overflow: hidden;
+    border: 1px solid hsl(var(--foreground) / 0.13);
+    background:
+      radial-gradient(circle at 50% 42%, hsl(var(--accent) / 0.18), transparent 22rem),
+      linear-gradient(135deg, hsl(var(--foreground) / 0.07), transparent 40%),
+      hsl(var(--card) / 0.78);
+    perspective: 1300px;
+    transform-style: preserve-3d;
+  }
+
+  .tech-card-table::before,
+  .tech-card-table::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .tech-card-table::before {
+    inset: 1.5rem;
+    border: 1px solid hsl(var(--foreground) / 0.08);
+    background:
+      linear-gradient(90deg, hsl(var(--foreground) / 0.045) 1px, transparent 1px),
+      linear-gradient(0deg, hsl(var(--foreground) / 0.04) 1px, transparent 1px);
+    background-size: 42px 42px;
+    transform:
+      rotateX(calc(58deg + var(--tilt-x) * 1deg))
+      rotateZ(calc(-12deg + var(--tilt-y) * 0.45deg))
+      translate3d(0, 2rem, -80px);
+    opacity: 0.72;
+  }
+
+  .tech-card-table::after {
+    left: 50%;
+    top: 50%;
+    width: 78%;
+    height: 34%;
+    border: 1px solid hsl(var(--accent) / 0.2);
+    transform:
+      translate(-50%, -50%)
+      rotateX(calc(64deg + var(--tilt-x) * 1deg))
+      rotateZ(calc(20deg + var(--tilt-y) * 0.5deg));
+    opacity: 0.78;
+  }
+
+  .tech-card-table-grid {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    min-height: clamp(34rem, 58vw, 43rem);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-content: center;
+    gap: clamp(0.85rem, 2vw, 1.35rem);
+    padding: clamp(1.2rem, 4vw, 4.25rem);
+    transform:
+      rotateX(calc(var(--tilt-x) * 1deg))
+      rotateY(calc(var(--tilt-y) * 1deg));
+    transform-style: preserve-3d;
+    transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .tech-card {
+    --card-x: 0px;
+    --card-y: 0px;
+    --card-rotate: 0deg;
+    --level: 50%;
+    position: relative;
+    aspect-ratio: 3 / 4.05;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    transform:
+      translate3d(var(--card-x), var(--card-y), 0)
+      rotateZ(var(--card-rotate));
+    transform-style: preserve-3d;
+    transition:
+      transform 360ms cubic-bezier(0.22, 1, 0.36, 1),
+      filter 260ms ease;
+    will-change: transform;
+  }
+
+  .tech-card:hover,
+  .tech-card.is-active {
+    z-index: 12;
+    transform:
+      translate3d(var(--card-x), calc(var(--card-y) - 10px), 84px)
+      rotateZ(calc(var(--card-rotate) * 0.45))
+      scale(1.045);
+  }
+
+  .tech-card-inner {
+    position: absolute;
+    inset: 0;
+    display: block;
+    transform-style: preserve-3d;
+    transition: transform 720ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .tech-card.is-revealed .tech-card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .tech-card-face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid hsl(var(--foreground) / 0.16);
+    backface-visibility: hidden;
+    box-shadow:
+      0 20px 56px hsl(215 42% 2% / 0.38),
+      inset 0 0 0 1px hsl(var(--foreground) / 0.04);
+  }
+
+  .tech-card-back {
+    justify-content: space-between;
+    background:
+      radial-gradient(circle at 50% 26%, hsl(var(--accent) / 0.24), transparent 8rem),
+      repeating-linear-gradient(135deg, hsl(var(--foreground) / 0.08) 0 1px, transparent 1px 15px),
+      hsl(var(--background) / 0.86);
+    padding: clamp(0.75rem, 1.8vw, 1rem);
+  }
+
+  .tech-card-back::before,
+  .tech-card-back::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .tech-card-back::before {
+    inset: 0.65rem;
+    border: 1px solid hsl(var(--accent) / 0.28);
+  }
+
+  .tech-card-back::after {
+    left: 50%;
+    top: 50%;
+    width: 62%;
+    height: 42%;
+    border: 1px solid hsl(var(--foreground) / 0.12);
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  .tech-card-back-index {
+    position: relative;
+    z-index: 1;
+    align-self: flex-start;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .tech-card-back-sigil {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    flex: 1;
+    place-items: center;
+    color: hsl(var(--accent) / 0.86);
+  }
+
+  .tech-card-back-category {
+    position: relative;
+    z-index: 1;
+    align-self: flex-end;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 0.56rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .tech-card-front {
+    justify-content: flex-end;
+    background:
+      radial-gradient(circle at 72% 18%, hsl(var(--accent) / 0.28), transparent 7rem),
+      linear-gradient(135deg, hsl(var(--foreground) / 0.12), transparent 40%),
+      hsl(var(--card) / 0.96);
+    padding: clamp(0.8rem, 2vw, 1.1rem);
+    transform: rotateY(180deg);
+  }
+
+  .tech-card-front::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.62;
+    background:
+      linear-gradient(90deg, hsl(var(--foreground) / 0.06) 1px, transparent 1px),
+      linear-gradient(0deg, hsl(var(--foreground) / 0.05) 1px, transparent 1px);
+    background-size: 18px 18px;
+  }
+
+  .tech-card-front > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .tech-card-meter {
+    position: relative;
+    margin-top: 1.3rem;
+    height: 0.28rem;
+    overflow: hidden;
+    border: 1px solid hsl(var(--foreground) / 0.13);
+    background: hsl(var(--background) / 0.62);
+  }
+
+  .tech-card-meter span {
+    display: block;
+    height: 100%;
+    width: var(--level);
+    background: hsl(var(--accent));
+  }
+
+  .tech-dossier {
+    position: relative;
+    min-height: clamp(34rem, 58vw, 43rem);
+    overflow: hidden;
+    border: 1px solid hsl(var(--foreground) / 0.13);
+    background:
+      linear-gradient(135deg, hsl(var(--foreground) / 0.075), transparent 38%),
+      hsl(var(--card) / 0.92);
+    padding: 1.6rem;
+    box-shadow:
+      0 24px 70px hsl(215 42% 2% / 0.36),
+      inset 0 0 0 1px hsl(var(--foreground) / 0.035);
+  }
+
+  .tech-dossier::after {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    pointer-events: none;
+    border: 1px solid hsl(var(--accent) / 0.25);
+    clip-path: polygon(0 0, 36% 0, 36% 1px, 1px 1px, 1px 36%, 0 36%, 0 0, 100% 100%, 64% 100%, 64% calc(100% - 1px), calc(100% - 1px) calc(100% - 1px), calc(100% - 1px) 64%, 100% 64%, 100% 100%);
+  }
+
+  .tech-dossier-grid {
+    position: absolute;
+    inset: 1.15rem;
+    opacity: 0.72;
+    background:
+      radial-gradient(circle at 50% 34%, hsl(var(--accent) / 0.22), transparent 11rem),
+      repeating-radial-gradient(circle at 50% 34%, hsl(var(--foreground) / 0.1) 0 1px, transparent 1px 3.7rem),
+      linear-gradient(90deg, hsl(var(--foreground) / 0.06) 1px, transparent 1px),
+      linear-gradient(0deg, hsl(var(--foreground) / 0.05) 1px, transparent 1px);
+    background-size: auto, auto, 34px 34px, 34px 34px;
+  }
+
+  .tech-dossier-icon {
+    display: grid;
+    height: 2.75rem;
+    width: 2.75rem;
+    place-items: center;
+    border: 1px solid hsl(var(--accent) / 0.42);
+    background: hsl(var(--background) / 0.58);
+    color: hsl(var(--accent));
+  }
+
+  .tech-dossier-current {
+    transform-style: preserve-3d;
+  }
+
+  .tech-dossier-meter {
+    height: 0.42rem;
+    overflow: hidden;
+    border: 1px solid hsl(var(--foreground) / 0.12);
+    background: hsl(var(--background) / 0.62);
+  }
+
+  .tech-dossier-meter span {
+    display: block;
+    height: 100%;
+    background:
+      linear-gradient(90deg, hsl(var(--accent) / 0.95), hsl(var(--foreground) / 0.72)),
+      hsl(var(--accent));
+    transition: width 520ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @media (max-width: 1023px) {
+    .tech-card-table,
+    .tech-card-table-grid,
+    .tech-dossier {
+      min-height: auto;
+    }
+
+    .tech-card-table-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      padding: 1.2rem;
+    }
+
+    .tech-card {
+      transform: none;
+    }
+
+    .tech-card:hover,
+    .tech-card.is-active {
+      transform: translateY(-6px) scale(1.02);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .tech-card-table-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
 }
 
 /* ---------------------------------------------------------------- *

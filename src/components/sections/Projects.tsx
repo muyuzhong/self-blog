@@ -229,18 +229,13 @@ export function Projects() {
               精选项目
             </h2>
           </div>
-          <div className="grid gap-5 border-l border-accent/70 pl-6 lg:grid-cols-[minmax(0,1fr)_7rem] lg:items-end">
-            <p className="text-sm leading-7 text-muted-foreground">
-              保留流动式档案卡的动效，但把浏览方式交给明确的左右切换、编号索引和边缘感应，避免影响页面正常上下滚动。
-            </p>
-            <div className="hidden text-right lg:block">
-              <span className="font-editorial-latin text-6xl font-bold leading-none text-accent">
-                {String(activeIndex + 1).padStart(2, "0")}
-              </span>
-              <span className="mt-2 block font-mono text-[0.62rem] uppercase tracking-[0.16em] text-muted-foreground">
-                / {String(projects.length).padStart(2, "0")}
-              </span>
-            </div>
+          <div className="hidden border-l border-accent/70 pl-6 text-right lg:block">
+            <span className="font-editorial-latin text-6xl font-bold leading-none text-accent">
+              {String(activeIndex + 1).padStart(2, "0")}
+            </span>
+            <span className="mt-2 block font-mono text-[0.62rem] uppercase tracking-[0.16em] text-muted-foreground">
+              / {String(projects.length).padStart(2, "0")}
+            </span>
           </div>
         </div>
 

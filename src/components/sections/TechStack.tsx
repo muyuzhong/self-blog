@@ -1,8 +1,9 @@
 "use client"
 
-import { useMemo, useRef, useState } from "react"
+import { type CSSProperties, useMemo, useRef, useState } from "react"
 import { gsap } from "gsap"
 import { useGSAP } from "@gsap/react"
+import { BrainCircuit, Layers3, Rotate3D, Sparkles } from "lucide-react"
 import { SectionLabel } from "@/components/shared/SectionLabel"
 import { VerticalText } from "@/components/shared/VerticalText"
 import { BracketLabel } from "@/components/shared/BracketLabel"
@@ -11,289 +12,283 @@ import { cn } from "@/lib/utils"
 
 gsap.registerPlugin(useGSAP)
 
-const groups = [
-  { key: "all", label: "全部", title: "完整能力坐标" },
-  { key: "agent", label: "Agent", title: "任务编排与工具调用" },
-  { key: "knowledge", label: "Knowledge", title: "知识系统与评估" },
-  { key: "interface", label: "Interface", title: "界面与交互层" },
-  { key: "execution", label: "Execution", title: "脚本与执行层" },
-] as const
+const cardLayout = [
+  { x: -8, y: 10, rotate: -8 },
+  { x: 4, y: -4, rotate: 4 },
+  { x: 10, y: 12, rotate: 9 },
+  { x: -4, y: -10, rotate: -3 },
+  { x: 14, y: -2, rotate: 7 },
+  { x: -12, y: 0, rotate: -10 },
+  { x: 2, y: 8, rotate: 2 },
+  { x: -6, y: -8, rotate: -5 },
+  { x: 12, y: 8, rotate: 11 },
+  { x: -10, y: 12, rotate: -7 },
+  { x: 6, y: -12, rotate: 5 },
+  { x: 0, y: 2, rotate: -1 },
+  { x: 15, y: -10, rotate: 8 },
+  { x: -14, y: -4, rotate: -12 },
+]
 
-type GroupKey = (typeof groups)[number]["key"]
-
-const nodeMeta = [
-  {
-    x: 50,
-    y: 15,
-    group: "agent",
-    summary: "把复杂任务拆成可执行步骤，关注流程、状态和失败后的恢复路径。",
-    next: "继续补足真实项目中的任务编排和观察指标。",
+const categoryCopy: Record<string, { title: string; summary: string; signal: string }> = {
+  Agent: {
+    title: "Agent 编排",
+    summary: "把模型、工具、状态和任务路径组织成可以恢复、可以观察的执行单元。",
+    signal: "workflow / tools / state",
   },
-  {
-    x: 76,
-    y: 27,
-    group: "agent",
-    summary: "把模型回答和外部工具连接起来，重点是参数、错误处理和结果回填。",
-    next: "强化工具 schema 设计和调用后的验证闭环。",
+  Knowledge: {
+    title: "知识系统",
+    summary: "围绕检索、向量索引和评估链路，让回答能回到可追踪的依据上。",
+    signal: "rag / retrieval / eval",
   },
-  {
-    x: 82,
-    y: 57,
-    group: "knowledge",
-    summary: "把知识库、检索、引用和生成回答连成一条可追踪链路。",
-    next: "继续整理检索质量、引用准确性和失败样本分析。",
+  Backend: {
+    title: "后端接口",
+    summary: "为 Agent 能力提供稳定的 API、任务入口、存储边界和服务化承载。",
+    signal: "service / api / storage",
   },
-  {
-    x: 62,
-    y: 82,
-    group: "knowledge",
-    summary: "关注 Agent 是否真的完成任务，而不是只看一次漂亮输出。",
-    next: "补充 benchmark、trace 和可复现实验记录。",
+  Execution: {
+    title: "执行环境",
+    summary: "用脚本、任务进程和实验工具把想法快速落到可验证的运行结果里。",
+    signal: "runtime / scripts / test",
   },
-  {
-    x: 31,
-    y: 78,
-    group: "interface",
-    summary: "用 React 和 TypeScript 把复杂状态组织成可维护的界面体验。",
-    next: "继续把交互设计、组件边界和性能优化结合起来。",
+  Interface: {
+    title: "交互界面",
+    summary: "把复杂流程变成可以理解、可以操作、可以持续展示的前端体验。",
+    signal: "ui / motion / feedback",
   },
-  {
-    x: 17,
-    y: 51,
-    group: "execution",
-    summary: "用 Python 做脚本、数据处理和自动化实验，服务工程验证。",
-    next: "沉淀更多可复用工具脚本和实验流水线。",
-  },
-  {
-    x: 25,
-    y: 24,
-    group: "interface",
-    summary: "用 Next.js 承载静态内容、页面结构和可发布的作品集体验。",
-    next: "继续提升站点内容系统、构建验证和部署稳定性。",
-  },
-  {
-    x: 50,
-    y: 50,
-    group: "agent",
-    summary: "把问题描述转成模型能稳定执行的工作上下文。",
-    next: "减少提示词技巧感，更多依赖结构化流程和可验证输出。",
-  },
-] satisfies Array<{
-  x: number
-  y: number
-  group: Exclude<GroupKey, "all">
-  summary: string
-  next: string
-}>
-
-function getLevelLabel(level: number) {
-  if (level >= 90) return "CORE"
-  if (level >= 75) return "SHIPPING"
-  if (level >= 60) return "WORKING"
-  return "LEARNING"
 }
 
 export function TechStack() {
   const sectionRef = useRef<HTMLElement>(null)
-  const mapRef = useRef<HTMLDivElement>(null)
+  const tableRef = useRef<HTMLDivElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
-  const [activeGroup, setActiveGroup] = useState<GroupKey>("all")
+  const [revealedCards, setRevealedCards] = useState<Record<string, boolean>>({})
 
-  const nodes = useMemo(
+  const deck = useMemo(
     () =>
       skills.map((skill, index) => ({
         ...skill,
-        ...nodeMeta[index % nodeMeta.length],
+        layout: cardLayout[index % cardLayout.length],
+        meta: categoryCopy[skill.category] ?? categoryCopy.Agent,
       })),
     []
   )
-  const activeNode = nodes[activeIndex] ?? nodes[0]
-  const groupTitle = groups.find((group) => group.key === activeGroup)?.title ?? groups[0].title
+
+  const activeCard = deck[activeIndex]
+  const activeRevealed = Boolean(revealedCards[activeCard.name])
+  const revealedCount = Object.values(revealedCards).filter(Boolean).length
 
   useGSAP((context, contextSafe) => {
-    const map = mapRef.current
-    const nodeEls = (context.selector?.(".capability-node") ?? []) as HTMLElement[]
-    if (!map || nodeEls.length === 0) return
+    const table = tableRef.current
+    const cards = (context.selector?.(".tech-card") ?? []) as HTMLElement[]
+    if (!table || cards.length === 0) return
 
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     const safe = contextSafe ?? (<T extends (...args: any[]) => any>(fn: T) => fn)
 
-    gsap.from(nodeEls, {
+    gsap.from(cards, {
       autoAlpha: 0,
-      scale: prefersReduced ? 1 : 0.45,
-      xPercent: prefersReduced ? 0 : -8,
-      yPercent: prefersReduced ? 0 : 10,
-      duration: prefersReduced ? 0 : 0.7,
-      stagger: 0.055,
+      y: prefersReduced ? 0 : 70,
+      z: prefersReduced ? 0 : -180,
+      rotationX: prefersReduced ? 0 : -22,
+      stagger: 0.045,
+      duration: prefersReduced ? 0 : 0.95,
       ease: "expo.out",
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top 72%",
-      },
     })
 
-    const mapX = gsap.quickTo(map, "--map-x", { duration: prefersReduced ? 0 : 0.45, ease: "power3.out" })
-    const mapY = gsap.quickTo(map, "--map-y", { duration: prefersReduced ? 0 : 0.45, ease: "power3.out" })
+    const tiltX = gsap.quickTo(table, "--tilt-x", {
+      duration: prefersReduced ? 0 : 0.42,
+      ease: "power3.out",
+    })
+    const tiltY = gsap.quickTo(table, "--tilt-y", {
+      duration: prefersReduced ? 0 : 0.42,
+      ease: "power3.out",
+    })
 
     const move = safe((event: PointerEvent) => {
-      const rect = map.getBoundingClientRect()
-      mapX(((event.clientX - rect.left) / rect.width - 0.5) * 2)
-      mapY(((event.clientY - rect.top) / rect.height - 0.5) * 2)
+      if (window.innerWidth < 1024) return
+      const rect = table.getBoundingClientRect()
+      const px = (event.clientX - rect.left) / rect.width - 0.5
+      const py = (event.clientY - rect.top) / rect.height - 0.5
+      tiltX(py * -7)
+      tiltY(px * 9)
     })
 
     const leave = safe(() => {
-      mapX(0)
-      mapY(0)
+      tiltX(0)
+      tiltY(0)
     })
 
-    map.addEventListener("pointermove", move)
-    map.addEventListener("pointerleave", leave)
+    table.addEventListener("pointermove", move)
+    table.addEventListener("pointerleave", leave)
 
     return () => {
-      map.removeEventListener("pointermove", move)
-      map.removeEventListener("pointerleave", leave)
+      table.removeEventListener("pointermove", move)
+      table.removeEventListener("pointerleave", leave)
     }
   }, { scope: sectionRef })
 
-  const selectGroup = (groupKey: GroupKey) => {
-    setActiveGroup(groupKey)
-    if (groupKey === "all") return
-    const index = nodes.findIndex((node) => node.group === groupKey)
-    if (index >= 0) setActiveIndex(index)
+  useGSAP(() => {
+    gsap.fromTo(
+      ".tech-dossier-current",
+      { autoAlpha: 0, y: 18, rotateX: -8 },
+      { autoAlpha: 1, y: 0, rotateX: 0, duration: 0.42, ease: "expo.out" }
+    )
+  }, { dependencies: [activeIndex, activeRevealed], scope: sectionRef, revertOnUpdate: true })
+
+  const revealCard = (index: number) => {
+    const card = deck[index]
+    setActiveIndex(index)
+    setRevealedCards((current) => ({ ...current, [card.name]: true }))
   }
 
   return (
-    <section id="techstack" ref={sectionRef} className="capability-section magazine-page relative px-6 py-32 lg:px-10 lg:py-40">
-      <VerticalText text="STACK" side="left" className="opacity-40" />
-      <div className="capability-field-bg" aria-hidden="true" />
+    <section
+      id="techstack"
+      ref={sectionRef}
+      className="tech-card-table-section magazine-page relative min-h-screen overflow-hidden px-6 py-24 lg:px-10"
+    >
+      <div className="absolute inset-0 text-foreground/25 swiss-dots-fine pointer-events-none" />
+      <VerticalText text="SKILLS" side="left" className="opacity-40" />
 
-      <div className="relative z-10 mx-auto max-w-7xl">
-        <div className="mb-12 grid gap-8 lg:grid-cols-[24rem_minmax(0,1fr)] lg:items-end">
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col justify-center gap-12">
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-end">
           <div>
-            <SectionLabel number="03" title="TECHSTACK" />
+            <SectionLabel number="03" title="TECH STACK" />
             <h2 className="font-editorial text-5xl font-black leading-[0.98] tracking-normal text-foreground md:text-6xl lg:text-7xl">
-              技术能力
+              技术牌桌
             </h2>
           </div>
-          <p className="max-w-2xl border-l border-accent/70 pl-6 text-sm leading-7 text-muted-foreground">
-            不把技术堆成清单，而是把它们放回 Agent 工程的能力坐标里。节点之间的距离、轨道和档案面板，表达这些能力如何一起工作。
-          </p>
+          <div className="hidden border-l border-accent/70 pl-6 text-right lg:block">
+            <span className="font-editorial-latin text-6xl font-bold leading-none text-accent">
+              {String(revealedCount).padStart(2, "0")}
+            </span>
+            <span className="mt-2 block font-mono text-[0.62rem] uppercase tracking-[0.16em] text-muted-foreground">
+              / {String(deck.length).padStart(2, "0")}
+            </span>
+          </div>
         </div>
 
-        <div className="capability-group-rail" aria-label="能力域筛选">
-          {groups.map((group) => (
-            <button
-              key={group.key}
-              type="button"
-              className={cn("capability-group", activeGroup === group.key && "is-active")}
-              onClick={() => selectGroup(group.key)}
-              data-cursor-hover
-            >
-              [{group.label}]
-            </button>
-          ))}
-        </div>
-
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-stretch">
-          <div ref={mapRef} className="capability-map">
-            <div className="capability-orbit capability-orbit-a" />
-            <div className="capability-orbit capability-orbit-b" />
-            <div className="capability-orbit capability-orbit-c" />
-
-            <svg className="capability-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-              {nodes.map((node, index) => {
-                const highlighted =
-                  index === activeIndex ||
-                  node.group === activeNode.group ||
-                  (activeGroup !== "all" && node.group === activeGroup)
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
+          <div ref={tableRef} className="tech-card-table">
+            <div className="tech-card-table-grid" aria-label="技术卡片">
+              {deck.map((card, index) => {
+                const revealed = Boolean(revealedCards[card.name])
+                const active = index === activeIndex
+                const level = `${card.level}%`
 
                 return (
-                  <line
-                    key={`${node.name}-${index}`}
-                    x1="50"
-                    y1="50"
-                    x2={node.x}
-                    y2={node.y}
-                    className={cn("capability-line", highlighted && "is-active")}
-                  />
+                  <button
+                    key={card.name}
+                    type="button"
+                    className={cn("tech-card", revealed && "is-revealed", active && "is-active")}
+                    style={{
+                      "--card-x": `${card.layout.x}px`,
+                      "--card-y": `${card.layout.y}px`,
+                      "--card-rotate": `${card.layout.rotate}deg`,
+                      "--level": level,
+                    } as CSSProperties}
+                    onClick={() => revealCard(index)}
+                    aria-label={`翻开 ${card.name}`}
+                    aria-pressed={revealed}
+                    data-cursor-hover
+                  >
+                    <span className="tech-card-inner">
+                      <span className="tech-card-face tech-card-back">
+                        <span className="tech-card-back-index">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                        <span className="tech-card-back-sigil">
+                          <Rotate3D className="h-5 w-5" />
+                        </span>
+                        <span className="tech-card-back-category">{card.category}</span>
+                      </span>
+                      <span className="tech-card-face tech-card-front">
+                        <span className="font-mono text-[0.58rem] uppercase tracking-[0.16em] text-accent">
+                          {card.category}
+                        </span>
+                        <span className="mt-4 block font-editorial text-2xl font-semibold leading-none text-foreground">
+                          {card.name}
+                        </span>
+                        <span className="tech-card-meter" aria-hidden="true">
+                          <span />
+                        </span>
+                      </span>
+                    </span>
+                  </button>
                 )
               })}
-            </svg>
-
-            <button
-              type="button"
-              className="capability-core"
-              onClick={() => selectGroup("all")}
-              data-cursor-hover
-            >
-              <span>Agent</span>
-              <span>Engineering Core</span>
-            </button>
-
-            {nodes.map((node, index) => {
-              const isActive = index === activeIndex
-              const isMuted = activeGroup !== "all" && node.group !== activeGroup
-
-              return (
-                <button
-                  key={node.name}
-                  type="button"
-                  className={cn("capability-node", isActive && "is-active", isMuted && "is-muted")}
-                  style={{
-                    left: `${node.x}%`,
-                    top: `${node.y}%`,
-                    ["--level" as string]: node.level,
-                  }}
-                  onMouseEnter={() => setActiveIndex(index)}
-                  onFocus={() => setActiveIndex(index)}
-                  onClick={() => {
-                    setActiveIndex(index)
-                    setActiveGroup(node.group)
-                  }}
-                  data-cursor-hover
-                >
-                  <span className="capability-node-dot" />
-                  <span className="capability-node-label">{node.name}</span>
-                </button>
-              )
-            })}
+            </div>
           </div>
 
-          <aside className="capability-dossier">
-            <div className="capability-dossier-map" aria-hidden="true" />
-            <div className="relative z-10">
-              <BracketLabel hover={false} className="text-accent">
-                {groupTitle}
-              </BracketLabel>
-              <h3 className="mt-7 font-editorial text-4xl font-semibold leading-tight text-foreground">
-                {activeNode.name}
-              </h3>
-              <p className="mt-4 text-sm leading-7 text-muted-foreground">
-                {activeNode.summary}
-              </p>
-            </div>
+          <aside className="tech-dossier" aria-live="polite">
+            <div className="tech-dossier-grid" />
+            <div className="relative z-10 flex h-full flex-col">
+              <div className="flex items-center justify-between gap-4">
+                <BracketLabel hover={false} className="text-accent">
+                  CARD DOSSIER
+                </BracketLabel>
+                <Sparkles className="h-4 w-4 text-accent" />
+              </div>
 
-            <div className="relative z-10 mt-auto">
-              <div className="mb-4 grid grid-cols-[1fr_auto] items-end gap-4">
-                <div>
+              <div className="tech-dossier-current mt-12">
+                {activeRevealed ? (
+                  <>
+                    <div className="flex items-center gap-3">
+                      <span className="tech-dossier-icon">
+                        {activeCard.category === "Agent" ? (
+                          <BrainCircuit className="h-5 w-5" />
+                        ) : (
+                          <Layers3 className="h-5 w-5" />
+                        )}
+                      </span>
+                      <span className="font-mono text-[0.62rem] uppercase tracking-[0.16em] text-muted-foreground">
+                        {activeCard.meta.title}
+                      </span>
+                    </div>
+                    <h3 className="mt-8 font-editorial text-5xl font-semibold leading-none text-foreground">
+                      {activeCard.name}
+                    </h3>
+                    <p className="mt-7 text-sm leading-7 text-muted-foreground">
+                      {activeCard.meta.summary}
+                    </p>
+                    <div className="mt-10">
+                      <div className="mb-3 flex items-center justify-between font-mono text-[0.62rem] uppercase tracking-[0.14em] text-muted-foreground">
+                        <span>{activeCard.meta.signal}</span>
+                        <span>{activeCard.level}</span>
+                      </div>
+                      <div className="tech-dossier-meter">
+                        <span style={{ width: `${activeCard.level}%` }} />
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="tech-dossier-icon">
+                      <Rotate3D className="h-5 w-5" />
+                    </div>
+                    <h3 className="mt-8 font-editorial text-5xl font-semibold leading-none text-foreground">
+                      Dossier
+                    </h3>
+                    <p className="mt-7 font-mono text-[0.72rem] uppercase tracking-[0.16em] text-muted-foreground">
+                      Locked / {String(deck.length).padStart(2, "0")} cards
+                    </p>
+                  </>
+                )}
+              </div>
+
+              <div className="mt-auto pt-10">
+                <div className="flex items-end justify-between">
                   <span className="font-mono text-[0.62rem] uppercase tracking-[0.16em] text-muted-foreground">
-                    DELIVERY SIGNAL
+                    Revealed
                   </span>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    <BracketLabel hover={false}>{activeNode.category}</BracketLabel>
-                    <BracketLabel hover={false}>{getLevelLabel(activeNode.level)}</BracketLabel>
-                  </div>
+                  <span className="font-editorial-latin text-6xl font-bold leading-none text-accent">
+                    {String(revealedCount).padStart(2, "0")}
+                  </span>
                 </div>
-                <span className="font-editorial-latin text-6xl font-bold leading-none text-accent">
-                  {activeNode.level}
-                </span>
+                <div className="tech-dossier-meter mt-4">
+                  <span style={{ width: `${(revealedCount / deck.length) * 100}%` }} />
+                </div>
               </div>
-              <div className="capability-meter" style={{ ["--level" as string]: `${activeNode.level}%` }}>
-                <span />
-              </div>
-              <p className="mt-6 border-l border-accent/55 pl-5 text-sm leading-7 text-muted-foreground">
-                {activeNode.next}
-              </p>
             </div>
           </aside>
         </div>

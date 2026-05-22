@@ -99,14 +99,20 @@ export const projects: Array<{
 ]
 
 export const techStack = [
-  { name: "Agent 工作流", category: "Agent", level: 75 },
-  { name: "工具调用与函数接口", category: "Agent", level: 72 },
-  { name: "RAG 与知识库", category: "AI", level: 70 },
-  { name: "评估与可观测性", category: "Agent", level: 62 },
-  { name: "TypeScript / React", category: "Frontend", level: 76 },
-  { name: "Python", category: "Language", level: 70 },
-  { name: "Next.js", category: "Frontend", level: 72 },
-  { name: "Prompt 设计", category: "AI", level: 74 },
+  { name: "LangGraph", category: "Agent", level: 76 },
+  { name: "LangChain", category: "Agent", level: 72 },
+  { name: "Tool Calling", category: "Agent", level: 74 },
+  { name: "RAG Pipeline", category: "Knowledge", level: 73 },
+  { name: "Vector DB", category: "Knowledge", level: 66 },
+  { name: "Evaluation Trace", category: "Knowledge", level: 64 },
+  { name: "Go", category: "Backend", level: 68 },
+  { name: "Gin", category: "Backend", level: 65 },
+  { name: "PostgreSQL", category: "Backend", level: 62 },
+  { name: "Python", category: "Execution", level: 70 },
+  { name: "TypeScript React", category: "Interface", level: 76 },
+  { name: "Next.js", category: "Interface", level: 72 },
+  { name: "Prompt Design", category: "Agent", level: 74 },
+  { name: "Observability", category: "Agent", level: 63 },
 ]
 
 export const skills = techStack
