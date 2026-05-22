@@ -997,7 +997,7 @@
     --tilt-x: 0;
     --tilt-y: 0;
     position: relative;
-    min-height: clamp(34rem, 58vw, 43rem);
+    min-height: clamp(44rem, 62vw, 49rem);
     overflow: hidden;
     border: 1px solid hsl(var(--foreground) / 0.13);
     background:
@@ -1046,14 +1046,13 @@
     position: relative;
     z-index: 2;
     display: grid;
-    min-height: clamp(34rem, 58vw, 43rem);
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    min-height: clamp(44rem, 62vw, 49rem);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     align-content: center;
-    gap: clamp(0.85rem, 2vw, 1.35rem);
-    padding: clamp(1.2rem, 4vw, 4.25rem);
+    gap: clamp(0.75rem, 1.5vw, 1.1rem);
+    padding: clamp(1.1rem, 3.2vw, 3rem);
     transform:
-      rotateX(calc(var(--tilt-x) * 1deg))
-      rotateY(calc(var(--tilt-y) * 1deg));
+      translate3d(calc(var(--tilt-y) * 0.18rem), calc(var(--tilt-x) * 0.14rem), 0);
     transform-style: preserve-3d;
     transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
   }
@@ -1077,6 +1076,11 @@
       transform 360ms cubic-bezier(0.22, 1, 0.36, 1),
       filter 260ms ease;
     will-change: transform;
+  }
+
+  .tech-card:focus-visible {
+    outline: 1px solid hsl(var(--accent) / 0.88);
+    outline-offset: 4px;
   }
 
   .tech-card:hover,
@@ -1219,7 +1223,7 @@
 
   .tech-dossier {
     position: relative;
-    min-height: clamp(34rem, 58vw, 43rem);
+    min-height: clamp(44rem, 62vw, 49rem);
     overflow: hidden;
     border: 1px solid hsl(var(--foreground) / 0.13);
     background:
@@ -1301,6 +1305,18 @@
     .tech-card:hover,
     .tech-card.is-active {
       transform: translateY(-6px) scale(1.02);
+    }
+  }
+
+  @media (min-width: 1024px) and (max-width: 1199px) {
+    .tech-card-table,
+    .tech-card-table-grid,
+    .tech-dossier {
+      min-height: 52rem;
+    }
+
+    .tech-card-table-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
   }
 

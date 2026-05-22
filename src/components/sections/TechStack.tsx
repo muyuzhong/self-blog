@@ -87,12 +87,11 @@ export function TechStack() {
 
     gsap.from(cards, {
       autoAlpha: 0,
-      y: prefersReduced ? 0 : 70,
-      z: prefersReduced ? 0 : -180,
-      rotationX: prefersReduced ? 0 : -22,
+      filter: prefersReduced ? "none" : "blur(10px)",
       stagger: 0.045,
-      duration: prefersReduced ? 0 : 0.95,
+      duration: prefersReduced ? 0 : 0.8,
       ease: "expo.out",
+      clearProps: "filter",
     })
 
     const tiltX = gsap.quickTo(table, "--tilt-x", {
