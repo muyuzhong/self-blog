@@ -334,5 +334,3 @@ SkillOpt 这类工具解决第三层。它把“我觉得该改”变成“这�
 
 - [SkillOpt 项目页](https://microsoft.github.io/SkillOpt/)
 - [SkillOpt arXiv 论文](https://arxiv.org/abs/2605.23904)
-- [AGI Hunt：别再手写 Skill 了！微软最新研究：像神经网络一样训练 Skill](https://mp.weixin.qq.com/s/sqHF3d3l5PX3VOs0Mtwk3A)
-- 本地项目：`E:\tools\SkillOpt`
