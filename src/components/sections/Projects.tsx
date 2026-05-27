@@ -56,7 +56,7 @@ export function Projects() {
     gsap.set(cards, {
       transformPerspective: 1200,
       transformOrigin: "50% 50%",
-      z: (index) => (index % 2 === 0 ? 80 : -120),
+      z: (index) => (index % 2 === 0 ? 80 : 24),
       rotationY: (index) => (index % 2 === 0 ? -10 : 12),
       rotationZ: (index) => (index % 3 - 1) * 2,
     })
@@ -166,7 +166,7 @@ export function Projects() {
         rotateYTo(index % 2 === 0 ? -10 : 12)
         gsap.to(card, {
           scale: 1,
-          z: index % 2 === 0 ? 80 : -120,
+          z: index % 2 === 0 ? 80 : 24,
           duration: 0.36,
           ease: "power3.out",
         })
@@ -206,7 +206,8 @@ export function Projects() {
     moveProjectRef.current(index)
   }
 
-  const toggleFlip = (title: string) => {
+  const toggleFlip = (title: string, index: number) => {
+    moveProjectRef.current(index)
     setFlipped((current) => ({ ...current, [title]: !current[title] }))
   }
 
@@ -282,7 +283,7 @@ export function Projects() {
                     <button
                       type="button"
                       className="project-river-flip"
-                      onClick={() => toggleFlip(project.title)}
+                      onClick={() => toggleFlip(project.title, index)}
                       aria-label={`Flip ${project.title}`}
                     >
                       <span className="project-river-face project-river-front">
@@ -326,7 +327,8 @@ export function Projects() {
                           {project.title}
                         </span>
                         <span className="mt-6 block text-left text-sm leading-7 text-muted-foreground">
-                          这一面先留给之后的项目证据、截图、架构说明和真实链接。现在只作为交互动效占位。
+                          {project.dossier ??
+                            "这一面先留给之后的项目证据、截图、架构说明和真实链接。现在只作为交互动效占位。"}
                         </span>
                         <span className="mt-auto inline-flex items-center gap-2 self-start font-mono text-xs uppercase tracking-[0.12em] text-foreground">
                           返回正面

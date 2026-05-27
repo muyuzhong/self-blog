@@ -35,6 +35,7 @@ export const projects: Array<{
   image: string
   link: string
   demo?: string
+  dossier?: string
 }> = [
   {
     title: "Orbit Prototype 01",
@@ -47,14 +48,15 @@ export const projects: Array<{
     link: "https://github.com/muyuzhong",
   },
   {
-    title: "Magnet Prototype 02",
-    category: "Hover",
-    date: "Draft",
-    description: "Placeholder reserved for a project card that can be pulled forward from the motion field.",
-    technologies: ["Pointer", "quickTo", "React"],
-    tags: ["prototype"],
+    title: "GH Semantic Search Skill",
+    category: "Skill",
+    date: "2026",
+    description: "A small agent skill that expands architecture intent into GitHub searches, reads READMEs, and ranks repositories by semantic fit.",
+    technologies: ["Claude Skill", "GitHub CLI", "Semantic Search"],
+    tags: ["skill", "github", "agent"],
     image: "",
-    link: "https://github.com/muyuzhong",
+    link: "https://github.com/muyuzhong/gh-semantic-search-skill",
+    dossier: "这个 skill 把“按架构思想找项目”变成一条可执行流程：扩展搜索词、并行查询 GitHub、读取 README，并按语义相关性重排结果。",
   },
   {
     title: "Dossier Prototype 03",
