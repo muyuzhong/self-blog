@@ -296,9 +296,31 @@ export function Projects() {
                         <span className="project-river-number">
                           {String(index + 1).padStart(2, "0")}
                         </span>
-                        <span className="project-river-preview">
-                          <span className="project-river-letter">{project.title.slice(0, 1)}</span>
-                          <span className="project-river-scan" />
+                        <span
+                          className={cn(
+                            "project-river-preview",
+                            project.visual === "semantic-search" && "project-river-preview-semantic",
+                          )}
+                        >
+                          {project.visual === "semantic-search" ? (
+                            <span className="project-semantic-visual" aria-hidden="true">
+                              <span className="project-semantic-query">intent</span>
+                              <span className="project-semantic-line project-semantic-line-a" />
+                              <span className="project-semantic-line project-semantic-line-b" />
+                              <span className="project-semantic-node project-semantic-node-a">GitHub</span>
+                              <span className="project-semantic-node project-semantic-node-b">README</span>
+                              <span className="project-semantic-rank">
+                                <span />
+                                <span />
+                                <span />
+                              </span>
+                            </span>
+                          ) : (
+                            <>
+                              <span className="project-river-letter">{project.title.slice(0, 1)}</span>
+                              <span className="project-river-scan" />
+                            </>
+                          )}
                           <Rotate3D className="absolute right-5 top-5 h-5 w-5 text-accent/70" />
                         </span>
                         <span className="block text-left">

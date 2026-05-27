@@ -36,12 +36,13 @@ export const projects: Array<{
   link: string
   demo?: string
   dossier?: string
+  visual?: "semantic-search"
 }> = [
   {
     title: "Orbit Prototype 01",
     category: "River",
     date: "Draft",
-    description: "Placeholder for testing a flowing project stream, magnetic hover, and scroll-linked motion.",
+    description: "用于测试流动式项目卡片、磁吸悬浮和横向浏览动效的占位项目。",
     technologies: ["GSAP", "ScrollTrigger", "3D"],
     tags: ["prototype"],
     image: "",
@@ -51,18 +52,19 @@ export const projects: Array<{
     title: "GH Semantic Search Skill",
     category: "Skill",
     date: "2026",
-    description: "A small agent skill that expands architecture intent into GitHub searches, reads READMEs, and ranks repositories by semantic fit.",
+    description: "一个用于按架构意图搜索 GitHub 项目的小型 skill：扩展检索词、读取 README，并按语义相关性重排结果。",
     technologies: ["Claude Skill", "GitHub CLI", "Semantic Search"],
     tags: ["skill", "github", "agent"],
     image: "",
     link: "https://github.com/muyuzhong/gh-semantic-search-skill",
     dossier: "这个 skill 把“按架构思想找项目”变成一条可执行流程：扩展搜索词、并行查询 GitHub、读取 README，并按语义相关性重排结果。",
+    visual: "semantic-search",
   },
   {
     title: "Dossier Prototype 03",
     category: "Flip",
     date: "Draft",
-    description: "Placeholder used to validate flip states, back-face content, and layered archive styling.",
+    description: "用于验证卡片翻面、背面档案内容和分层档案样式的占位项目。",
     technologies: ["CSS 3D", "GSAP", "State"],
     tags: ["prototype"],
     image: "",
@@ -72,7 +74,7 @@ export const projects: Array<{
     title: "Signal Prototype 04",
     category: "Scroll",
     date: "Draft",
-    description: "Placeholder for experimenting with pinned scroll progress and a cinematic horizontal flow.",
+    description: "用于实验滚动进度、横向切换和电影感场景推进的占位项目。",
     technologies: ["Pin", "Scrub", "Timeline"],
     tags: ["prototype"],
     image: "",
@@ -82,7 +84,7 @@ export const projects: Array<{
     title: "Depth Prototype 05",
     category: "Space",
     date: "Draft",
-    description: "Placeholder for testing foreground and background depth without adding final content.",
+    description: "用于测试前景、背景和卡片景深关系的占位项目。",
     technologies: ["Perspective", "Transform", "Layer"],
     tags: ["prototype"],
     image: "",
@@ -92,7 +94,7 @@ export const projects: Array<{
     title: "Archive Prototype 06",
     category: "Index",
     date: "Draft",
-    description: "Placeholder for future screenshots, evidence links, and richer project notes.",
+    description: "用于预留未来项目截图、证据链接和更完整项目记录的占位项目。",
     technologies: ["Next.js", "UI", "Motion"],
     tags: ["prototype"],
     image: "",
