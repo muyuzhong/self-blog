@@ -39,14 +39,15 @@ export const projects: Array<{
   visual?: "semantic-search"
 }> = [
   {
-    title: "Orbit Prototype 01",
-    category: "River",
-    date: "Draft",
-    description: "用于测试流动式项目卡片、磁吸悬浮和横向浏览动效的占位项目。",
-    technologies: ["GSAP", "ScrollTrigger", "3D"],
-    tags: ["prototype"],
+    title: "AgentOps Harness",
+    category: "AgentOps",
+    date: "2026",
+    description: "一个面向真实代码仓库的 AI coding 工作质量评测与优化系统：扫描仓库就绪度、追踪执行步骤，并沉淀可复用的工程经验。",
+    technologies: ["Python", "CLI", "Workflow Trace"],
+    tags: ["agentops", "evaluation", "workflow"],
     image: "",
-    link: "https://github.com/muyuzhong",
+    link: "https://github.com/muyuzhong/AgentOps",
+    dossier: "AgentOps Harness 不实现另一个 coding agent，而是围绕 Claude Code、Codex、Cursor 等工具补充仓库级质量评测能力。目前已支持仓库就绪度扫描与工作流追踪，离线过程评测和进一步改进建议仍在开发中。",
   },
   {
     title: "GH Semantic Search Skill",
