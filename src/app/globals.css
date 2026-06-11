@@ -1852,3 +1852,198 @@
   50%  { transform: translate(40px, -30px) scale(1.08); }
   100% { transform: translate(-25px, 20px) scale(0.95); }
 }
+
+/* ABOUT poem: a quiet route from echo to action */
+.about-poem-section {
+  min-height: 100vh;
+  background:
+    linear-gradient(90deg, transparent 0 49.96%, hsl(var(--foreground) / 0.035) 50%, transparent 50.04%),
+    linear-gradient(180deg, hsl(var(--foreground) / 0.025), transparent 24rem),
+    hsl(var(--background));
+}
+
+.about-poem-stage {
+  position: relative;
+  margin-top: clamp(4rem, 8vw, 7.5rem);
+  min-height: 66rem;
+  padding-bottom: 2rem;
+}
+
+.about-poem-stanzas {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  gap: clamp(5rem, 9vw, 9rem);
+}
+
+.about-poem-stanza {
+  position: relative;
+  width: min(100%, 46rem);
+}
+
+.about-poem-stanza-2,
+.about-poem-stanza-4 {
+  margin-left: auto;
+}
+
+.about-poem-stanza-3 {
+  margin-left: 12%;
+}
+
+.about-poem-stanza p {
+  font-family: "Noto Serif SC", "Playfair Display", serif;
+  font-size: clamp(1.35rem, 2.25vw, 2.1rem);
+  font-weight: 500;
+  line-height: 1.95;
+  color: hsl(var(--foreground) / 0.92);
+}
+
+.about-poem-line {
+  display: block;
+  width: fit-content;
+  will-change: transform, opacity, filter;
+}
+
+.about-poem-line:first-child {
+  color: hsl(var(--foreground));
+}
+
+.about-poem-index {
+  position: absolute;
+  top: 0.72rem;
+  left: -3.4rem;
+  display: grid;
+  height: 1.55rem;
+  width: 1.55rem;
+  place-items: center;
+  border: 1px solid hsl(var(--accent) / 0.55);
+  background: hsl(var(--background));
+  color: hsl(var(--accent));
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.52rem;
+  line-height: 1;
+}
+
+.about-poem-route {
+  position: absolute;
+  inset: -2rem auto 0 50%;
+  z-index: 1;
+  width: 1px;
+  background: hsl(var(--foreground) / 0.06);
+}
+
+.about-poem-route-fill {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    hsl(var(--accent) / 0.7) 12%,
+    hsl(var(--accent) / 0.35) 76%,
+    transparent
+  );
+  box-shadow: 0 0 22px hsl(var(--accent) / 0.25);
+  will-change: transform;
+}
+
+.about-poem-memories {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.about-poem-memory {
+  position: absolute;
+  font-family: "Noto Serif SC", "Playfair Display", serif;
+  font-size: clamp(5rem, 13vw, 12rem);
+  line-height: 1;
+  color: hsl(var(--foreground) / 0.022);
+  white-space: nowrap;
+  will-change: transform, opacity;
+}
+
+.about-poem-memory-1 {
+  right: 3%;
+  top: -2%;
+}
+
+.about-poem-memory-2 {
+  left: 0;
+  top: 29%;
+}
+
+.about-poem-memory-3 {
+  right: 1%;
+  top: 57%;
+}
+
+.about-poem-memory-4 {
+  left: 6%;
+  bottom: 0;
+}
+
+@media (max-width: 1023px) {
+  .about-poem-stage {
+    min-height: auto;
+  }
+
+  .about-poem-route {
+    left: 0.72rem;
+  }
+
+  .about-poem-stanzas {
+    gap: 5.5rem;
+    padding-left: 3.5rem;
+  }
+
+  .about-poem-stanza,
+  .about-poem-stanza-2,
+  .about-poem-stanza-3,
+  .about-poem-stanza-4 {
+    margin-left: 0;
+  }
+
+  .about-poem-index {
+    left: -3.52rem;
+  }
+}
+
+@media (max-width: 639px) {
+  .about-poem-stanzas {
+    gap: 4.5rem;
+    padding-left: 2.3rem;
+  }
+
+  .about-poem-stanza p {
+    font-size: 1.08rem;
+    line-height: 2;
+  }
+
+  .about-poem-index {
+    left: -2.32rem;
+    height: 1.4rem;
+    width: 1.4rem;
+  }
+
+  .about-poem-route {
+    left: 0.64rem;
+  }
+
+  .about-poem-memory {
+    font-size: 5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-poem-line,
+  .about-poem-index,
+  .about-poem-memory,
+  .about-poem-route-fill {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+}
