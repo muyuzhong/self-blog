@@ -13,7 +13,6 @@ const navLinks = [
   { label: "项目", href: "#projects" },
   { label: "技术", href: "#techstack" },
   { label: "博客", href: "#blog" },
-  { label: "合集", href: "/series" },
   { label: "联系", href: "#contact" },
 ]
 

@@ -208,3 +208,8 @@ export async function getSeriesPosts(seriesName: string): Promise<BlogPostSummar
       return a.slug.localeCompare(b.slug)
     })
 }
+
+export async function getStandaloneBlogPosts(): Promise<BlogPostSummary[]> {
+  const posts = await getAllBlogPosts()
+  return posts.filter((post) => !post.series)
+}

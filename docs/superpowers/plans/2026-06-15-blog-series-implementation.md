@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add a sustainable `/series` blog collection section and make `runtime-engine-the-clockmaker.md` the first article in “Harness 工程札记”.
+**Goal:** Add a sustainable series area inside the homepage blog module, keep series posts out of standalone blog lists, and make `runtime-engine-the-clockmaker.md` the first article in “Harness 工程札记”.
 
-**Architecture:** Extend the existing Markdown frontmatter parser with optional series metadata, derive series membership from the same `content/blog` source used by the blog archive, and render one dedicated static series index page. Existing article pages conditionally expose series context without changing ordinary posts.
+**Architecture:** Extend the existing Markdown frontmatter parser with optional series metadata, derive series membership from the same `content/blog` source, and split homepage/archive queries into series and standalone posts. The homepage blog module renders both content types in separate visual regions, while `/series` remains a secondary detail page.
 
 **Tech Stack:** Next.js App Router, React, TypeScript, Tailwind CSS, Markdown frontmatter, PowerShell site verification
 
@@ -59,3 +59,20 @@
 - [x] Run `npm run build` and confirm static export succeeds.
 - [x] Run `npm run verify:site` again and confirm `/series/index.html` exists.
 - [x] Inspect `git diff` and confirm only intended files changed.
+
+### Task 6: Integrate Series Into the Blog Module
+
+**Files:**
+- Modify: `src/lib/blog.ts`
+- Modify: `src/app/page.tsx`
+- Modify: `src/components/sections/Blog.tsx`
+- Modify: `src/app/blog/page.tsx`
+- Modify: `src/components/layout/Navbar.tsx`
+- Modify: `verify-site.ps1`
+
+- [x] Add acceptance checks that require a homepage series area and reject a top-level series navigation entry.
+- [x] Add a standalone-post query that excludes series posts.
+- [x] Pass standalone and series posts separately into the homepage blog module.
+- [x] Render the Harness series area above the standalone article layout.
+- [x] Use standalone posts only in `/blog`.
+- [x] Run build, site verification, type check, and browser QA.

@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { ArrowLeft, ArrowRight } from "lucide-react"
-import { getAllBlogPosts } from "@/lib/blog"
+import { getStandaloneBlogPosts } from "@/lib/blog"
 import { BracketLabel } from "@/components/shared/BracketLabel"
 
 export const metadata: Metadata = {
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 }
 
 export default async function BlogIndexPage() {
-  const posts = await getAllBlogPosts()
+  const posts = await getStandaloneBlogPosts()
 
   return (
     <main className="min-h-screen px-6 pb-24 pt-32 lg:px-10">

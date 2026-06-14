@@ -40,8 +40,39 @@ if (Test-Path -LiteralPath (Join-Path $PSScriptRoot "out")) {
 }
 
 $navbarSource = Get-Content -LiteralPath $navbarPath -Raw -Encoding UTF8
-if ($navbarSource -notmatch 'href:\s*"/series"') {
-  $failures.Add("Navbar should expose a /series entry")
+if ($navbarSource -match 'href:\s*"/series"') {
+  $failures.Add("Navbar should not expose a top-level /series entry")
+}
+
+if ($blogComponent -notmatch 'seriesPosts') {
+  $failures.Add("Homepage blog module should render series posts separately")
+}
+if ($blogComponent -notmatch 'href="/series"') {
+  $failures.Add("Homepage blog module should link its series area to /series")
+}
+if ($blogComponent -notmatch 'Harness') {
+  $failures.Add("Homepage blog module should expose the Harness series")
+}
+
+$homePageSource = Get-Content -LiteralPath (Join-Path $PSScriptRoot "src\app\page.tsx") -Raw -Encoding UTF8
+if ($homePageSource -notmatch 'getStandaloneBlogPosts') {
+  $failures.Add("Homepage should query standalone blog posts")
+}
+if ($homePageSource -notmatch 'getSeriesPosts') {
+  $failures.Add("Homepage should query series posts separately")
+}
+
+$blogIndexSource = Get-Content -LiteralPath $blogIndexPath -Raw -Encoding UTF8
+if ($blogIndexSource -notmatch 'getStandaloneBlogPosts') {
+  $failures.Add("Blog archive should exclude series posts")
+}
+
+$blogDataSource = Get-Content -LiteralPath (Join-Path $PSScriptRoot "src\lib\blog.ts") -Raw -Encoding UTF8
+if ($blogDataSource -notmatch 'export async function getStandaloneBlogPosts') {
+  $failures.Add("Blog data layer should expose a standalone-post query")
+}
+if ($blogDataSource -notmatch 'filter\(\(post\) => !post\.series\)') {
+  $failures.Add("Standalone-post query should exclude every series post")
 }
 
 $sitemapSource = Get-Content -LiteralPath $sitemapPath -Raw -Encoding UTF8

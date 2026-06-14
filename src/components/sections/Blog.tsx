@@ -9,12 +9,16 @@ import type { BlogPostSummary } from "@/lib/blog"
 
 interface BlogProps {
   posts: BlogPostSummary[]
+  seriesPosts: BlogPostSummary[]
 }
 
-export function Blog({ posts }: BlogProps) {
+const SERIES_NAME = "Harness 工程札记"
+
+export function Blog({ posts, seriesPosts }: BlogProps) {
   const sectionRef = useScrollAnimation({ selector: ".blog-row", y: 30, duration: 0.6, stagger: 0.1 })
   const featured = posts.slice(0, 1)
   const rest = posts.slice(1, 4)
+  const seriesLead = seriesPosts[0]
 
   return (
     <section id="blog" ref={sectionRef} className="magazine-page relative px-6 py-32 lg:px-10 lg:py-40">
@@ -33,6 +37,63 @@ export function Blog({ posts }: BlogProps) {
             <span>VIEW ALL</span>
             <ArrowRight className="h-3.5 w-3.5" />
           </Link>
+        </div>
+
+        {seriesLead ? (
+          <Link
+            href="/series"
+            className="blog-row group mb-16 grid overflow-hidden border border-foreground/12 bg-card/70 transition-colors hover:border-accent/55 lg:grid-cols-[minmax(0,1.25fr)_minmax(20rem,0.75fr)]"
+            data-cursor-hover
+          >
+            <div className="magazine-paper border-b border-foreground/10 p-8 lg:border-b-0 lg:border-r lg:p-10">
+              <div className="mb-8 flex flex-wrap items-center gap-2">
+                <BracketLabel hover={false} className="text-accent">
+                  SERIES
+                </BracketLabel>
+                <BracketLabel hover={false}>
+                  {String(seriesPosts.length).padStart(2, "0")} ARTICLES
+                </BracketLabel>
+              </div>
+              <h3 className="font-editorial text-4xl font-semibold leading-tight tracking-normal text-foreground transition-colors group-hover:text-accent md:text-5xl lg:text-6xl">
+                {SERIES_NAME}
+              </h3>
+              <p className="mt-7 max-w-2xl text-sm leading-7 text-muted-foreground">
+                从运行时、上下文、工具、状态与验证出发，记录一个可靠 Harness 如何被逐层搭建出来。
+              </p>
+              <span className="mt-9 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.1em] text-muted-foreground transition-colors group-hover:text-accent">
+                VIEW SERIES
+                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+              </span>
+            </div>
+
+            <div className="relative flex min-h-[18rem] flex-col justify-between p-8 lg:p-10">
+              <span className="absolute right-5 top-3 font-editorial text-8xl font-bold leading-none text-foreground/[0.055]">
+                {String(seriesLead.seriesOrder ?? 1).padStart(2, "0")}
+              </span>
+              <div className="relative z-10">
+                <BracketLabel hover={false}>FIRST ARTICLE</BracketLabel>
+                <h4 className="mt-8 font-editorial text-2xl font-semibold leading-tight tracking-normal text-foreground md:text-3xl">
+                  {seriesLead.title}
+                </h4>
+                <p className="mt-5 line-clamp-3 text-sm leading-7 text-muted-foreground">
+                  {seriesLead.excerpt}
+                </p>
+              </div>
+              <div className="relative z-10 mt-8 flex flex-wrap gap-2">
+                <BracketLabel hover={false}>{seriesLead.readingMinutes} MIN READ</BracketLabel>
+                {seriesLead.tags.slice(0, 2).map((tag) => (
+                  <BracketLabel key={tag} hover={false} className="text-[0.6rem]">
+                    {tag}
+                  </BracketLabel>
+                ))}
+              </div>
+            </div>
+          </Link>
+        ) : null}
+
+        <div className="mb-7 flex items-center gap-4">
+          <BracketLabel hover={false}>STANDALONE NOTES</BracketLabel>
+          <span className="h-px flex-1 bg-foreground/10" />
         </div>
 
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(22rem,0.9fr)]">

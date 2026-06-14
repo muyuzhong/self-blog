@@ -6,7 +6,9 @@ import { TechStack } from "@/components/sections/TechStack"
 import { Blog } from "@/components/sections/Blog"
 import { Contact } from "@/components/sections/Contact"
 import { Footer } from "@/components/sections/Footer"
-import { getAllBlogPosts } from "@/lib/blog"
+import { getSeriesPosts, getStandaloneBlogPosts } from "@/lib/blog"
+
+const SERIES_NAME = "Harness 工程札记"
 
 export const metadata: Metadata = {
   title: "暮羽中 | Agent 开发学习者",
@@ -19,7 +21,10 @@ export const metadata: Metadata = {
 }
 
 export default async function Home() {
-  const posts = await getAllBlogPosts()
+  const [posts, seriesPosts] = await Promise.all([
+    getStandaloneBlogPosts(),
+    getSeriesPosts(SERIES_NAME),
+  ])
 
   return (
     <main>
@@ -27,7 +32,7 @@ export default async function Home() {
       <About />
       <Projects />
       <TechStack />
-      <Blog posts={posts} />
+      <Blog posts={posts} seriesPosts={seriesPosts} />
       <Contact />
       <Footer />
     </main>
