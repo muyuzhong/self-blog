@@ -77,6 +77,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <BracketLabel hover={false} className="text-accent">
               ARTICLE
             </BracketLabel>
+            {post.series ? (
+              <Link href="/series" className="transition-colors hover:text-accent">
+                <BracketLabel>
+                  {post.series}
+                  {post.seriesOrder !== undefined ? ` · ${String(post.seriesOrder).padStart(2, "0")}` : ""}
+                </BracketLabel>
+              </Link>
+            ) : null}
             <span className="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground">
               {post.readingMinutes} MIN READ
             </span>
@@ -146,13 +154,24 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </article>
 
         <footer className="mt-20 border-t border-[hsla(0,0%,89%,0.1)] pt-8">
-          <Link
-            href="/blog"
-            className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.12em] text-muted-foreground transition-colors hover:text-accent"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            回到文章列表
-          </Link>
+          <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
+            {post.series ? (
+              <Link
+                href="/series"
+                className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.12em] text-muted-foreground transition-colors hover:text-accent"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" />
+                返回 {post.series}
+              </Link>
+            ) : null}
+            <Link
+              href="/blog"
+              className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.12em] text-muted-foreground transition-colors hover:text-accent"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              回到文章列表
+            </Link>
+          </div>
         </footer>
       </div>
     </main>

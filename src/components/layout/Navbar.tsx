@@ -13,6 +13,7 @@ const navLinks = [
   { label: "项目", href: "#projects" },
   { label: "技术", href: "#techstack" },
   { label: "博客", href: "#blog" },
+  { label: "合集", href: "/series" },
   { label: "联系", href: "#contact" },
 ]
 
@@ -75,7 +76,7 @@ export function Navbar() {
             {navLinks.map((link) => (
               <Link
                 key={link.href}
-                href={`/${link.href}`}
+                href={link.href.startsWith("/") ? link.href : `/${link.href}`}
                 className="font-mono text-xs uppercase tracking-[0.1em] text-muted-foreground hover:text-foreground transition-colors"
               >
                 {link.label}
@@ -131,7 +132,7 @@ export function Navbar() {
           {navLinks.map((link, i) => (
             <Link
               key={link.href}
-              href={`/${link.href}`}
+              href={link.href.startsWith("/") ? link.href : `/${link.href}`}
               onClick={() => setMenuOpen(false)}
               className={cn(
                 "text-3xl font-extrabold tracking-tight text-foreground hover:text-accent transition-all duration-300",

@@ -5,6 +5,12 @@ $failures = New-Object System.Collections.Generic.List[string]
 $dataPath = Join-Path $PSScriptRoot "src\lib\data.ts"
 $blogComponentPath = Join-Path $PSScriptRoot "src\components\sections\Blog.tsx"
 $blogIndexPath = Join-Path $PSScriptRoot "src\app\blog\page.tsx"
+$seriesIndexPath = Join-Path $PSScriptRoot "src\app\series\page.tsx"
+$seriesExportPath = Join-Path $PSScriptRoot "out\series\index.html"
+$navbarPath = Join-Path $PSScriptRoot "src\components\layout\Navbar.tsx"
+$sitemapPath = Join-Path $PSScriptRoot "src\app\sitemap.ts"
+$blogPostPagePath = Join-Path $PSScriptRoot "src\app\blog\[slug]\page.tsx"
+$runtimeArticlePath = Join-Path $PSScriptRoot "content\blog\runtime-engine-the-clockmaker.md"
 $contactPath = Join-Path $PSScriptRoot "src\components\sections\Contact.tsx"
 $blogContentPath = Join-Path $PSScriptRoot "content\blog"
 
@@ -21,6 +27,39 @@ foreach ($slug in $slugs) {
 $blogComponent = Get-Content -LiteralPath $blogComponentPath -Raw -Encoding UTF8
 if ($blogComponent -match 'href="/blog"' -and -not (Test-Path -LiteralPath $blogIndexPath)) {
   $failures.Add("Blog section links to /blog but src/app/blog/page.tsx is missing")
+}
+
+if (-not (Test-Path -LiteralPath $seriesIndexPath)) {
+  $failures.Add("Series index page is missing: src/app/series/page.tsx")
+}
+
+if (Test-Path -LiteralPath (Join-Path $PSScriptRoot "out")) {
+  if (-not (Test-Path -LiteralPath $seriesExportPath)) {
+    $failures.Add("Static series export is missing: out/series/index.html")
+  }
+}
+
+$navbarSource = Get-Content -LiteralPath $navbarPath -Raw -Encoding UTF8
+if ($navbarSource -notmatch 'href:\s*"/series"') {
+  $failures.Add("Navbar should expose a /series entry")
+}
+
+$sitemapSource = Get-Content -LiteralPath $sitemapPath -Raw -Encoding UTF8
+if ($sitemapSource -notmatch 'https://muyuzhong\.xyz/series') {
+  $failures.Add("Sitemap should include /series")
+}
+
+$blogPostPageSource = Get-Content -LiteralPath $blogPostPagePath -Raw -Encoding UTF8
+if ($blogPostPageSource -notmatch 'post\.series') {
+  $failures.Add("Blog post page should render series context when present")
+}
+
+$runtimeArticleSource = Get-Content -LiteralPath $runtimeArticlePath -Raw -Encoding UTF8
+if ($runtimeArticleSource -notmatch '(?m)^series:\s*"Harness .+"\s*$') {
+  $failures.Add("Runtime engine article should belong to Harness 工程札记")
+}
+if ($runtimeArticleSource -notmatch '(?m)^seriesOrder:\s*1\s*$') {
+  $failures.Add("Runtime engine article should be series article 01")
 }
 
 $sourceFiles = Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot "src") -Recurse -Include *.ts,*.tsx,*.mdx -File

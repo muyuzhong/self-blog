@@ -14,6 +14,8 @@ export interface BlogPost {
   tags: string[]
   content: string
   readingMinutes: number
+  series?: string
+  seriesOrder?: number
 }
 
 export type BlogPostSummary = Omit<BlogPost, "content">
@@ -81,9 +83,24 @@ function parseTags(value: string) {
   return [parseScalar(trimmed)].filter(Boolean)
 }
 
+function parseInteger(value: string) {
+  const normalized = value.trim()
+  if (!/^-?\d+$/.test(normalized)) return undefined
+
+  const parsed = Number.parseInt(normalized, 10)
+  return Number.isFinite(parsed) ? parsed : undefined
+}
+
 function parseFrontmatter(source: string) {
   const match = source.match(/^---\s*\r?\n([\s\S]*?)\r?\n---\s*(?:\r?\n|$)/)
-  const data: { title?: string; excerpt?: string; tags?: string[]; order?: number } = {}
+  const data: {
+    title?: string
+    excerpt?: string
+    tags?: string[]
+    order?: number
+    series?: string
+    seriesOrder?: number
+  } = {}
 
   if (!match) return data
 
@@ -95,7 +112,9 @@ function parseFrontmatter(source: string) {
     if (key === "title") data.title = parseScalar(rawValue)
     if (key === "excerpt") data.excerpt = parseScalar(rawValue)
     if (key === "tags") data.tags = parseTags(rawValue)
-    if (key === "order") data.order = Number.parseInt(rawValue, 10)
+    if (key === "order") data.order = parseInteger(rawValue)
+    if (key === "series") data.series = parseScalar(rawValue)
+    if (key === "seriesOrder") data.seriesOrder = parseInteger(rawValue)
   }
 
   return data
@@ -140,6 +159,8 @@ async function readPostFromFile(filePath: string): Promise<BlogPost & { order?: 
     content,
     readingMinutes: getReadingMinutes(source),
     order: frontmatter.order,
+    series: frontmatter.series,
+    seriesOrder: frontmatter.seriesOrder,
   }
 }
 
@@ -173,4 +194,17 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
 
   const { order, ...post } = await readPostFromFile(filePath)
   return post
+}
+
+export async function getSeriesPosts(seriesName: string): Promise<BlogPostSummary[]> {
+  const posts = await getAllBlogPosts()
+
+  return posts
+    .filter((post) => post.series === seriesName)
+    .sort((a, b) => {
+      if (a.seriesOrder !== undefined || b.seriesOrder !== undefined) {
+        return (a.seriesOrder ?? Number.MAX_SAFE_INTEGER) - (b.seriesOrder ?? Number.MAX_SAFE_INTEGER)
+      }
+      return a.slug.localeCompare(b.slug)
+    })
 }
