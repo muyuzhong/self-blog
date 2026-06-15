@@ -66,6 +66,18 @@ $blogIndexSource = Get-Content -LiteralPath $blogIndexPath -Raw -Encoding UTF8
 if ($blogIndexSource -notmatch 'getStandaloneBlogPosts') {
   $failures.Add("Blog archive should exclude series posts")
 }
+if ($blogIndexSource -notmatch 'getSeriesPosts') {
+  $failures.Add("Blog archive should query series posts separately")
+}
+if ($blogIndexSource -notmatch 'seriesPosts') {
+  $failures.Add("Blog archive should render a series dossier")
+}
+if ($blogIndexSource -notmatch 'href="/series"') {
+  $failures.Add("Blog archive series dossier should link to /series")
+}
+if ($blogIndexSource -notmatch 'INDEPENDENT ARTICLES') {
+  $failures.Add("Blog archive should label the standalone article list")
+}
 
 $blogDataSource = Get-Content -LiteralPath (Join-Path $PSScriptRoot "src\lib\blog.ts") -Raw -Encoding UTF8
 if ($blogDataSource -notmatch 'export async function getStandaloneBlogPosts') {

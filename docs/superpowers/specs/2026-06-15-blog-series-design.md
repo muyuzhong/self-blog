@@ -38,6 +38,13 @@
 3. 按 `seriesOrder` 排列的文章目录；每项展示篇序、标题、摘要、阅读时间和标签。
 4. 点击目录项进入现有 `/blog/[slug]` 文章详情页。
 
+`/blog` 普通文章归档页展示：
+
+1. 页面介绍之后展示完整的「Harness 工程札记」合集档案区。
+2. 合集档案区包含合集名称、简介、篇数、首篇文章和进入 `/series` 的入口。
+3. 合集档案区之后以「独立文章」分隔标签进入普通文章列表。
+4. 合集文章不出现在普通文章列表中。
+
 ## 数据模型
 
 扩展博客文章 frontmatter：
@@ -109,8 +116,9 @@ getStandaloneBlogPosts(): Promise<BlogPostSummary[]>
 3. `/series` 展示「Harness 工程札记」及第 01 篇文章。
 4. `runtime-engine-the-clockmaker.md` 通过 frontmatter 声明合集与篇序。
 5. 合集文章不出现在首页零散文章区域和 `/blog` 普通文章归档。
-6. 首篇文章详情页展示合集标识和返回合集入口。
-7. 普通文章详情页不展示合集标识。
-8. `npm run build` 成功。
-9. `npm run verify:site` 成功，并验证源码入口与静态导出的 `/series/index.html` 存在。
-10. `sitemap.xml` 包含 `/series`。
+6. `/blog` 页面在普通文章列表之前展示合集档案区。
+7. 首篇文章详情页展示合集标识和返回合集入口。
+8. 普通文章详情页不展示合集标识。
+9. `npm run build` 成功。
+10. `npm run verify:site` 成功，并验证源码入口与静态导出的 `/series/index.html` 存在。
+11. `sitemap.xml` 包含 `/series`。

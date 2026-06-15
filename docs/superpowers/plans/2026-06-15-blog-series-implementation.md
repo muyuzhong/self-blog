@@ -76,3 +76,15 @@
 - [x] Render the Harness series area above the standalone article layout.
 - [x] Use standalone posts only in `/blog`.
 - [x] Run build, site verification, type check, and browser QA.
+
+### Task 7: Surface Series on the Resume-Facing Blog Archive
+
+**Files:**
+- Modify: `src/app/blog/page.tsx`
+- Modify: `verify-site.ps1`
+
+- [x] Add failing acceptance checks for a series query and series archive section on `/blog`.
+- [x] Query standalone and Harness series posts in parallel.
+- [x] Render a full series dossier before the independent article list.
+- [x] Keep series posts excluded from the independent article list.
+- [x] Run build, site verification, type check, desktop/mobile browser QA, commit, and push.
