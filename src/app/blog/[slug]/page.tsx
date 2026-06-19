@@ -2,6 +2,7 @@ import type { ReactNode } from "react"
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { MDXRemote } from "next-mdx-remote/rsc"
+import remarkGfm from "remark-gfm"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { getAllBlogPosts, getBlogPost, getMarkdownHeadings, slugifyHeading } from "@/lib/blog"
@@ -140,6 +141,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <article className="article-content">
           <MDXRemote
             source={post.content}
+            options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
             components={{
               h2: ({ children }) => {
                 const text = textFromNode(children)

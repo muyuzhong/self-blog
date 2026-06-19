@@ -23,6 +23,10 @@ export type BlogPostSummary = Omit<BlogPost, "content">
 const BLOG_DIR = path.join(process.cwd(), "content", "blog")
 const POST_EXTENSIONS = [".md", ".mdx"]
 
+function isPostFile(filePath: string) {
+  return POST_EXTENSIONS.includes(path.extname(filePath).toLowerCase())
+}
+
 export function stripFrontmatter(source: string) {
   return source.replace(/^---\s*\r?\n[\s\S]*?\r?\n---\s*(?:\r?\n|$)/, "")
 }
@@ -132,17 +136,25 @@ function excerptFromContent(content: string) {
 async function findPostFile(slug: string) {
   if (!/^[a-zA-Z0-9][a-zA-Z0-9_-]*$/.test(slug)) return null
 
-  for (const extension of POST_EXTENSIONS) {
-    const filePath = path.join(BLOG_DIR, `${slug}${extension}`)
-    try {
-      await fs.access(filePath)
-      return filePath
-    } catch {
-      // Try the next supported Markdown extension.
-    }
-  }
+  const postFiles = await getPostFiles()
+  return postFiles.find((filePath) => path.basename(filePath, path.extname(filePath)) === slug) ?? null
+}
 
-  return null
+async function getPostFiles(directory = BLOG_DIR): Promise<string[]> {
+  try {
+    const entries = await fs.readdir(directory, { withFileTypes: true })
+    const files = await Promise.all(
+      entries.map(async (entry) => {
+        const entryPath = path.join(directory, entry.name)
+        if (entry.isDirectory()) return getPostFiles(entryPath)
+        return isPostFile(entryPath) ? [entryPath] : []
+      }),
+    )
+
+    return files.flat()
+  } catch {
+    return []
+  }
 }
 
 async function readPostFromFile(filePath: string): Promise<BlogPost & { order?: number }> {
@@ -165,16 +177,7 @@ async function readPostFromFile(filePath: string): Promise<BlogPost & { order?: 
 }
 
 export async function getAllBlogPosts(): Promise<BlogPostSummary[]> {
-  let entries: string[]
-  try {
-    entries = await fs.readdir(BLOG_DIR)
-  } catch {
-    return []
-  }
-
-  const postFiles = entries
-    .filter((entry) => POST_EXTENSIONS.includes(path.extname(entry).toLowerCase()))
-    .map((entry) => path.join(BLOG_DIR, entry))
+  const postFiles = await getPostFiles()
 
   const posts = await Promise.all(postFiles.map(readPostFromFile))
 
