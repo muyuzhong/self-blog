@@ -4,7 +4,7 @@ import { useRef, useState } from "react"
 import { gsap } from "gsap"
 import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, Rotate3D } from "lucide-react"
+import { ArrowLeft, ArrowRight, ArrowUpRight, Rotate3D } from "lucide-react"
 import { SectionLabel } from "@/components/shared/SectionLabel"
 import { VerticalText } from "@/components/shared/VerticalText"
 import { BracketLabel } from "@/components/shared/BracketLabel"
@@ -21,6 +21,7 @@ export function Projects() {
   const moveProjectRef = useRef<(index: number, immediate?: boolean) => void>(() => {})
   const [activeIndex, setActiveIndex] = useState(0)
   const [flipped, setFlipped] = useState<Record<string, boolean>>({})
+  const visibleProjects = projects
 
   useGSAP((context, contextSafe) => {
     const track = trackRef.current
@@ -30,7 +31,7 @@ export function Projects() {
 
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     const safe = contextSafe ?? (<T extends (...args: any[]) => any>(fn: T) => fn)
-    const clampIndex = (index: number) => gsap.utils.clamp(0, projects.length - 1, index)
+    const clampIndex = (index: number) => gsap.utils.clamp(0, visibleProjects.length - 1, index)
     const trackTo = gsap.quickTo(track, "x", {
       duration: prefersReduced ? 0 : 0.72,
       ease: "expo.out",
@@ -235,12 +236,12 @@ export function Projects() {
               {String(activeIndex + 1).padStart(2, "0")}
             </span>
             <span className="mt-2 block font-mono text-[0.62rem] uppercase tracking-[0.16em] text-muted-foreground">
-              / {String(projects.length).padStart(2, "0")}
+              / {String(visibleProjects.length).padStart(2, "0")}
             </span>
           </div>
         </div>
 
-        {projects.length > 0 ? (
+        {visibleProjects.length > 0 ? (
           <div ref={viewportRef} className="project-river-viewport">
             <button
               type="button"
@@ -256,7 +257,7 @@ export function Projects() {
               type="button"
               className="project-river-nav project-river-nav-next"
               onClick={() => moveProject(1)}
-              disabled={activeIndex === projects.length - 1}
+              disabled={activeIndex === visibleProjects.length - 1}
               aria-label="Next project"
               data-cursor-hover
             >
@@ -266,7 +267,7 @@ export function Projects() {
             <div className="project-river-edge project-river-edge-right" aria-hidden="true" />
 
             <div ref={trackRef} className="project-river-track">
-              {projects.map((project, index) => {
+              {visibleProjects.map((project, index) => {
                 const isFlipped = Boolean(flipped[project.title])
 
                 return (
@@ -348,10 +349,11 @@ export function Projects() {
                         <span className="mt-8 block font-editorial text-4xl font-semibold leading-tight text-foreground">
                           {project.title}
                         </span>
-                        <span className="mt-6 block text-left text-sm leading-7 text-muted-foreground">
-                          {project.dossier ??
-                            "这一面先留给之后的项目证据、截图、架构说明和真实链接。现在只作为交互动效占位。"}
-                        </span>
+                        {project.dossier ? (
+                          <span className="mt-6 block text-left text-sm leading-7 text-muted-foreground">
+                            {project.dossier}
+                          </span>
+                        ) : null}
                         <span className="mt-auto inline-flex items-center gap-2 self-start font-mono text-xs uppercase tracking-[0.12em] text-foreground">
                           返回正面
                           <ArrowUpRight className="h-3.5 w-3.5" />
@@ -375,7 +377,7 @@ export function Projects() {
             </div>
 
             <div className="project-river-controls" aria-label="Project selector">
-              {projects.map((project, index) => (
+              {visibleProjects.map((project, index) => (
                 <button
                   key={project.title}
                   type="button"
@@ -389,19 +391,7 @@ export function Projects() {
               ))}
             </div>
           </div>
-        ) : (
-          <div className="magazine-paper grid min-h-[24rem] place-items-center border border-foreground/12 p-8 text-center">
-            <div className="max-w-xl">
-              <BookOpen className="mx-auto mb-8 h-8 w-8 text-accent" />
-              <BracketLabel hover={false} className="text-accent">
-                PROJECTS WILL BE ADDED LATER
-              </BracketLabel>
-              <h3 className="mt-6 font-editorial text-4xl font-semibold leading-tight text-foreground">
-                Projects are intentionally empty for now.
-              </h3>
-            </div>
-          </div>
-        )}
+        ) : null}
       </div>
     </section>
   )

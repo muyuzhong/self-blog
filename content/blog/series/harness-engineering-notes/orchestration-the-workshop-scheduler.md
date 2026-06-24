@@ -1,6 +1,7 @@
 ---
 title: "任务编排与工作流引擎：给工坊排班的人"
 excerpt: "运行时只管一条循环内的下一步，编排层管的是跨循环、跨智能体的全局调度。本文拆解 DAG 任务分解、拓扑分层调度、七种任务类型、状态机工作流与副作用暂停、多智能体角色专化，以及通信的三条底线。"
+date: "2026-06-14"
 tags: ["AI", "Agent", "Workflow", "Orchestration", "Harness"]
 series: "Harness 工程札记"
 seriesOrder: 5

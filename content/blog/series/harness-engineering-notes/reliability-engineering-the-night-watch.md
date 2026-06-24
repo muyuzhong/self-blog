@@ -1,6 +1,7 @@
 ---
 title: "容错与可靠性工程：夜巡人与不断的钟"
 excerpt: "可靠性不是不出错，而是出错后能看见、能恢复、能被接管，并把故障变成下一次更稳的证据。"
+date: "2026-06-17"
 tags: ["AI", "Agent", "Reliability", "Observability", "Harness"]
 series: "Harness 工程札记"
 seriesOrder: 8

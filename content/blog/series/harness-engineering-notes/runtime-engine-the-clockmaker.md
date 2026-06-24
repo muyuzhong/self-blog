@@ -1,6 +1,7 @@
 ---
 title: "运行时引擎：那个站在天才身后的人"
 excerpt: "模型是那个能推演一百步齿轮的天才钟表匠，运行时是那个确认桌上零件、核对图纸、写好交接单的人。她不做齿轮，但她确保天才不被自己的混乱所困。"
+date: "2026-06-10"
 tags: ["AI", "Agent", "Runtime", "Harness", "架构设计"]
 series: "Harness 工程札记"
 seriesOrder: 1

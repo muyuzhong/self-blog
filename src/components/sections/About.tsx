@@ -18,6 +18,25 @@ const poem = [
 
 const memories = ["回声", "微光", "方向", "来处"]
 
+const profileNotes = [
+  {
+    label: "技术方向",
+    text: "聚焦 AI Agent 工程化：工具调用、任务编排、记忆与上下文管理、评估体系，以及模型输出进入真实系统前的安全边界。",
+  },
+  {
+    label: "核心技能栈",
+    text: "主要使用 TypeScript、React、Next.js 构建前端体验，也用 Python、Go、LangChain、LangGraph 和 CLI 工具做 Agent 原型与工程验证。",
+  },
+  {
+    label: "当前状态",
+    text: "正在把学习笔记、实验记录和可公开项目整理成可复盘的作品集，持续补齐从原型到生产级 Harness 的工程能力。",
+  },
+  {
+    label: "求职意向",
+    text: "寻找 AI Agent、工具平台、前端工程或全栈工程相关实习，希望参与真实产品中的 Agent 能力落地、评估和可观测性建设。",
+  },
+]
+
 export function About() {
   const sectionRef = useRef<HTMLElement>(null)
 
@@ -123,6 +142,19 @@ export function About() {
               </div>
             ))}
           </div>
+        </div>
+
+        <div className="mt-24 grid gap-4 border-y border-foreground/12 py-8 md:grid-cols-2">
+          {profileNotes.map((item) => (
+            <div key={item.label} className="magazine-paper border border-foreground/10 p-6">
+              <span className="font-mono text-[0.62rem] uppercase tracking-[0.16em] text-accent">
+                {item.label}
+              </span>
+              <p className="mt-4 text-sm leading-7 text-muted-foreground">
+                {item.text}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </section>

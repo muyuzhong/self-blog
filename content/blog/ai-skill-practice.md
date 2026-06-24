@@ -1,6 +1,7 @@
 ---
 title: "我现在不再手写 Skill，而是让 AI 先写，再用结果去训练它"
 excerpt: "Claude 或 Codex 先生成 Skill 初版，再用真实任务、失败轨迹和 SkillOpt 去优化。Skill 是可以被验证、被拒绝、被迭代的工程资产。"
+date: "2026-06-18"
 tags: ["AI", "Agent", "Skills", "SkillOpt", "工程笔记"]
 ---
 

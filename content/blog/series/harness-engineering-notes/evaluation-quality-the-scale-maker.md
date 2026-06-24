@@ -1,6 +1,7 @@
 ---
 title: "评估与质量保障：秤匠和每一步脚印"
 excerpt: "Agent 评估不能只看最终成功率。步骤、轨迹、任务三层一起看，才能知道系统哪里好、哪里坏、为什么坏。"
+date: "2026-06-19"
 tags: ["AI", "Agent", "Evaluation", "Quality", "Harness"]
 series: "Harness 工程札记"
 seriesOrder: 10

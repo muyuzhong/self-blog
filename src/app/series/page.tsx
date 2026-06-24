@@ -75,6 +75,7 @@ export default async function SeriesIndexPage() {
                   </span>
                   <div>
                     <div className="mb-4 flex flex-wrap gap-2">
+                      <BracketLabel hover={false}>{post.date}</BracketLabel>
                       <BracketLabel hover={false}>{post.readingMinutes} MIN READ</BracketLabel>
                       {post.tags.slice(0, 3).map((tag) => (
                         <BracketLabel key={tag} hover={false} className="text-[0.6rem]">

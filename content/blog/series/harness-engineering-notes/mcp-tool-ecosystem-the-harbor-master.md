@@ -1,6 +1,7 @@
 ---
 title: "MCP 与工具生态：给工具修码头的人"
 excerpt: "MCP 让工具从框架私有接口变成公共协议。Harness 还要在协议之上做好发现、缓存、权限、降级和按需加载。"
+date: "2026-06-15"
 tags: ["AI", "Agent", "MCP", "Tools", "Harness"]
 series: "Harness 工程札记"
 seriesOrder: 6

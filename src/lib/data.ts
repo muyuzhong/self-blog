@@ -14,7 +14,7 @@ export const personalInfo = {
   stats: [
     { label: "方向", value: "Agent" },
     { label: "状态", value: "实习" },
-    { label: "项目", value: "待补" },
+    { label: "项目", value: "2 个公开项目" },
   ],
 }
 
@@ -61,47 +61,56 @@ export const projects: Array<{
     dossier: "这个 skill 把“按架构思想找项目”变成一条可执行流程：扩展搜索词、并行查询 GitHub、读取 README，并按语义相关性重排结果。",
     visual: "semantic-search",
   },
-  {
-    title: "Dossier Prototype 03",
-    category: "Flip",
-    date: "Draft",
-    description: "用于验证卡片翻面、背面档案内容和分层档案样式的占位项目。",
-    technologies: ["CSS 3D", "GSAP", "State"],
-    tags: ["prototype"],
-    image: "",
-    link: "https://github.com/muyuzhong",
-  },
-  {
-    title: "Signal Prototype 04",
-    category: "Scroll",
-    date: "Draft",
-    description: "用于实验滚动进度、横向切换和电影感场景推进的占位项目。",
-    technologies: ["Pin", "Scrub", "Timeline"],
-    tags: ["prototype"],
-    image: "",
-    link: "https://github.com/muyuzhong",
-  },
-  {
-    title: "Depth Prototype 05",
-    category: "Space",
-    date: "Draft",
-    description: "用于测试前景、背景和卡片景深关系的占位项目。",
-    technologies: ["Perspective", "Transform", "Layer"],
-    tags: ["prototype"],
-    image: "",
-    link: "https://github.com/muyuzhong",
-  },
-  {
-    title: "Archive Prototype 06",
-    category: "Index",
-    date: "Draft",
-    description: "用于预留未来项目截图、证据链接和更完整项目记录的占位项目。",
-    technologies: ["Next.js", "UI", "Motion"],
-    tags: ["prototype"],
-    image: "",
-    link: "https://github.com/muyuzhong",
-  },
 ]
+
+/*
+Draft project cards retained for later recovery, but intentionally kept out of
+the runtime project array so visitors only receive substantive project data.
+
+{
+  title: "Dossier Prototype 03",
+  category: "Flip",
+  date: "Draft",
+  description: "用于验证卡片翻面、背面档案内容和分层档案样式的占位项目。",
+  technologies: ["CSS 3D", "GSAP", "State"],
+  tags: ["prototype"],
+  image: "",
+  link: "https://github.com/muyuzhong",
+}
+
+{
+  title: "Signal Prototype 04",
+  category: "Scroll",
+  date: "Draft",
+  description: "用于实验滚动进度、横向切换和电影感场景推进的占位项目。",
+  technologies: ["Pin", "Scrub", "Timeline"],
+  tags: ["prototype"],
+  image: "",
+  link: "https://github.com/muyuzhong",
+}
+
+{
+  title: "Depth Prototype 05",
+  category: "Space",
+  date: "Draft",
+  description: "用于测试前景、背景和卡片景深关系的占位项目。",
+  technologies: ["Perspective", "Transform", "Layer"],
+  tags: ["prototype"],
+  image: "",
+  link: "https://github.com/muyuzhong",
+}
+
+{
+  title: "Archive Prototype 06",
+  category: "Index",
+  date: "Draft",
+  description: "用于预留未来项目截图、证据链接和更完整项目记录的占位项目。",
+  technologies: ["Next.js", "UI", "Motion"],
+  tags: ["prototype"],
+  image: "",
+  link: "https://github.com/muyuzhong",
+}
+*/
 
 export const techStack = [
   { name: "LangGraph", category: "Agent", level: 76 },

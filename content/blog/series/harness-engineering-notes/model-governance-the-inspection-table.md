@@ -1,6 +1,7 @@
 ---
 title: "模型集成与输出治理：把预言放上验货台"
 excerpt: "模型输出只是候选意图。Harness 要先选择、适配、解析、验证和预算，才能让它进入运行时或工具层。"
+date: "2026-06-13"
 tags: ["AI", "Agent", "Model", "Governance", "Harness"]
 series: "Harness 工程札记"
 seriesOrder: 4

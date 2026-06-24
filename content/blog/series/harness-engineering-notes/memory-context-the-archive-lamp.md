@@ -1,6 +1,7 @@
 ---
 title: "记忆与上下文：档案馆里那盏灯"
 excerpt: "记忆回答系统过去知道什么，上下文回答本轮该让模型看到什么。本文拆解二者的边界、分层记忆、混合检索、上下文组装投影、Token 预算与离线整合，以及它们如何接入运行时。"
+date: "2026-06-12"
 tags: ["AI", "Agent", "Memory", "Context", "Harness"]
 series: "Harness 工程札记"
 seriesOrder: 3

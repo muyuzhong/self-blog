@@ -1,6 +1,7 @@
 ---
 title: "dynamic workflow对agent开发的启发"
 excerpt: "Claude Code 的 dynamic workflows 重新定义了 Agent 开发里的流程问题。垂直业务 Agent 靠固定流水线处理不了输入差异，把整条链路交给模型临场发挥又失去可控性。开发者要设计状态入口、流程生成边界、执行托管和验证节点。"
+date: "2026-06-20"
 tags: ["AI", "Agent", "Workflow", "Claude Code", "架构设计"]
 ---
 

@@ -1,6 +1,7 @@
 ---
 title: "Skill 不是长 Prompt，它是模型的工作边界"
 excerpt: "Skill 不是更长的 Prompt。它是一套按需加载的工作边界：触发、入口、材料、指令和红线，每一层都在影响模型下一步怎么判断。"
+date: "2026-06-09"
 tags: ["AI", "Agent", "Claude", "Skills", "工程笔记"]
 ---
 

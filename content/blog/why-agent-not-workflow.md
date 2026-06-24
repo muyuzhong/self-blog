@@ -1,6 +1,7 @@
 ---
 title: "我的场景为什么需要 Agent，而不是普通 Workflow"
 excerpt: "很多所谓 Agent 其实只是用 LLM 串起来的 Workflow。区别在流程由谁决定：开发者写死路径，还是模型在目标、状态和工具之间动态决策。"
+date: "2026-06-24"
 tags: ["AI", "Agent", "Workflow", "架构设计", "工程笔记"]
 ---
 

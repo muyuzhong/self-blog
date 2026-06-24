@@ -1,6 +1,7 @@
 ---
 title: "生产级 Harness：从样机到工坊规矩"
 excerpt: "原型只要跑通一次，生产系统要长期可维护、可扩展、可灰度、可回滚，并且说得清每个控制在防什么。"
+date: "2026-06-16"
 tags: ["AI", "Agent", "Production", "Harness", "工程实践"]
 series: "Harness 工程札记"
 seriesOrder: 7

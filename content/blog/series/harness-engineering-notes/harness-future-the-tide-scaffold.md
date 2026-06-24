@@ -1,6 +1,7 @@
 ---
 title: "Harness 工程的未来：退潮后留下的脚手架"
 excerpt: "Agent 工程正在从提示词、上下文走向 Harness。未来的难点不只是加控制，也包括知道哪些控制已经过期。"
+date: "2026-06-20"
 tags: ["AI", "Agent", "Harness", "Future", "架构演进"]
 series: "Harness 工程札记"
 seriesOrder: 11

@@ -1,6 +1,7 @@
 ---
 title: "从 0 实现一个 Agent Workflow"
 excerpt: "从最小 ReAct 循环出发，理解工具、记忆、多 Agent 编排，以及让智能真正抵达现实所需的工程边界。"
+date: "2026-06-05"
 tags: ["AI", "Agent", "Workflow", "ReAct", "架构设计"]
 ---
 

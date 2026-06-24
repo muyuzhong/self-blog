@@ -12,6 +12,7 @@ export interface BlogPost {
   title: string
   excerpt: string
   tags: string[]
+  date: string
   content: string
   readingMinutes: number
   series?: string
@@ -101,6 +102,7 @@ function parseFrontmatter(source: string) {
     title?: string
     excerpt?: string
     tags?: string[]
+    date?: string
     order?: number
     series?: string
     seriesOrder?: number
@@ -116,6 +118,7 @@ function parseFrontmatter(source: string) {
     if (key === "title") data.title = parseScalar(rawValue)
     if (key === "excerpt") data.excerpt = parseScalar(rawValue)
     if (key === "tags") data.tags = parseTags(rawValue)
+    if (key === "date") data.date = parseScalar(rawValue)
     if (key === "order") data.order = parseInteger(rawValue)
     if (key === "series") data.series = parseScalar(rawValue)
     if (key === "seriesOrder") data.seriesOrder = parseInteger(rawValue)
@@ -168,6 +171,7 @@ async function readPostFromFile(filePath: string): Promise<BlogPost & { order?: 
     title: frontmatter.title ?? slug.replace(/[-_]/g, " "),
     excerpt: frontmatter.excerpt ?? excerptFromContent(content),
     tags: frontmatter.tags ?? [],
+    date: frontmatter.date ?? "",
     content,
     readingMinutes: getReadingMinutes(source),
     order: frontmatter.order,

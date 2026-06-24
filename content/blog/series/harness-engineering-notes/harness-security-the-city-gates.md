@@ -1,6 +1,7 @@
 ---
 title: "Harness 安全体系：城门、通行证和最后的闸"
 excerpt: "智能体握着工具权限，安全不能只靠模型听话。可靠防线要把权限、沙箱、路径校验和审计串成纵深。"
+date: "2026-06-18"
 tags: ["AI", "Agent", "Security", "Sandbox", "Harness"]
 series: "Harness 工程札记"
 seriesOrder: 9

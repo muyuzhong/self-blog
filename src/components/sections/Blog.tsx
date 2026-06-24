@@ -68,19 +68,35 @@ export function Blog({ posts, seriesPosts }: BlogProps) {
 
             <div className="relative flex min-h-[18rem] flex-col justify-between p-8 lg:p-10">
               <span className="absolute right-5 top-3 font-editorial text-8xl font-bold leading-none text-foreground/[0.055]">
-                {String(seriesLead.seriesOrder ?? 1).padStart(2, "0")}
+                {String(seriesPosts.length).padStart(2, "0")}
               </span>
               <div className="relative z-10">
-                <BracketLabel hover={false}>FIRST ARTICLE</BracketLabel>
-                <h4 className="mt-8 font-editorial text-2xl font-semibold leading-tight tracking-normal text-foreground md:text-3xl">
-                  {seriesLead.title}
-                </h4>
-                <p className="mt-5 line-clamp-3 text-sm leading-7 text-muted-foreground">
-                  {seriesLead.excerpt}
-                </p>
+                <BracketLabel hover={false}>SERIES ARTICLES</BracketLabel>
+                <div className="mt-6 max-h-[28rem] space-y-5 overflow-y-auto pr-2">
+                  {seriesPosts.map((post) => (
+                    <div key={post.slug} className="border-b border-foreground/10 pb-5 last:border-b-0 last:pb-0">
+                      <div className="mb-3 flex flex-wrap gap-2">
+                        <BracketLabel hover={false} className="text-[0.6rem]">
+                          {String(post.seriesOrder ?? 1).padStart(2, "0")}
+                        </BracketLabel>
+                        <BracketLabel hover={false} className="text-[0.6rem]">
+                          {post.date}
+                        </BracketLabel>
+                        <BracketLabel hover={false} className="text-[0.6rem]">
+                          {post.readingMinutes} MIN READ
+                        </BracketLabel>
+                      </div>
+                      <h4 className="font-editorial text-xl font-semibold leading-tight tracking-normal text-foreground transition-colors group-hover:text-accent">
+                        {post.title}
+                      </h4>
+                      <p className="mt-3 line-clamp-3 text-sm leading-6 text-muted-foreground">
+                        {post.excerpt}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
               <div className="relative z-10 mt-8 flex flex-wrap gap-2">
-                <BracketLabel hover={false}>{seriesLead.readingMinutes} MIN READ</BracketLabel>
                 {seriesLead.tags.slice(0, 2).map((tag) => (
                   <BracketLabel key={tag} hover={false} className="text-[0.6rem]">
                     {tag}
@@ -108,6 +124,7 @@ export function Blog({ posts, seriesPosts }: BlogProps) {
                 <BracketLabel hover={false} className="text-accent">
                   FEATURED
                 </BracketLabel>
+                <BracketLabel hover={false}>{post.date}</BracketLabel>
                 <BracketLabel hover={false}>{post.readingMinutes} MIN READ</BracketLabel>
                 {post.tags.slice(0, 2).map((tag) => (
                   <BracketLabel key={tag} hover={false} className="text-[0.6rem]">
@@ -137,6 +154,12 @@ export function Blog({ posts, seriesPosts }: BlogProps) {
                 </span>
                 <div>
                   <div className="mb-3 flex flex-wrap gap-2">
+                    <BracketLabel hover={false} className="text-[0.6rem]">
+                      {post.date}
+                    </BracketLabel>
+                    <BracketLabel hover={false} className="text-[0.6rem]">
+                      {post.readingMinutes} MIN READ
+                    </BracketLabel>
                     {post.tags.slice(0, 2).map((tag) => (
                       <BracketLabel key={tag} hover={false} className="text-[0.6rem]">
                         {tag}
