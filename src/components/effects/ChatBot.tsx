@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react"
 import { MessageCircle, X, Send, Bot, User } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { personalData } from "@/lib/data"
+import { motionAwareScrollBehavior } from "@/lib/motion"
 
 interface Message {
   role: "user" | "bot"
@@ -52,7 +53,10 @@ export function ChatBot() {
   const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" })
+    scrollRef.current?.scrollTo({
+      top: scrollRef.current.scrollHeight,
+      behavior: motionAwareScrollBehavior(),
+    })
   }, [messages])
 
   const send = () => {
@@ -80,7 +84,7 @@ export function ChatBot() {
       </button>
 
       {open && (
-        <div className="fixed bottom-20 right-6 z-50 w-80 sm:w-96 h-[28rem] flex flex-col rounded-none border border-[hsla(0,0%,89%,0.12)] bg-card backdrop-blur-md shadow-2xl">
+        <div className="fixed bottom-20 left-4 right-4 z-50 h-[28rem] max-h-[calc(100dvh-7rem)] max-w-md sm:left-auto sm:right-6 sm:w-96 flex flex-col rounded-none border border-[hsla(0,0%,89%,0.12)] bg-card backdrop-blur-md shadow-2xl">
           <div className="flex items-center gap-3 px-4 py-3 border-b border-[hsla(0,0%,89%,0.08)]">
             <Bot className="w-5 h-5 text-accent" />
             <span className="font-mono text-xs uppercase tracking-[0.1em] text-muted-foreground">AI 助手</span>

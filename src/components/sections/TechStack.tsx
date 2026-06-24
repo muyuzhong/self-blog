@@ -1,16 +1,13 @@
 "use client"
 
-import { type CSSProperties, useMemo, useRef, useState } from "react"
-import { gsap } from "gsap"
-import { useGSAP } from "@gsap/react"
+import { type CSSProperties, useEffect, useMemo, useRef, useState } from "react"
 import { BrainCircuit, Layers3, Rotate3D, Sparkles } from "lucide-react"
 import { SectionLabel } from "@/components/shared/SectionLabel"
 import { VerticalText } from "@/components/shared/VerticalText"
 import { BracketLabel } from "@/components/shared/BracketLabel"
 import { skills } from "@/lib/data"
 import { cn } from "@/lib/utils"
-
-gsap.registerPlugin(useGSAP)
+import { shouldUseHeavyMotion } from "@/lib/motion"
 
 const cardLayout = [
   { x: -8, y: 10, rotate: -8 },
@@ -77,62 +74,96 @@ export function TechStack() {
   const activeRevealed = Boolean(revealedCards[activeCard.name])
   const revealedCount = Object.values(revealedCards).filter(Boolean).length
 
-  useGSAP((context, contextSafe) => {
+  useEffect(() => {
     const table = tableRef.current
-    const cards = (context.selector?.(".tech-card") ?? []) as HTMLElement[]
-    if (!table || cards.length === 0) return
+    const cards = Array.from(sectionRef.current?.querySelectorAll<HTMLElement>(".tech-card") ?? [])
+    if (!table || cards.length === 0 || !shouldUseHeavyMotion(1024)) return
 
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    const safe = contextSafe ?? (<T extends (...args: any[]) => any>(fn: T) => fn)
+    let cancelled = false
+    let cleanup: (() => void) | undefined
+    let context: { revert: () => void } | undefined
 
-    gsap.from(cards, {
-      autoAlpha: 0,
-      filter: prefersReduced ? "none" : "blur(10px)",
-      stagger: 0.045,
-      duration: prefersReduced ? 0 : 0.8,
-      ease: "expo.out",
-      clearProps: "filter",
-    })
+    async function runAnimation() {
+      const { gsap } = await import("gsap")
+      if (cancelled) return
 
-    const tiltX = gsap.quickTo(table, "--tilt-x", {
-      duration: prefersReduced ? 0 : 0.42,
-      ease: "power3.out",
-    })
-    const tiltY = gsap.quickTo(table, "--tilt-y", {
-      duration: prefersReduced ? 0 : 0.42,
-      ease: "power3.out",
-    })
+      context = gsap.context(() => {
+        gsap.from(cards, {
+          autoAlpha: 0,
+          filter: "blur(10px)",
+          stagger: 0.045,
+          duration: 0.8,
+          ease: "expo.out",
+          clearProps: "filter",
+        })
 
-    const move = safe((event: PointerEvent) => {
-      if (window.innerWidth < 1024) return
-      const rect = table.getBoundingClientRect()
-      const px = (event.clientX - rect.left) / rect.width - 0.5
-      const py = (event.clientY - rect.top) / rect.height - 0.5
-      tiltX(py * -7)
-      tiltY(px * 9)
-    })
+        const tiltX = gsap.quickTo(table!, "--tilt-x", {
+          duration: 0.42,
+          ease: "power3.out",
+        })
+        const tiltY = gsap.quickTo(table!, "--tilt-y", {
+          duration: 0.42,
+          ease: "power3.out",
+        })
 
-    const leave = safe(() => {
-      tiltX(0)
-      tiltY(0)
-    })
+        const move = (event: PointerEvent) => {
+          const rect = table!.getBoundingClientRect()
+          const px = (event.clientX - rect.left) / rect.width - 0.5
+          const py = (event.clientY - rect.top) / rect.height - 0.5
+          tiltX(py * -7)
+          tiltY(px * 9)
+        }
 
-    table.addEventListener("pointermove", move)
-    table.addEventListener("pointerleave", leave)
+        const leave = () => {
+          tiltX(0)
+          tiltY(0)
+        }
+
+        table!.addEventListener("pointermove", move)
+        table!.addEventListener("pointerleave", leave)
+
+        cleanup = () => {
+          table!.removeEventListener("pointermove", move)
+          table!.removeEventListener("pointerleave", leave)
+        }
+      }, sectionRef.current ?? undefined)
+    }
+
+    runAnimation()
 
     return () => {
-      table.removeEventListener("pointermove", move)
-      table.removeEventListener("pointerleave", leave)
+      cancelled = true
+      cleanup?.()
+      context?.revert()
     }
-  }, { scope: sectionRef })
+  }, [])
 
-  useGSAP(() => {
-    gsap.fromTo(
-      ".tech-dossier-current",
-      { autoAlpha: 0, y: 18, rotateX: -8 },
-      { autoAlpha: 1, y: 0, rotateX: 0, duration: 0.42, ease: "expo.out" }
-    )
-  }, { dependencies: [activeIndex, activeRevealed], scope: sectionRef, revertOnUpdate: true })
+  useEffect(() => {
+    if (!sectionRef.current || !shouldUseHeavyMotion(1024)) return
+
+    let cancelled = false
+    let context: { revert: () => void } | undefined
+
+    async function runTransition() {
+      const { gsap } = await import("gsap")
+      if (cancelled) return
+
+      context = gsap.context(() => {
+        gsap.fromTo(
+          ".tech-dossier-current",
+          { autoAlpha: 0, y: 18, rotateX: -8 },
+          { autoAlpha: 1, y: 0, rotateX: 0, duration: 0.42, ease: "expo.out" }
+        )
+      }, sectionRef.current ?? undefined)
+    }
+
+    runTransition()
+
+    return () => {
+      cancelled = true
+      context?.revert()
+    }
+  }, [activeIndex, activeRevealed])
 
   const revealCard = (index: number) => {
     const card = deck[index]

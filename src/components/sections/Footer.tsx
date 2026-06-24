@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { BracketLabel } from "@/components/shared/BracketLabel"
+import { motionAwareScrollBehavior } from "@/lib/motion"
 
 export function Footer() {
   const [count, setCount] = useState(0)
@@ -14,12 +15,12 @@ export function Footer() {
   }, [])
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" })
+    window.scrollTo({ top: 0, behavior: motionAwareScrollBehavior() })
   }
 
   return (
     <footer className="border-t border-foreground/10 px-6 py-8 lg:px-10">
-      <div className="mx-auto flex max-w-7xl items-center justify-between">
+      <div className="mx-auto flex max-w-7xl flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <BracketLabel>© {new Date().getFullYear()}</BracketLabel>
           <span className="font-swiss-label text-muted-foreground">

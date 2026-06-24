@@ -1,45 +1,56 @@
 "use client"
 
-import { useRef, useState } from "react"
-import { gsap } from "gsap"
-import { useGSAP } from "@gsap/react"
+import { useEffect, useRef, useState } from "react"
 import { cn } from "@/lib/utils"
-
-gsap.registerPlugin(useGSAP)
+import { shouldUseHeavyMotion } from "@/lib/motion"
 
 export function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null)
   const [hovering, setHovering] = useState(false)
 
-  useGSAP(() => {
+  useEffect(() => {
     const cursor = cursorRef.current
-    if (!cursor) return
+    if (!cursor || !shouldUseHeavyMotion(768)) return
 
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    const xTo = gsap.quickTo(cursor, "x", { duration: prefersReduced ? 0 : 0.22, ease: "power3.out" })
-    const yTo = gsap.quickTo(cursor, "y", { duration: prefersReduced ? 0 : 0.22, ease: "power3.out" })
+    let cancelled = false
+    let cleanup: (() => void) | undefined
 
-    const move = (e: MouseEvent) => {
-      xTo(e.clientX)
-      yTo(e.clientY)
+    async function bindCursor() {
+      const { gsap } = await import("gsap")
+      if (cancelled) return
+
+      const xTo = gsap.quickTo(cursor, "x", { duration: 0.22, ease: "power3.out" })
+      const yTo = gsap.quickTo(cursor, "y", { duration: 0.22, ease: "power3.out" })
+
+      const move = (e: MouseEvent) => {
+        xTo(e.clientX)
+        yTo(e.clientY)
+      }
+
+      const updateHover = (target: EventTarget | null, next: boolean) => {
+        if (!(target instanceof Element)) return
+        if (target.closest("a, button, [data-cursor-hover]")) setHovering(next)
+      }
+
+      const enter = (e: PointerEvent) => updateHover(e.target, true)
+      const leave = (e: PointerEvent) => updateHover(e.target, false)
+
+      window.addEventListener("mousemove", move, { passive: true })
+      document.addEventListener("pointerover", enter, { passive: true })
+      document.addEventListener("pointerout", leave, { passive: true })
+
+      cleanup = () => {
+        window.removeEventListener("mousemove", move)
+        document.removeEventListener("pointerover", enter)
+        document.removeEventListener("pointerout", leave)
+      }
     }
 
-    const updateHover = (target: EventTarget | null, next: boolean) => {
-      if (!(target instanceof Element)) return
-      if (target.closest("a, button, [data-cursor-hover]")) setHovering(next)
-    }
-
-    const enter = (e: PointerEvent) => updateHover(e.target, true)
-    const leave = (e: PointerEvent) => updateHover(e.target, false)
-
-    window.addEventListener("mousemove", move, { passive: true })
-    document.addEventListener("pointerover", enter, { passive: true })
-    document.addEventListener("pointerout", leave, { passive: true })
+    bindCursor()
 
     return () => {
-      window.removeEventListener("mousemove", move)
-      document.removeEventListener("pointerover", enter)
-      document.removeEventListener("pointerout", leave)
+      cancelled = true
+      cleanup?.()
     }
   }, [])
 

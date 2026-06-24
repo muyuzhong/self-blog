@@ -1,11 +1,7 @@
 "use client"
 
-import { useRef, useState } from "react"
-import { gsap } from "gsap"
-import { useGSAP } from "@gsap/react"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
-
-gsap.registerPlugin(useGSAP, ScrollTrigger)
+import { useEffect, useRef, useState } from "react"
+import { shouldUseHeavyMotion } from "@/lib/motion"
 
 const sections = [
   { id: "home", label: "00" },
@@ -21,37 +17,90 @@ export function MotionProgress() {
   const barRef = useRef<HTMLSpanElement>(null)
   const [active, setActive] = useState("00")
 
-  useGSAP(() => {
+  useEffect(() => {
     const bar = barRef.current
     if (!bar) return
 
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    gsap.set(bar, { scaleY: 0, transformOrigin: "50% 0%" })
+    if (!shouldUseHeavyMotion(1024)) {
+      let activeLabel = active
 
-    const setProgress = gsap.quickTo(bar, "scaleY", {
-      duration: prefersReduced ? 0 : 0.28,
-      ease: "power3.out",
-    })
+      const updateProgress = () => {
+        const root = document.documentElement
+        const maxScroll = Math.max(1, root.scrollHeight - root.clientHeight)
+        const progress = Math.min(1, Math.max(0, window.scrollY / maxScroll))
+        bar.style.transform = `scaleY(${progress})`
 
-    ScrollTrigger.create({
-      start: 0,
-      end: "max",
-      onUpdate: (self) => setProgress(self.progress),
-    })
+        const current = sections.find((section) => {
+          const element = document.getElementById(section.id)
+          if (!element) return false
+          const rect = element.getBoundingClientRect()
+          return rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2
+        })
 
-    sections.forEach((section) => {
-      const element = document.getElementById(section.id)
-      if (!element) return
+        if (current && current.label !== activeLabel) {
+          activeLabel = current.label
+          setActive(current.label)
+        }
+      }
 
-      ScrollTrigger.create({
-        trigger: element,
-        start: "top center",
-        end: "bottom center",
-        onEnter: () => setActive(section.label),
-        onEnterBack: () => setActive(section.label),
-      })
-    })
-  }, { scope: rootRef })
+      updateProgress()
+      window.addEventListener("scroll", updateProgress, { passive: true })
+      window.addEventListener("resize", updateProgress)
+
+      return () => {
+        window.removeEventListener("scroll", updateProgress)
+        window.removeEventListener("resize", updateProgress)
+      }
+    }
+
+    let cancelled = false
+    let context: { revert: () => void } | undefined
+
+    async function bindProgress() {
+      const [{ gsap }, { ScrollTrigger }] = await Promise.all([
+        import("gsap"),
+        import("gsap/ScrollTrigger"),
+      ])
+
+      if (cancelled) return
+      gsap.registerPlugin(ScrollTrigger)
+
+      context = gsap.context(() => {
+        gsap.set(bar, { scaleY: 0, transformOrigin: "50% 0%" })
+
+        const setProgress = gsap.quickTo(bar, "scaleY", {
+          duration: 0.28,
+          ease: "power3.out",
+        })
+
+        ScrollTrigger.create({
+          start: 0,
+          end: "max",
+          onUpdate: (self) => setProgress(self.progress),
+        })
+
+        sections.forEach((section) => {
+          const element = document.getElementById(section.id)
+          if (!element) return
+
+          ScrollTrigger.create({
+            trigger: element,
+            start: "top center",
+            end: "bottom center",
+            onEnter: () => setActive(section.label),
+            onEnterBack: () => setActive(section.label),
+          })
+        })
+      }, rootRef.current ?? undefined)
+    }
+
+    bindProgress()
+
+    return () => {
+      cancelled = true
+      context?.revert()
+    }
+  }, [])
 
   return (
     <div
@@ -63,7 +112,11 @@ export function MotionProgress() {
         {active}
       </span>
       <span className="relative h-36 w-px overflow-hidden bg-foreground/12">
-        <span ref={barRef} className="absolute left-0 top-0 h-full w-full bg-accent" />
+        <span
+          ref={barRef}
+          className="absolute left-0 top-0 h-full w-full bg-accent"
+          style={{ transform: "scaleY(0)", transformOrigin: "50% 0%" }}
+        />
       </span>
     </div>
   )

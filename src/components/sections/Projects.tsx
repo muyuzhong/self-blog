@@ -1,17 +1,13 @@
 "use client"
 
-import { useRef, useState } from "react"
-import { gsap } from "gsap"
-import { useGSAP } from "@gsap/react"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { useEffect, useRef, useState } from "react"
 import { ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, Rotate3D } from "lucide-react"
 import { SectionLabel } from "@/components/shared/SectionLabel"
 import { VerticalText } from "@/components/shared/VerticalText"
 import { BracketLabel } from "@/components/shared/BracketLabel"
 import { projects } from "@/lib/data"
 import { cn } from "@/lib/utils"
-
-gsap.registerPlugin(useGSAP, ScrollTrigger)
+import { motionAwareScrollBehavior, shouldUseHeavyMotion } from "@/lib/motion"
 
 export function Projects() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -22,17 +18,107 @@ export function Projects() {
   const [activeIndex, setActiveIndex] = useState(0)
   const [flipped, setFlipped] = useState<Record<string, boolean>>({})
 
-  useGSAP((context, contextSafe) => {
+  useEffect(() => {
     const track = trackRef.current
     const viewport = viewportRef.current
-    const cards = (context.selector?.(".project-river-card") ?? []) as HTMLElement[]
+    const cards = Array.from(track?.querySelectorAll<HTMLElement>(".project-river-card") ?? [])
     if (!track || !viewport || cards.length === 0) return
 
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    const safe = contextSafe ?? (<T extends (...args: any[]) => any>(fn: T) => fn)
-    const clampIndex = (index: number) => gsap.utils.clamp(0, projects.length - 1, index)
-    const trackTo = gsap.quickTo(track, "x", {
-      duration: prefersReduced ? 0 : 0.72,
+    const clampIndex = (index: number) => Math.min(projects.length - 1, Math.max(0, index))
+
+    const getCenteredX = (index: number) => {
+      const card = cards[index]
+      if (!card) return 0
+
+      const maxTravel = Math.max(0, track.scrollWidth - viewport.clientWidth)
+      const centered = card.offsetLeft - (viewport.clientWidth - card.offsetWidth) / 2
+      return -Math.min(maxTravel, Math.max(0, centered))
+    }
+
+    const nativeMoveToIndex = (index: number, immediate = false) => {
+      const next = clampIndex(index)
+      const card = cards[next]
+      if (!card) return
+
+      activeIndexRef.current = next
+      setActiveIndex(next)
+
+      if (window.matchMedia("(min-width: 1024px)").matches) {
+        track.style.transform = `translate3d(${getCenteredX(next)}px, 0, 0)`
+        return
+      }
+
+      card.scrollIntoView({
+        block: "nearest",
+        inline: "center",
+        behavior: immediate ? "auto" : motionAwareScrollBehavior(),
+      })
+    }
+
+    moveProjectRef.current = nativeMoveToIndex
+    nativeMoveToIndex(activeIndexRef.current, true)
+
+    let scrollFrame = 0
+    const syncActiveFromScroll = () => {
+      scrollFrame = 0
+      const viewportCenter = viewport.scrollLeft + viewport.clientWidth / 2
+      let nearestIndex = activeIndexRef.current
+      let nearestDistance = Number.POSITIVE_INFINITY
+
+      cards.forEach((card, index) => {
+        const cardCenter = card.offsetLeft + card.offsetWidth / 2
+        const distance = Math.abs(cardCenter - viewportCenter)
+        if (distance < nearestDistance) {
+          nearestDistance = distance
+          nearestIndex = index
+        }
+      })
+
+      if (nearestIndex !== activeIndexRef.current) {
+        activeIndexRef.current = nearestIndex
+        setActiveIndex(nearestIndex)
+      }
+    }
+
+    const onNativeScroll = () => {
+      if (scrollFrame) return
+      scrollFrame = window.requestAnimationFrame(syncActiveFromScroll)
+    }
+
+    const onResize = () => nativeMoveToIndex(activeIndexRef.current, true)
+    viewport.addEventListener("scroll", onNativeScroll, { passive: true })
+    window.addEventListener("resize", onResize)
+
+    return () => {
+      viewport.removeEventListener("scroll", onNativeScroll)
+      window.removeEventListener("resize", onResize)
+      if (scrollFrame) window.cancelAnimationFrame(scrollFrame)
+    }
+  }, [])
+
+  useEffect(() => {
+    const track = trackRef.current
+    const viewport = viewportRef.current
+    const cards = Array.from(track?.querySelectorAll<HTMLElement>(".project-river-card") ?? [])
+    if (!track || !viewport || cards.length === 0 || !shouldUseHeavyMotion(1024)) return
+
+    let cancelled = false
+    let context: { revert: () => void } | undefined
+    let cleanup: (() => void) | undefined
+
+    async function runAnimation() {
+      const [{ gsap }, { ScrollTrigger }] = await Promise.all([
+        import("gsap"),
+        import("gsap/ScrollTrigger"),
+      ])
+
+      if (cancelled) return
+      gsap.registerPlugin(ScrollTrigger)
+
+      context = gsap.context(() => {
+        const clampIndex = (index: number) => gsap.utils.clamp(0, projects.length - 1, index)
+    const trackTo = gsap.quickTo(track!, "x", {
+      duration: 0.72,
       ease: "expo.out",
     })
 
@@ -41,13 +127,13 @@ export function Projects() {
       const card = cards[next]
       if (!card) return
 
-      const maxTravel = Math.max(0, track.scrollWidth - viewport.clientWidth)
-      const centered = card.offsetLeft - (viewport.clientWidth - card.offsetWidth) / 2
+      const maxTravel = Math.max(0, track!.scrollWidth - viewport!.clientWidth)
+      const centered = card.offsetLeft - (viewport!.clientWidth - card.offsetWidth) / 2
       const x = -gsap.utils.clamp(0, maxTravel, centered)
 
       activeIndexRef.current = next
       setActiveIndex(next)
-      if (immediate) gsap.set(track, { x })
+      if (immediate) gsap.set(track!, { x })
       else trackTo(x)
     }
 
@@ -61,7 +147,6 @@ export function Projects() {
       rotationZ: (index) => (index % 3 - 1) * 2,
     })
 
-    if (!prefersReduced) {
       gsap.from(cards, {
         autoAlpha: 0,
         y: 90,
@@ -75,7 +160,6 @@ export function Projects() {
           start: "top 70%",
         },
       })
-    }
 
     moveToIndex(activeIndexRef.current, true)
 
@@ -83,7 +167,7 @@ export function Projects() {
     window.addEventListener("resize", onResize)
 
     let edgeDirection = 0
-    let edgeDelay: gsap.core.Tween | null = null
+    let edgeDelay: { kill: () => void } | null = null
 
     const scheduleEdgeMove = () => {
       edgeDelay?.kill()
@@ -106,27 +190,26 @@ export function Projects() {
       edgeDelay = null
     }
 
-    const onViewportMove = safe((event: PointerEvent) => {
-      if (window.innerWidth < 1024) return
-      const rect = viewport.getBoundingClientRect()
+        const onViewportMove = (event: PointerEvent) => {
+      const rect = viewport!.getBoundingClientRect()
       const px = (event.clientX - rect.left) / rect.width
       if (px < 0.16) startEdgeMove(-1)
       else if (px > 0.84) startEdgeMove(1)
       else stopEdgeMove()
-    })
+        }
 
-    viewport.addEventListener("pointermove", onViewportMove)
-    viewport.addEventListener("pointerleave", stopEdgeMove)
+    viewport!.addEventListener("pointermove", onViewportMove)
+    viewport!.addEventListener("pointerleave", stopEdgeMove)
 
     const disposers = cards.map((card) => {
-      const xTo = gsap.quickTo(card, "x", { duration: prefersReduced ? 0 : 0.35, ease: "power3.out" })
-      const yTo = gsap.quickTo(card, "y", { duration: prefersReduced ? 0 : 0.35, ease: "power3.out" })
-      const rotateXTo = gsap.quickTo(card, "rotationX", { duration: prefersReduced ? 0 : 0.34, ease: "power3.out" })
-      const rotateYTo = gsap.quickTo(card, "rotationY", { duration: prefersReduced ? 0 : 0.34, ease: "power3.out" })
-      const mx = gsap.quickTo(card, "--mx", { duration: prefersReduced ? 0 : 0.22, ease: "power3.out" })
-      const my = gsap.quickTo(card, "--my", { duration: prefersReduced ? 0 : 0.22, ease: "power3.out" })
+      const xTo = gsap.quickTo(card, "x", { duration: 0.35, ease: "power3.out" })
+      const yTo = gsap.quickTo(card, "y", { duration: 0.35, ease: "power3.out" })
+      const rotateXTo = gsap.quickTo(card, "rotationX", { duration: 0.34, ease: "power3.out" })
+      const rotateYTo = gsap.quickTo(card, "rotationY", { duration: 0.34, ease: "power3.out" })
+      const mx = gsap.quickTo(card, "--mx", { duration: 0.22, ease: "power3.out" })
+      const my = gsap.quickTo(card, "--my", { duration: 0.22, ease: "power3.out" })
 
-      const move = safe((event: PointerEvent) => {
+      const move = (event: PointerEvent) => {
         const rect = card.getBoundingClientRect()
         const px = (event.clientX - rect.left) / rect.width
         const py = (event.clientY - rect.top) / rect.height
@@ -136,26 +219,26 @@ export function Projects() {
         yTo((py - 0.5) * 24)
         rotateXTo((0.5 - py) * 9)
         rotateYTo((px - 0.5) * 14)
-      })
+      }
 
-      const enter = safe(() => {
+      const enter = () => {
         card.style.zIndex = "20"
         gsap.to(card, {
-          scale: prefersReduced ? 1 : 1.035,
-          z: prefersReduced ? 0 : 110,
+          scale: 1.035,
+          z: 110,
           duration: 0.42,
           ease: "expo.out",
         })
         gsap.to(card.querySelectorAll(".project-river-token"), {
-          y: prefersReduced ? 0 : -5,
+          y: -5,
           autoAlpha: 1,
           duration: 0.26,
           stagger: 0.025,
           ease: "power3.out",
         })
-      })
+      }
 
-      const leave = safe(() => {
+      const leave = () => {
         const index = Number(card.dataset.index ?? 0)
         card.style.zIndex = ""
         mx(50)
@@ -176,7 +259,7 @@ export function Projects() {
           duration: 0.2,
           ease: "power3.out",
         })
-      })
+      }
 
       card.addEventListener("pointermove", move)
       card.addEventListener("pointerenter", enter)
@@ -189,14 +272,24 @@ export function Projects() {
       }
     })
 
-    return () => {
+        cleanup = () => {
       window.removeEventListener("resize", onResize)
-      viewport.removeEventListener("pointermove", onViewportMove)
-      viewport.removeEventListener("pointerleave", stopEdgeMove)
+      viewport!.removeEventListener("pointermove", onViewportMove)
+      viewport!.removeEventListener("pointerleave", stopEdgeMove)
       stopEdgeMove()
       disposers.forEach((dispose) => dispose())
     }
-  }, { scope: sectionRef })
+      }, sectionRef.current ?? undefined)
+    }
+
+    runAnimation()
+
+    return () => {
+      cancelled = true
+      cleanup?.()
+      context?.revert()
+    }
+  }, [])
 
   const moveProject = (offset: number) => {
     moveProjectRef.current(activeIndexRef.current + offset)

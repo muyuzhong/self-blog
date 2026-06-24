@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
+import { motionAwareScrollBehavior } from "@/lib/motion"
 
 const navItems = [
  { label: "首页", href: "#hero" },
@@ -37,7 +38,7 @@ export function Navbar() {
  const scrollTo = (href: string) => {
  const el = document.querySelector(href)
  if (el) {
- el.scrollIntoView({ behavior: "smooth" })
+ el.scrollIntoView({ behavior: motionAwareScrollBehavior() })
  setMobileOpen(false)
  }
  }

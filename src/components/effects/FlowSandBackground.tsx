@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from "react"
+import { shouldUseHeavyMotion } from "@/lib/motion"
 
 const VERTEX_SHADER = `
 attribute vec2 position;
@@ -96,7 +97,7 @@ export function FlowSandBackground() {
     })
     if (!gl) return
 
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    const animateScene = shouldUseHeavyMotion(768)
     const mouse = { x: 0.5, y: 0.5 }
     let raf = 0
     let startedAt = performance.now()
@@ -152,7 +153,7 @@ export function FlowSandBackground() {
       gl.uniform3f(accentLoc, r, g, b)
       gl.drawArrays(gl.TRIANGLES, 0, 6)
 
-      if (!prefersReduced) raf = requestAnimationFrame(draw)
+      if (animateScene) raf = requestAnimationFrame(draw)
     }
 
     const onPointerMove = (event: PointerEvent) => {
@@ -163,14 +164,14 @@ export function FlowSandBackground() {
 
     resize()
     window.addEventListener("resize", resize)
-    window.addEventListener("pointermove", onPointerMove, { passive: true })
+    if (animateScene) window.addEventListener("pointermove", onPointerMove, { passive: true })
     startedAt = performance.now()
     raf = requestAnimationFrame(draw)
 
     return () => {
       cancelAnimationFrame(raf)
       window.removeEventListener("resize", resize)
-      window.removeEventListener("pointermove", onPointerMove)
+      if (animateScene) window.removeEventListener("pointermove", onPointerMove)
       gl.deleteProgram(program)
       gl.deleteShader(vertexShader)
       gl.deleteShader(fragmentShader)

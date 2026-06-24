@@ -1584,14 +1584,18 @@
   .article-content pre {
     margin: 2rem 0;
     padding: 1.05rem 1.25rem;
+    max-width: 100%;
     background: hsl(var(--card));
     border: 1px solid hsla(0, 0%, 89%, 0.1);
     border-left: 2px solid hsl(var(--accent) / 0.6);
     overflow-x: auto;
+    contain: inline-size;
     font-size: 0.875rem;
     line-height: 1.7;
   }
   .article-content pre code {
+    display: inline-block;
+    min-width: 100%;
     color: hsl(var(--foreground) / 0.92);
     background: transparent;
     padding: 0;
@@ -1652,6 +1656,7 @@
   .article-content table {
     margin: 2rem 0;
     width: 100%;
+    max-width: 100%;
     border-collapse: collapse;
     font-size: 0.95em;
   }
@@ -1665,6 +1670,21 @@
     background: hsla(46, 100%, 45%, 0.05);
     font-weight: 600;
     color: hsl(var(--foreground));
+  }
+
+  @media (max-width: 640px) {
+    .article-content table {
+      display: block;
+      overflow-x: auto;
+      contain: inline-size;
+      white-space: nowrap;
+    }
+
+    .article-content th,
+    .article-content td {
+      min-width: 7rem;
+      white-space: normal;
+    }
   }
 
   /* Images */
@@ -2045,5 +2065,165 @@
     opacity: 1 !important;
     filter: none !important;
     transform: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  body {
+    background-size: 64px 64px, 64px 64px, auto;
+  }
+
+  main,
+  section,
+  article {
+    min-width: 0;
+  }
+
+  img,
+  canvas,
+  svg {
+    max-width: 100%;
+  }
+
+  .project-river-section,
+  .project-river-viewport,
+  .tech-card-table {
+    perspective: none;
+  }
+
+  .project-river-track,
+  .project-river-card,
+  .project-river-flip,
+  .project-river-face,
+  .tech-card-table-grid,
+  .tech-card,
+  .tech-card-inner,
+  .tech-card-face {
+    transform-style: flat;
+    will-change: auto;
+  }
+
+  .project-river-card,
+  .project-river-card:hover {
+    transform: none !important;
+  }
+
+  .project-river-card.is-flipped .project-river-flip {
+    transform: none;
+  }
+
+  .project-river-back {
+    display: none;
+    transform: none;
+  }
+
+  .project-river-card.is-flipped .project-river-front {
+    display: none;
+  }
+
+  .project-river-card.is-flipped .project-river-back {
+    display: flex;
+  }
+
+  .project-river-preview,
+  .project-semantic-visual,
+  .project-river-letter,
+  .project-river-scan {
+    transform: none;
+  }
+
+  .project-river-controls {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .project-river-dot {
+    min-width: 2.75rem;
+  }
+
+  .tech-card-table::before,
+  .tech-card-table::after,
+  .tech-card-table-grid,
+  .tech-card,
+  .tech-card:hover,
+  .tech-card.is-active,
+  .tech-card.is-revealed .tech-card-inner,
+  .tech-dossier-current {
+    transform: none !important;
+  }
+
+  .tech-card-front {
+    display: none;
+    transform: none;
+  }
+
+  .tech-card.is-revealed .tech-card-back {
+    display: none;
+  }
+
+  .tech-card.is-revealed .tech-card-front {
+    display: flex;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swiss-grid-flow,
+  .swiss-orb,
+  .animate-scroll-hint {
+    animation: none !important;
+  }
+
+  .project-river-section,
+  .project-river-viewport,
+  .project-river-track,
+  .project-river-card,
+  .project-river-flip,
+  .project-river-face,
+  .project-river-preview,
+  .project-semantic-visual,
+  .project-river-letter,
+  .project-river-scan,
+  .tech-card-table,
+  .tech-card-table::before,
+  .tech-card-table::after,
+  .tech-card-table-grid,
+  .tech-card,
+  .tech-card:hover,
+  .tech-card.is-active,
+  .tech-card-inner,
+  .tech-card-face,
+  .tech-dossier-current {
+    transform: none !important;
+    transform-style: flat !important;
+    perspective: none !important;
+    filter: none !important;
+    will-change: auto !important;
+  }
+
+  .project-river-card.is-flipped .project-river-flip,
+  .tech-card.is-revealed .tech-card-inner {
+    transform: none !important;
+  }
+
+  .project-river-back,
+  .tech-card-front {
+    display: none;
+    transform: none !important;
+  }
+
+  .project-river-card.is-flipped .project-river-front,
+  .tech-card.is-revealed .tech-card-back {
+    display: none;
+  }
+
+  .project-river-card.is-flipped .project-river-back,
+  .tech-card.is-revealed .tech-card-front {
+    display: flex;
   }
 }

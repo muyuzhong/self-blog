@@ -1,13 +1,9 @@
 "use client"
 
-import { useRef } from "react"
-import { gsap } from "gsap"
-import { useGSAP } from "@gsap/react"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { useEffect, useRef } from "react"
 import { SectionLabel } from "@/components/shared/SectionLabel"
 import { VerticalText } from "@/components/shared/VerticalText"
-
-gsap.registerPlugin(useGSAP, ScrollTrigger)
+import { shouldUseHeavyMotion } from "@/lib/motion"
 
 const poem = [
   ["起初，思想只是回声，", "在语言深处往返，", "看见万物，", "却从未触碰一粒尘埃。"],
@@ -21,66 +17,83 @@ const memories = ["回声", "微光", "方向", "来处"]
 export function About() {
   const sectionRef = useRef<HTMLElement>(null)
 
-  useGSAP(() => {
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    if (prefersReducedMotion) {
-      gsap.set([".about-poem-line", ".about-poem-index", ".about-poem-memory"], {
-        clearProps: "all",
-      })
-      gsap.set(".about-poem-route-fill", { scaleY: 1 })
-      return
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section || !shouldUseHeavyMotion(1024)) return
+    const scope: HTMLElement = section
+
+    let cancelled = false
+    let context: { revert: () => void } | undefined
+
+    async function runAnimation() {
+      const [{ gsap }, { ScrollTrigger }] = await Promise.all([
+        import("gsap"),
+        import("gsap/ScrollTrigger"),
+      ])
+
+      if (cancelled) return
+      gsap.registerPlugin(ScrollTrigger)
+
+      context = gsap.context(() => {
+        gsap.from(".about-poem-route-fill", {
+          scaleY: 0,
+          transformOrigin: "top center",
+          ease: "none",
+          scrollTrigger: {
+            trigger: scope,
+            start: "top 68%",
+            end: "bottom 62%",
+            scrub: 0.8,
+          },
+        })
+
+        gsap.utils.toArray<HTMLElement>(".about-poem-stanza").forEach((stanza) => {
+          const stanzaTimeline = gsap.timeline({
+            scrollTrigger: {
+              trigger: stanza,
+              start: "top 82%",
+              toggleActions: "play none none reverse",
+            },
+            defaults: {
+              ease: "expo.out",
+            },
+          })
+
+          stanzaTimeline
+            .from(stanza.querySelector(".about-poem-index"), {
+              autoAlpha: 0,
+              scale: 0,
+              duration: 0.5,
+            })
+            .from(stanza.querySelectorAll(".about-poem-line"), {
+              autoAlpha: 0,
+              y: 32,
+              filter: "blur(10px)",
+              duration: 1.05,
+              stagger: 0.11,
+            }, "<0.05")
+        })
+
+        gsap.to(".about-poem-memory", {
+          yPercent: (index) => (index % 2 === 0 ? -18 : 18),
+          ease: "none",
+          scrollTrigger: {
+            trigger: scope,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1.2,
+          },
+        })
+      }, scope)
     }
 
-    gsap.from(".about-poem-route-fill", {
-        scaleY: 0,
-        transformOrigin: "top center",
-        ease: "none",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 68%",
-          end: "bottom 62%",
-          scrub: 0.8,
-        },
-      })
+    runAnimation()
 
-    gsap.utils.toArray<HTMLElement>(".about-poem-stanza").forEach((stanza) => {
-      const stanzaTimeline = gsap.timeline({
-        scrollTrigger: {
-          trigger: stanza,
-          start: "top 82%",
-          toggleActions: "play none none reverse",
-        },
-        defaults: {
-          ease: "expo.out",
-        },
-      })
-
-      stanzaTimeline
-        .from(stanza.querySelector(".about-poem-index"), {
-          autoAlpha: 0,
-          scale: 0,
-          duration: 0.5,
-        })
-        .from(stanza.querySelectorAll(".about-poem-line"), {
-          autoAlpha: 0,
-          y: 32,
-          filter: "blur(10px)",
-          duration: 1.05,
-          stagger: 0.11,
-        }, "<0.05")
-    })
-
-    gsap.to(".about-poem-memory", {
-      yPercent: (index) => (index % 2 === 0 ? -18 : 18),
-      ease: "none",
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top bottom",
-        end: "bottom top",
-        scrub: 1.2,
-      },
-    })
-  }, { scope: sectionRef })
+    return () => {
+      cancelled = true
+      context?.revert()
+    }
+  }, [])
 
   return (
     <section

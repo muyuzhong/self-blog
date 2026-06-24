@@ -1,11 +1,7 @@
 "use client"
 
-import { useRef } from "react"
-import { gsap } from "gsap"
-import { useGSAP } from "@gsap/react"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
-
-gsap.registerPlugin(useGSAP, ScrollTrigger)
+import { useEffect, useRef } from "react"
+import { shouldUseHeavyMotion } from "@/lib/motion"
 
 interface UseScrollAnimationOptions {
   selector: string
@@ -21,53 +17,67 @@ export function useScrollAnimation(options: UseScrollAnimationOptions) {
   const optsRef = useRef(options)
   optsRef.current = options
 
-  useGSAP((context) => {
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section || !shouldUseHeavyMotion(768)) return
+    const scope: HTMLDivElement = section
 
-    const {
-      selector,
-      y = 40,
-      duration = 0.8,
-      stagger = 0.1,
-      ease = "power3.out",
-      start = "top 70%",
-    } = optsRef.current
+    let cancelled = false
+    let context: { revert: () => void } | undefined
 
-    const elements = (
-      context.selector
-        ? context.selector(selector)
-        : gsap.utils.toArray(selector)
-    ) as HTMLElement[]
-    if (elements.length === 0) return
+    async function runAnimation() {
+      const [{ gsap }, { ScrollTrigger }] = await Promise.all([
+        import("gsap"),
+        import("gsap/ScrollTrigger"),
+      ])
 
-    if (prefersReduced) {
-      gsap.set(elements, { opacity: 1, y: 0, willChange: "auto" })
-      return
+      if (cancelled) return
+      gsap.registerPlugin(ScrollTrigger)
+
+      context = gsap.context(() => {
+        const {
+          selector,
+          y = 40,
+          duration = 0.8,
+          stagger = 0.1,
+          ease = "power3.out",
+          start = "top 70%",
+        } = optsRef.current
+
+        const elements = Array.from(scope.querySelectorAll<HTMLElement>(selector))
+        if (elements.length === 0) return
+
+        // Pre-set initial state + promote to composite layer for smooth animation.
+        gsap.set(elements, {
+          opacity: 0,
+          y,
+          willChange: "transform, opacity",
+        })
+
+        gsap.to(elements, {
+          y: 0,
+          opacity: 1,
+          duration,
+          stagger,
+          ease,
+          scrollTrigger: {
+            trigger: scope,
+            start,
+          },
+          onComplete: () => {
+            gsap.set(elements, { willChange: "auto" })
+          },
+        })
+      }, scope)
     }
 
-    // Pre-set initial state + promote to composite layer for smooth animation
-    gsap.set(elements, {
-      opacity: 0,
-      y,
-      willChange: "transform, opacity",
-    })
+    runAnimation()
 
-    gsap.to(elements, {
-      y: 0,
-      opacity: 1,
-      duration,
-      stagger,
-      ease,
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start,
-      },
-      onComplete: () => {
-        // Clean up will-change after animation to free GPU memory
-        gsap.set(elements, { willChange: "auto" })
-      },
-    })
-  }, { scope: sectionRef })
+    return () => {
+      cancelled = true
+      context?.revert()
+    }
+  }, [])
 
   return sectionRef
 }

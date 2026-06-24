@@ -1,13 +1,10 @@
 "use client"
 
-import { useRef } from "react"
-import { gsap } from "gsap"
-import { useGSAP } from "@gsap/react"
+import { useEffect, useRef } from "react"
 import { ArrowDown, ArrowUpRight } from "lucide-react"
 import { BracketLabel } from "@/components/shared/BracketLabel"
 import { FlowSandBackground } from "@/components/effects/FlowSandBackground"
-
-gsap.registerPlugin(useGSAP)
+import { shouldUseHeavyMotion } from "@/lib/motion"
 
 const notes = [
   "Agent 开发",
@@ -21,38 +18,48 @@ export function Hero() {
   const titleRef = useRef<HTMLHeadingElement>(null)
   const subRef = useRef<HTMLDivElement>(null)
 
-  useGSAP((context) => {
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    const select = context.selector
-    const revealTargets = [
-      ...(titleRef.current?.querySelectorAll(".line") ?? []),
-      subRef.current,
-      ...(select ? select(".hero-focus-row, .scroll-hint, .hero-kicker") : []),
-    ].filter(Boolean)
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container || !shouldUseHeavyMotion(768)) return
+    const scope: HTMLDivElement = container
 
-    if (prefersReduced) {
-      gsap.set(revealTargets, { opacity: 1, y: 0, clipPath: "inset(0% 0% 0% 0%)" })
-      return
+    let cancelled = false
+    let context: { revert: () => void } | undefined
+
+    async function runAnimation() {
+      const { gsap } = await import("gsap")
+      if (cancelled) return
+
+      context = gsap.context(() => {
+        const titleLines = Array.from(titleRef.current?.querySelectorAll(".line") ?? [])
+
+        gsap.set(titleLines, {
+          clipPath: "inset(0% 0% 100% 0%)",
+          y: 42,
+          opacity: 0,
+        })
+
+        const tl = gsap.timeline({ defaults: { ease: "expo.out" } })
+        tl.to(titleLines, {
+          y: 0,
+          opacity: 1,
+          clipPath: "inset(0% 0% 0% 0%)",
+          duration: 1.05,
+          stagger: 0.1,
+        })
+        tl.from(subRef.current, { y: 28, opacity: 0, duration: 0.72 }, "-=0.45")
+        tl.from(".hero-focus-row", { x: 28, opacity: 0, duration: 0.58, stagger: 0.07 }, "-=0.42")
+        tl.from(".scroll-hint", { y: 18, opacity: 0, duration: 0.5 }, "-=0.2")
+      }, scope)
     }
 
-    gsap.set(titleRef.current?.querySelectorAll(".line") || [], {
-      clipPath: "inset(0% 0% 100% 0%)",
-      y: 42,
-      opacity: 0,
-    })
+    runAnimation()
 
-    const tl = gsap.timeline({ defaults: { ease: "expo.out" } })
-    tl.to(titleRef.current?.querySelectorAll(".line") || [], {
-      y: 0,
-      opacity: 1,
-      clipPath: "inset(0% 0% 0% 0%)",
-      duration: 1.05,
-      stagger: 0.1,
-    })
-    tl.from(subRef.current, { y: 28, opacity: 0, duration: 0.72 }, "-=0.45")
-    tl.from(".hero-focus-row", { x: 28, opacity: 0, duration: 0.58, stagger: 0.07 }, "-=0.42")
-    tl.from(".scroll-hint", { y: 18, opacity: 0, duration: 0.5 }, "-=0.2")
-  }, { scope: containerRef })
+    return () => {
+      cancelled = true
+      context?.revert()
+    }
+  }, [])
 
   return (
     <section
