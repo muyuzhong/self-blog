@@ -1,37 +1,67 @@
-# dependencies
-/node_modules
-/.pnp
+# Dependencies
+/node_modules/
+/.pnp/
 .pnp.js
+.pnp.cjs
 
-# testing
-/coverage
-
-# next.js
+# Build output
 /.next/
 /out/
+/dist/
+/build/
 
-# production
-/build
+# Test and coverage output
+/coverage/
+/playwright-report/
+/test-results/
 
-# misc
-.DS_Store
-*.pem
-
-# debug
+# Logs and one-off local run output
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+bun-debug.log*
+dev.log
+npm-install.log
+npm-install-done.txt
+.server_pid.txt
+*.pid
+*.tmp
+/tmp/
+/temp/
+/install.bat
+/start_dev.bat
 
-# local env files
-.env*.local
+# Local environment files
 .env
+.env.*
+!.env.example
 
-# vercel
-.vercel
-
-# typescript
+# TypeScript and Next generated files
 *.tsbuildinfo
 next-env.d.ts
 
-# claude code
-.claude/
+# Package manager and manually packed dependency artifacts
+*.tgz
+*.tar.gz
+*.zip
+
+# Deployment and tool caches
+/.vercel/
+/.turbo/
+/.cache/
+
+# Local editor and AI assistant state
+/.claude/
+/.codex/
+/.agents/
+/.cursor/
+/.idea/
+/.vscode/
+/.worktrees/
+
+# OS files and secrets
+.DS_Store
+Thumbs.db
+*.pem
