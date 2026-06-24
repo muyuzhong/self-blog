@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>暮羽中 | Agent 开发学习者</title>
+    <link>https://muyuzhong.xyz</link>
+    <description>暮羽中的个人网站，记录 Agent 开发学习、技术笔记和实习准备。</description>
+    <language>zh-CN</language>
+    <lastBuildDate>Fri, 19 Jun 2026 17:50:01 GMT</lastBuildDate>
+    <atom:link href="https://muyuzhong.xyz/feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>我的场景为什么需要 Agent，而不是普通 Workflow</title>
+      <link>https://muyuzhong.xyz/blog/why-agent-not-workflow/</link>
+      <guid isPermaLink="true">https://muyuzhong.xyz/blog/why-agent-not-workflow/</guid>
+      <description>很多所谓 Agent 其实只是用 LLM 串起来的 Workflow。区别在流程由谁决定：开发者写死路径，还是模型在目标、状态和工具之间动态决策。</description>
+      <pubDate>Thu, 28 May 2026 13:35:58 GMT</pubDate>
+    </item>
+    <item>
+      <title>工具层设计：给行动上锁的人</title>
+      <link>https://muyuzhong.xyz/blog/tool-layer-the-key-keeper/</link>
+      <guid isPermaLink="true">https://muyuzhong.xyz/blog/tool-layer-the-key-keeper/</guid>
+      <description>模型提出行动，工具层负责把它变成可授权、可验证、可执行、可审计的真实操作。本文拆解工具契约、六阶段执行流水线、分层权限，以及五个绕不开的设计决策。</description>
+      <pubDate>Fri, 19 Jun 2026 17:50:01 GMT</pubDate>
+    </item>
+    <item>
+      <title>运行时引擎：那个站在天才身后的人</title>
+      <link>https://muyuzhong.xyz/blog/runtime-engine-the-clockmaker/</link>
+      <guid isPermaLink="true">https://muyuzhong.xyz/blog/runtime-engine-the-clockmaker/</guid>
+      <description>模型是那个能推演一百步齿轮的天才钟表匠，运行时是那个确认桌上零件、核对图纸、写好交接单的人。她不做齿轮，但她确保天才不被自己的混乱所困。</description>
+      <pubDate>Sun, 14 Jun 2026 16:46:39 GMT</pubDate>
+    </item>
+    <item>
+      <title>容错与可靠性工程：夜巡人与不断的钟</title>
+      <link>https://muyuzhong.xyz/blog/reliability-engineering-the-night-watch/</link>
+      <guid isPermaLink="true">https://muyuzhong.xyz/blog/reliability-engineering-the-night-watch/</guid>
+      <description>可靠性不是不出错，而是出错后能看见、能恢复、能被接管，并把故障变成下一次更稳的证据。</description>
+      <pubDate>Thu, 18 Jun 2026 07:52:20 GMT</pubDate>
+    </item>
+    <item>
+      <title>生产级 Harness：从样机到工坊规矩</title>
+      <link>https://muyuzhong.xyz/blog/production-harness-the-workshop-rules/</link>
+      <guid isPermaLink="true">https://muyuzhong.xyz/blog/production-harness-the-workshop-rules/</guid>
+      <description>原型只要跑通一次，生产系统要长期可维护、可扩展、可灰度、可回滚，并且说得清每个控制在防什么。</description>
+      <pubDate>Thu, 18 Jun 2026 07:52:20 GMT</pubDate>
+    </item>
+    <item>
+      <title>任务编排与工作流引擎：给工坊排班的人</title>
+      <link>https://muyuzhong.xyz/blog/orchestration-the-workshop-scheduler/</link>
+      <guid isPermaLink="true">https://muyuzhong.xyz/blog/orchestration-the-workshop-scheduler/</guid>
+      <description>运行时只管一条循环内的下一步，编排层管的是跨循环、跨智能体的全局调度。本文拆解 DAG 任务分解、拓扑分层调度、七种任务类型、状态机工作流与副作用暂停、多智能体角色专化，以及通信的三条底线。</description>
+      <pubDate>Fri, 19 Jun 2026 17:50:01 GMT</pubDate>
+    </item>
+    <item>
+      <title>模型集成与输出治理：把预言放上验货台</title>
+      <link>https://muyuzhong.xyz/blog/model-governance-the-inspection-table/</link>
+      <guid isPermaLink="true">https://muyuzhong.xyz/blog/model-governance-the-inspection-table/</guid>
+      <description>模型输出只是候选意图。Harness 要先选择、适配、解析、验证和预算，才能让它进入运行时或工具层。</description>
+      <pubDate>Thu, 18 Jun 2026 07:52:20 GMT</pubDate>
+    </item>
+    <item>
+      <title>记忆与上下文：档案馆里那盏灯</title>
+      <link>https://muyuzhong.xyz/blog/memory-context-the-archive-lamp/</link>
+      <guid isPermaLink="true">https://muyuzhong.xyz/blog/memory-context-the-archive-lamp/</guid>
+      <description>记忆回答系统过去知道什么，上下文回答本轮该让模型看到什么。本文拆解二者的边界、分层记忆、混合检索、上下文组装投影、Token 预算与离线整合，以及它们如何接入运行时。</description>
+      <pubDate>Fri, 19 Jun 2026 17:50:01 GMT</pubDate>
+    </item>
+    <item>
+      <title>MCP 与工具生态：给工具修码头的人</title>
+      <link>https://muyuzhong.xyz/blog/mcp-tool-ecosystem-the-harbor-master/</link>
+      <guid isPermaLink="true">https://muyuzhong.xyz/blog/mcp-tool-ecosystem-the-harbor-master/</guid>
+      <description>MCP 让工具从框架私有接口变成公共协议。Harness 还要在协议之上做好发现、缓存、权限、降级和按需加载。</description>
+      <pubDate>Thu, 18 Jun 2026 07:52:20 GMT</pubDate>
+    </item>
+    <item>
+      <title>多 Agent 不一定更强，它可能只是把不稳定分散开</title>
+      <link>https://muyuzhong.xyz/blog/junshi-multi-agent/</link>
+      <guid isPermaLink="true">https://muyuzhong.xyz/blog/junshi-multi-agent/</guid>
+      <description>多 Agent 的关键是把强模型留在判断节点，把便宜模型和脚本放在执行路径上，让系统知道什么时候该求助。</description>
+      <pubDate>Thu, 21 May 2026 12:54:01 GMT</pubDate>
+    </item>
+    <item>
+      <title>Harness 安全体系：城门、通行证和最后的闸</title>
+      <link>https://muyuzhong.xyz/blog/harness-security-the-city-gates/</link>
+      <guid isPermaLink="true">https://muyuzhong.xyz/blog/harness-security-the-city-gates/</guid>
+      <description>智能体握着工具权限，安全不能只靠模型听话。可靠防线要把权限、沙箱、路径校验和审计串成纵深。</description>
+      <pubDate>Thu, 18 Jun 2026 07:52:20 GMT</pubDate>
+    </item>
+    <item>
+      <title>Harness 工程的未来：退潮后留下的脚手架</title>
+      <link>https://muyuzhong.xyz/blog/harness-future-the-tide-scaffold/</link>
+      <guid isPermaLink="true">https://muyuzhong.xyz/blog/harness-future-the-tide-scaffold/</guid>
+      <description>Agent 工程正在从提示词、上下文走向 Harness。未来的难点不只是加控制，也包括知道哪些控制已经过期。</description>
+      <pubDate>Thu, 18 Jun 2026 07:52:20 GMT</pubDate>
+    </item>
+    <item>
+      <title>评估与质量保障：秤匠和每一步脚印</title>
+      <link>https://muyuzhong.xyz/blog/evaluation-quality-the-scale-maker/</link>
+      <guid isPermaLink="true">https://muyuzhong.xyz/blog/evaluation-quality-the-scale-maker/</guid>
+      <description>Agent 评估不能只看最终成功率。步骤、轨迹、任务三层一起看，才能知道系统哪里好、哪里坏、为什么坏。</description>
+      <pubDate>Thu, 18 Jun 2026 07:52:20 GMT</pubDate>
+    </item>
+    <item>
+      <title>dynamic workflow对agent开发的启发</title>
+      <link>https://muyuzhong.xyz/blog/dynamic-workflow/</link>
+      <guid isPermaLink="true">https://muyuzhong.xyz/blog/dynamic-workflow/</guid>
+      <description>Claude Code 的 dynamic workflows 重新定义了 Agent 开发里的流程问题。垂直业务 Agent 靠固定流水线处理不了输入差异，把整条链路交给模型临场发挥又失去可控性。开发者要设计状态入口、流程生成边界、执行托管和验证节点。</description>
+      <pubDate>Thu, 04 Jun 2026 06:27:17 GMT</pubDate>
+    </item>
+    <item>
+      <title>Skill 不是长 Prompt，它是模型的工作边界</title>
+      <link>https://muyuzhong.xyz/blog/anthropic-summary/</link>
+      <guid isPermaLink="true">https://muyuzhong.xyz/blog/anthropic-summary/</guid>
+      <description>Skill 不是更长的 Prompt。它是一套按需加载的工作边界：触发、入口、材料、指令和红线，每一层都在影响模型下一步怎么判断。</description>
+      <pubDate>Fri, 01 May 2026 16:51:30 GMT</pubDate>
+    </item>
+    <item>
+      <title>我现在不再手写 Skill，而是让 AI 先写，再用结果去训练它</title>
+      <link>https://muyuzhong.xyz/blog/ai-skill-practice/</link>
+      <guid isPermaLink="true">https://muyuzhong.xyz/blog/ai-skill-practice/</guid>
+      <description>Claude 或 Codex 先生成 Skill 初版，再用真实任务、失败轨迹和 SkillOpt 去优化。Skill 是可以被验证、被拒绝、被迭代的工程资产。</description>
+      <pubDate>Wed, 27 May 2026 13:15:14 GMT</pubDate>
+    </item>
+    <item>
+      <title>从 0 实现一个 Agent Workflow</title>
+      <link>https://muyuzhong.xyz/blog/agent_workflow_blog/</link>
+      <guid isPermaLink="true">https://muyuzhong.xyz/blog/agent_workflow_blog/</guid>
+      <description>从最小 ReAct 循环出发，理解工具、记忆、多 Agent 编排，以及让智能真正抵达现实所需的工程边界。</description>
+      <pubDate>Fri, 05 Jun 2026 11:18:56 GMT</pubDate>
+    </item>
+  </channel>
+</rss>

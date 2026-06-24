@@ -1,4 +1,8 @@
 /** @type {import('next').NextConfig} */
+const { registerSeoBuildArtifacts } = require('./scripts/seo-assets.cjs')
+
+registerSeoBuildArtifacts()
+
 const nextConfig = {
   output: 'export',
   distDir: 'out',

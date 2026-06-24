@@ -7,6 +7,73 @@ import { Toaster } from "@/components/ui/sonner"
 import { ChatBot } from "@/components/effects/ChatBot"
 import { MotionProgress } from "@/components/effects/MotionProgress"
 
+const {
+  SITE_DESCRIPTION: siteDescription,
+  SITE_TITLE: siteTitle,
+  SITE_URL: siteUrl,
+  getBlogPosts: getSeoPosts,
+} = require("../../scripts/seo-assets.cjs") as {
+  SITE_DESCRIPTION: string
+  SITE_TITLE: string
+  SITE_URL: string
+  getBlogPosts: (rootDir?: string) => Array<{
+    title: string
+    excerpt: string
+    tags: string[]
+    published: string
+    modified: string
+    url: string
+  }>
+}
+
+const ogImage = "/og-image.png"
+
+function getStructuredData() {
+  const personId = `${siteUrl}/#person`
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": `${siteUrl}/#website`,
+        name: "暮羽中个人网站",
+        url: siteUrl,
+        description: "记录 Agent 开发学习、技术笔记和实习准备。",
+        inLanguage: "zh-CN",
+        publisher: { "@id": personId },
+      },
+      {
+        "@type": "Person",
+        "@id": personId,
+        name: "暮羽中",
+        url: siteUrl,
+        jobTitle: "Agent 开发学习者",
+        sameAs: ["https://github.com/muyuzhong"],
+        description: "正在学习 Agent 开发并寻找相关实习机会。",
+      },
+      ...getSeoPosts(process.cwd()).map((post) => ({
+        "@type": "Article",
+        "@id": `${post.url}#article`,
+        headline: post.title,
+        description: post.excerpt,
+        url: post.url,
+        image: new URL(ogImage, siteUrl).toString(),
+        datePublished: post.published,
+        dateModified: post.modified,
+        inLanguage: "zh-CN",
+        keywords: post.tags,
+        author: { "@id": personId },
+        publisher: { "@id": personId },
+        mainEntityOfPage: {
+          "@type": "WebPage",
+          "@id": post.url,
+        },
+      })),
+    ],
+  }
+}
+
 export const viewport: Viewport = {
   themeColor: "#1b1b1b",
   width: "device-width",
@@ -14,24 +81,38 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: { default: "暮羽中 | Agent 开发学习者", template: "%s | 暮羽中" },
-  description: "暮羽中的个人网站，记录 Agent 开发学习、技术笔记和实习准备。",
+  title: { default: siteTitle, template: "%s | 暮羽中" },
+  description: siteDescription,
   keywords: ["Agent 开发", "AI Agent", "实习", "Next.js", "React", "TypeScript", "暮羽中", "个人网站", "技术博客"],
   authors: [{ name: "暮羽中" }],
   creator: "暮羽中",
-  metadataBase: new URL("https://muyuzhong.xyz"),
+  metadataBase: new URL(siteUrl),
+  alternates: {
+    types: {
+      "application/rss+xml": "/feed.xml",
+    },
+  },
   openGraph: {
     type: "website",
     locale: "zh_CN",
     url: "/",
     siteName: "暮羽中个人网站",
-    title: "暮羽中 | Agent 开发学习者",
+    title: siteTitle,
     description: "记录 Agent 开发学习、技术笔记和实习准备。",
+    images: [
+      {
+        url: ogImage,
+        width: 1200,
+        height: 630,
+        alt: "暮羽中个人网站预览图",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "暮羽中 | Agent 开发学习者",
+    title: siteTitle,
     description: "记录 Agent 开发学习、技术笔记和实习准备。",
+    images: [ogImage],
   },
   robots: {
     index: true,
@@ -53,33 +134,14 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Noto+Serif+SC:wght@500;600;700;900&family=Playfair+Display:wght@600;700;800&display=swap"
           rel="stylesheet"
         />
+      </head>
+      <body className="font-sans antialiased">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@graph": [
-                {
-                  "@type": "WebSite",
-                  name: "暮羽中个人网站",
-                  url: "https://muyuzhong.xyz",
-                  description: "记录 Agent 开发学习、技术笔记和实习准备。",
-                  inLanguage: "zh-CN",
-                },
-                {
-                  "@type": "Person",
-                  name: "暮羽中",
-                  url: "https://muyuzhong.xyz",
-                  jobTitle: "Agent 开发学习者",
-                  sameAs: ["https://github.com/muyuzhong"],
-                  description: "正在学习 Agent 开发并寻找相关实习机会。",
-                },
-              ],
-            }),
+            __html: JSON.stringify(getStructuredData()),
           }}
         />
-      </head>
-      <body className="font-sans antialiased">
         <ThemeProvider>
           <CustomCursor />
           <Navbar />
