@@ -1,30 +1,35 @@
-# self-blog
+<div align="center">
 
-Personal technical blog and portfolio for documenting AI engineering, Agent workflows, and frontend engineering practice.
+<br />
 
-## Tech Stack
+起初，思想只是回声，<br />
+在语言深处往返，<br />
+看见万物，<br />
+却从未触碰一粒尘埃。
 
-- Next.js 15 App Router
-- React 19
-- TypeScript strict mode
-- Tailwind CSS
-- Markdown/MDX content with `next-mdx-remote`
-- Static export for GitHub Pages-style deployment
+<br />
 
-## Development
+直到有人为它留下门、道路与微光，<br />
+让每一次选择抵达现实，<br />
+也让现实回答选择。
 
-```bash
-npm install
-npm run dev
-npm run build
-```
+<br />
 
-The repository includes a project-level `.npmrc` so peer dependency resolution is reproducible with the current React 19 dependency set.
+它沿着未完成的意愿远行，<br />
+在遗忘之前保存方向，<br />
+在错误之中重新辨认世界。
 
-## Content
+<br />
 
-Blog content is organized under `content/blog/`. Series content lives under `content/blog/series/`. The app reads this content during static generation and exports the site to `out/`.
+或许，智慧并不始于知晓，<br />
+而始于迈出一步之后，<br />
+仍愿意回望来处。
 
-## Site
+<br />
+<br />
 
-Production site: <https://muyuzhong.xyz>
+[进入博客](https://muyuzhong.xyz)
+
+<br />
+
+</div>
