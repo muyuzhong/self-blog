@@ -61,9 +61,9 @@ const ogImage = new URL('/og.png', Astro.site);
     {thermometer && (
       <script>
         /* 阅读温度计(§1.2):JS 只写 --read-progress,颜色由 CSS 完成;
-           hover 读数 = 初温随阅读深度降 2°C */
-        const bar = document.querySelector<HTMLElement>('.thermometer');
+           hover 读数 = 初温随阅读深度降 2°C。bar 每次重新查询,避免引用过期 DOM */
         const update = () => {
+          const bar = document.querySelector<HTMLElement>('.thermometer');
           const h = document.documentElement;
           const max = h.scrollHeight - h.clientHeight;
           const p = max > 0 ? Math.min(1, scrollY / max) : 0;
@@ -74,7 +74,7 @@ const ogImage = new URL('/og.png', Astro.site);
           }
         };
         addEventListener('scroll', update, { passive: true });
-        addEventListener('astro:page-load', update);
+        document.addEventListener('astro:page-load', update);
         update();
       </script>
     )}

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://lowtemp.lab/sitemap-index.xml
+Sitemap: https://muyuzhong.xyz/sitemap-index.xml

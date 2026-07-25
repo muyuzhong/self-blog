@@ -23,16 +23,22 @@ const path = Astro.url.pathname;
 </header>
 
 <script>
-  /* 明暗切换:默认深色,选择持久化(design.md §11) */
-  const btn = document.getElementById('theme-toggle')!;
-  const sync = () => {
-    btn.textContent = document.documentElement.dataset.theme === 'light' ? '深色' : '浅色';
-  };
-  btn.addEventListener('click', () => {
-    const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
-    document.documentElement.dataset.theme = next;
-    localStorage.setItem('theme', next);
+  /* 明暗切换(§11)。视图切换后模块脚本不重跑、<html> 属性被替换,
+     所以用 astro:page-load:每次换页都重新恢复主题并给新按钮绑事件 */
+  document.addEventListener('astro:page-load', () => {
+    const root = document.documentElement;
+    root.dataset.theme = localStorage.getItem('theme') || 'dark';
+    const btn = document.getElementById('theme-toggle');
+    if (!btn) return;
+    const sync = () => {
+      btn.textContent = root.dataset.theme === 'light' ? '深色' : '浅色';
+    };
+    btn.addEventListener('click', () => {
+      const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+      root.dataset.theme = next;
+      localStorage.setItem('theme', next);
+      sync();
+    });
     sync();
   });
-  sync();
 </script>

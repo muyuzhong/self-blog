@@ -104,10 +104,13 @@ const h2s = headings.filter((h) => h.depth === 2);
   </div>
 
   <script>
-    /* 目录 scroll-spy:滚动到哪节,目录高亮哪节 */
-    const tocLinks = document.querySelectorAll<HTMLAnchorElement>('.margin-col .toc nav a');
-    if (tocLinks.length) {
-      const spy = new IntersectionObserver(
+    /* 目录 scroll-spy:滚动到哪节,目录高亮哪节。换页时断开旧观察者 */
+    let spy: IntersectionObserver | undefined;
+    document.addEventListener('astro:page-load', () => {
+      spy?.disconnect();
+      const tocLinks = document.querySelectorAll<HTMLAnchorElement>('.margin-col .toc nav a');
+      if (!tocLinks.length) return;
+      spy = new IntersectionObserver(
         (entries) => {
           entries.forEach((e) => {
             if (e.isIntersecting) {
@@ -121,8 +124,8 @@ const h2s = headings.filter((h) => h.depth === 2);
       );
       tocLinks.forEach((l) => {
         const el = document.getElementById(decodeURIComponent(l.hash.slice(1)));
-        if (el) spy.observe(el);
+        if (el) spy!.observe(el);
       });
-    }
+    });
   </script>
 </Base>

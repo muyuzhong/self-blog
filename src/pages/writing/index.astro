@@ -28,17 +28,19 @@ const cats = Object.keys(CATEGORY_LABEL);
   </div>
 
   <script>
-    /* 前端过滤(§6.2),无路由 */
-    const btns = document.querySelectorAll<HTMLButtonElement>('.filter button');
-    const items = document.querySelectorAll<HTMLElement>('#archive .archive-item');
-    btns.forEach((b) =>
-      b.addEventListener('click', () => {
-        btns.forEach((x) => x.classList.toggle('active', x === b));
-        const cat = b.dataset.cat;
-        items.forEach((it) => {
-          it.style.display = cat === 'all' || it.dataset.category === cat ? '' : 'none';
-        });
-      })
-    );
+    /* 前端过滤(§6.2),无路由。astro:page-load:视图切换后重新绑定新 DOM */
+    document.addEventListener('astro:page-load', () => {
+      const btns = document.querySelectorAll<HTMLButtonElement>('.filter button');
+      const items = document.querySelectorAll<HTMLElement>('#archive .archive-item');
+      btns.forEach((b) =>
+        b.addEventListener('click', () => {
+          btns.forEach((x) => x.classList.toggle('active', x === b));
+          const cat = b.dataset.cat;
+          items.forEach((it) => {
+            it.style.display = cat === 'all' || it.dataset.category === cat ? '' : 'none';
+          });
+        })
+      );
+    });
   </script>
 </Base>
