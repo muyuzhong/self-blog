@@ -1,0 +1,30 @@
+---
+import { getCollection } from 'astro:content';
+import { siteTemp, tempOf, fmtTemp } from '../lib/temp';
+import Mark from './Mark.astro';
+
+/* 站点温度 = 全部公开内容温度中位数（§1.2） */
+const writing = await getCollection('writing');
+const projects = await getCollection('projects');
+const t = siteTemp([
+  ...writing.map((e) => tempOf(e.data.status, e.data.temperature)),
+  ...projects.map((e) => tempOf(e.data.status, e.data.temperature)),
+]);
+---
+<footer class="site-footer">
+  <div class="sys-status mono">
+    <span class="breath" aria-hidden="true"></span>
+    <span>
+      低温系统 ·
+      <a href="/about/#temperature" title="站点温度 = 全部公开内容温度的中位数,点击了解温度系统" style="color: inherit;">{fmtTemp(t)}</a>
+      · 安静 · 运行中
+    </span>
+  </div>
+  <nav class="footer-nav" aria-label="页脚导航">
+    <a href="/writing/">文章</a>
+    <a href="/projects/">项目</a>
+    <a href="/log/">日志</a>
+    <a href="/about/">关于</a>
+  </nav>
+  <Mark size={20} />
+</footer>

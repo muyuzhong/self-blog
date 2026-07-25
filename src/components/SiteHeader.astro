@@ -1,0 +1,38 @@
+---
+import Mark from './Mark.astro';
+
+const nav = [
+  { href: '/writing/', label: '文章' },
+  { href: '/projects/', label: '项目' },
+  { href: '/log/', label: '日志' },
+  { href: '/about/', label: '关于' },
+];
+const path = Astro.url.pathname;
+---
+<header class="site-header">
+  <div class="brand">
+    <a href="/" aria-label="LowTemp Notes 首页"><Mark /></a>
+    <a href="/" class="brand-name">LOWTEMP</a>
+  </div>
+  <nav class="site-nav" aria-label="主导航">
+    {nav.map((n) => (
+      <a href={n.href} aria-current={path.startsWith(n.href) ? 'page' : undefined}>{n.label}</a>
+    ))}
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="切换明暗模式">浅色</button>
+  </nav>
+</header>
+
+<script>
+  /* 明暗切换:默认深色,选择持久化(design.md §11) */
+  const btn = document.getElementById('theme-toggle')!;
+  const sync = () => {
+    btn.textContent = document.documentElement.dataset.theme === 'light' ? '深色' : '浅色';
+  };
+  btn.addEventListener('click', () => {
+    const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+    document.documentElement.dataset.theme = next;
+    localStorage.setItem('theme', next);
+    sync();
+  });
+  sync();
+</script>

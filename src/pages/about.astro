@@ -1,0 +1,66 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="关于" rail="ABOUT · 16.2°C">
+  <div class="content-col">
+    <div class="post-head">
+      <div class="post-meta mono"><span>ABOUT</span><span>16.2°C</span></div>
+      <h1>暮羽中</h1>
+      <p class="post-sub">Independent builder and observer.</p>
+    </div>
+
+    <div class="prose">
+      <p>
+        我在建造和研究 Coding Agent:上下文工程、最小变更、增量验证。
+        白天写代码,深夜整理这个实验室。相信系统的可靠性不来自它能做更多,
+        而来自它知道哪些事不该做。
+      </p>
+
+      <h2>这个站是什么</h2>
+      <p>
+        低温笔记是一个持续运行的个人实验室:输出长文,也记录失败;
+        呈现现在的研究,而不只是过去的结论。首页那棵结晶由全部文章生成,
+        每一篇是一条枝——它会随着写作真实生长。
+      </p>
+
+      <h2 id="temperature">温度系统</h2>
+      <p>
+        大多数博客只有两种状态:已发布和草稿。但思想是有物态的——
+        尚在蒸腾的想法、流动的探索、开始结晶的验证、完全结晶的结论,
+        以及升华消失的废弃观点。这个站把内容的成熟度可视化为温度:
+        <strong>越确定的思想,温度越低。</strong>
+      </p>
+      <table>
+        <thead>
+          <tr><th>状态</th><th>物态</th><th>温度</th><th>含义</th></tr>
+        </thead>
+        <tbody>
+          <tr><td style="color: var(--mauve)">草稿</td><td>雾</td><td>19.5°C</td><td>尚在形成,可能随时改变</td></tr>
+          <tr><td style="color: var(--blue)">探索</td><td>液态</td><td>14.0°C</td><td>有方向的探索,未定型</td></tr>
+          <tr><td style="color: var(--accent)">已验证</td><td>结晶中</td><td>8.4°C</td><td>经过项目验证,趋于稳定</td></tr>
+          <tr><td style="color: var(--teal)">稳定</td><td>结晶</td><td>4.2°C</td><td>相对成熟,可依赖</td></tr>
+          <tr><td style="color: var(--red)">已废弃</td><td>升华</td><td>—°C</td><td>观点已改变,仅作存档</td></tr>
+        </tbody>
+      </table>
+      <p>
+        温度在站里有三个出口:每篇文章页头的状态栏;页脚的站点温度——
+        它是全部内容温度的中位数,随发文自动变化;以及文章页顶部那条
+        1px 的阅读温度计,随着你读得越深,页面越冷。
+        观点改变时旧文不会被删除,只会标注升华:
+        知识库应该记录演化,而不是假装静止。
+      </p>
+
+      <h2>一个方向上的修正</h2>
+      <div class="diff" title="hover 看看">
+        <div class="minus">- 等待一个绝对正确的方向</div>
+        <div class="plus">+ 在行动中修正方向</div>
+      </div>
+
+      <p>
+        内容分四类:<strong>工程</strong>是完整、可复用的工程文章;
+        <strong>研究笔记</strong>是尚未定型的探索;<strong>建造日志</strong>
+        记录项目中的决策与失败;<strong>随笔</strong>是少量关于认知与行动的非技术思考。
+      </p>
+    </div>
+  </div>
+</Base>

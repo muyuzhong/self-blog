@@ -1,0 +1,14 @@
+---
+/* LT 羽标 — design.md §2.4 */
+interface Props { size?: number }
+const { size = 28 } = Astro.props;
+---
+<svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true">
+  <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+    <path d="M9 5 V26 H21" />
+    <line x1="11" y1="9" x2="21" y2="4" />
+    <line x1="11" y1="13" x2="19" y2="8.5" />
+    <line x1="11" y1="17" x2="17" y2="13" />
+  </g>
+  <line x1="11" y1="21" x2="15" y2="17.5" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="square" />
+</svg>

@@ -1,0 +1,105 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Crystal from '../components/Crystal.astro';
+import ArchiveItem from '../components/ArchiveItem.astro';
+import { fmtDate } from '../lib/temp';
+
+const writing = (await getCollection('writing')).sort(
+  (a, b) => b.data.published.getTime() - a.data.published.getTime()
+);
+const featured = writing.filter((e) => e.data.featured).slice(0, 4);
+const shown = featured.length ? featured : writing.slice(0, 4);
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order).slice(0, 2);
+const logs = (await getCollection('log')).sort(
+  (a, b) => b.data.published.getTime() - a.data.published.getTime()
+).slice(0, 5);
+---
+<Base title="首页" rail="低温笔记 · 始于 2026">
+  <section class="hero">
+    <div>
+      <div class="hero-kicker mono">
+        <span class="breath" aria-hidden="true"></span>
+        LOWTEMP NOTES ────────────
+      </div>
+      <h1>低温笔记</h1>
+      <p class="hero-sub">在噪声退去之后,<br />记录仍然成立的东西。</p>
+      <p class="hero-tags mono">Agent 工程 · Coding Agent · RAG · 系统</p>
+      <div class="hero-actions">
+        <a class="btn" href="/writing/">开始阅读</a>
+        <a class="btn" href="/projects/">查看项目</a>
+      </div>
+    </div>
+    <div>
+      <Crystal />
+      <p class="crystal-caption mono">每一篇文章是一条枝,温度是它的颜色 —— 可点击</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <span class="section-title mono">当前研究 / 02</span>
+    </div>
+    <div class="research-card">
+      <h3>Coding Agent Harness</h3>
+      <p>研究面向真实代码库的上下文管理、最小变更与增量验证。</p>
+      <dl class="stat-rows mono">
+        <div class="row"><dt>状态</dt><dd>开发中</dd></div>
+        <div class="row"><dt>方向</dt><dd>AST / 语义上下文 / 安全变更</dd></div>
+        <div class="row"><dt>更新</dt><dd>2026.07</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <span class="section-title mono">精选文章</span>
+      <a class="section-more" href="/writing/">全部 →</a>
+    </div>
+    <ul class="archive">
+      {shown.map((e) => <ArchiveItem entry={e} />)}
+    </ul>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <span class="section-title mono">项目档案</span>
+      <a class="section-more" href="/projects/">全部 →</a>
+    </div>
+    {projects.map((p) => (
+      <div class="lab">
+        <div class="lab-head">
+          <span class="lab-id mono">{p.data.id}</span>
+          <span class="mono" style="color: var(--ink-2)">{p.data.state}</span>
+        </div>
+        <h2>{p.data.title}</h2>
+        <p class="lab-sub">{p.data.subtitle}</p>
+      </div>
+    ))}
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <span class="section-title mono">最近日志</span>
+      <a class="section-more" href="/log/">全部 →</a>
+    </div>
+    {logs.map((l) => (
+      <div class="log-entry">
+        <span class="log-date">{fmtDate(l.data.published)}</span>
+        <p>{l.body}</p>
+      </div>
+    ))}
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <span class="section-title mono">关于</span>
+      <a class="section-more" href="/about/">更多 →</a>
+    </div>
+    <p style="max-width: 560px; color: var(--ink-1);">
+      暮羽中。独立建造者与观察者。关注 Coding Agent、上下文工程与最小变更,
+      也记录少量关于认知与行动的思考。
+    </p>
+  </section>
+</Base>

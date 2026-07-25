@@ -1,0 +1,41 @@
+/* LowTemp Notes — design tokens (design.md §3) */
+:root {
+  --bg-0: #0b0d12;
+  --bg-1: #11141b;
+  --bg-2: #171b24;
+  --ink-0: #d8dce6;
+  --ink-1: #858b99;
+  --ink-2: #555c6b;
+  --accent: #8b82d9;
+  --blue: #6e9fcb;
+  --teal: #70aaa6;
+  --mauve: #77718f;
+  --red: #c1787a;
+  --line: #232833;
+
+  --font-serif: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+  --font-sans: "Inter", "Source Han Sans SC", "Noto Sans SC", "PingFang SC",
+    "Microsoft YaHei", sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+
+  /* set by the reading thermometer on article pages (0..1) */
+  --read-progress: 0;
+
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --bg-0: #f2f1ed;
+  --bg-1: #e9e8e3;
+  --bg-2: #e0ded6;
+  --ink-0: #25272d;
+  --ink-1: #747780;
+  --ink-2: #a3a5ad;
+  --accent: #655dad;
+  --blue: #4a7ba6;
+  --teal: #4e8a86;
+  --mauve: #77718f;
+  --red: #a85f61;
+  --line: #d8d5cc;
+  color-scheme: light;
+}

@@ -1,0 +1,87 @@
+---
+/* 结晶生长 — design.md §2.1
+ * 数据即图形:每篇文章 = 一条分枝,枝长 ∝ 阅读时长,
+ * 分枝角由分类决定,枝端节点色温 = 文章温度。随发文真实生长。 */
+import { getCollection } from 'astro:content';
+import { tempOf, STATUS_COLOR } from '../lib/temp';
+
+const posts = (await getCollection('writing')).sort(
+  (a, b) => a.data.published.getTime() - b.data.published.getTime()
+);
+
+const W = 400, H = 480;
+const rootX = 200, rootY = 466, topY = 56;
+const n = Math.max(posts.length, 1);
+const gap = (rootY - topY) / n;
+
+/* 分类 → 分枝角(°):engineering 偏右、research 偏左、buildlog 近垂直、reflection 交替 ±30 */
+const ANGLE: Record<string, number> = { engineering: 15, research: -15, buildlog: 4 };
+const angleOf = (cat: string, i: number) =>
+  cat === 'reflection' ? (i % 2 ? 30 : -30) : (ANGLE[cat] ?? 12);
+
+const rad = (deg: number) => (deg * Math.PI) / 180;
+
+const branches = posts.map((p, i) => {
+  const baseY = rootY - gap * (i + 0.5);
+  const len = Math.min(110, Math.max(42, (p.data.minutes ?? 6) * 9));
+  const side = i % 2 === 0 ? 1 : -1; // 左右交替,保持整体平衡
+  const a = angleOf(p.data.category, i);
+  // 角度相对垂直方向,方向随 side 翻转
+  const dx = side * len * Math.sin(rad(Math.abs(a)));
+  const dy = -len * Math.cos(rad(a));
+  const tipX = rootX + dx, tipY = baseY + dy;
+  const temp = tempOf(p.data.status, p.data.temperature);
+  const color = STATUS_COLOR[p.data.status];
+  // 两条次级晶枝
+  const barb = (t: number, s: number) => {
+    const bx = rootX + dx * t, by = baseY + dy * t;
+    return {
+      x1: bx.toFixed(1), y1: by.toFixed(1),
+      x2: (bx + s * side * 14 * Math.sin(rad(Math.abs(a) + 24))).toFixed(1),
+      y2: (by - 14 * Math.cos(rad(Math.abs(a) + 24))).toFixed(1),
+    };
+  };
+  return {
+    href: `/writing/${p.id}/`,
+    x1: rootX, y1: baseY.toFixed(1),
+    x2: tipX.toFixed(1), y2: tipY.toFixed(1),
+    barbs: [barb(0.45, 1), barb(0.75, -0.7)],
+    color, delay: (i * 1.6).toFixed(1),
+    side,
+    label: `${p.data.id} · ${temp == null ? '—°C' : temp.toFixed(1) + '°C'}`,
+    title: `${p.data.id} · ${p.data.title} · ${temp == null ? '—°C' : temp.toFixed(1) + '°C'}`,
+  };
+});
+---
+<svg class="crystal" viewBox={`0 0 ${W} ${H}`} role="img" aria-label="由全部文章生成的结晶结构">
+  <!-- 主干 -->
+  <line x1={rootX} y1={rootY} x2={rootX} y2={topY}
+        stroke="var(--ink-2)" stroke-width="1" opacity="0.5" pathLength="1" />
+  {branches.map((b) => (
+    <g class="branch">
+      <a href={b.href}>
+        <line x1={b.x1} y1={b.y1} x2={b.x2} y2={b.y2}
+              stroke={b.color} stroke-width="1" opacity="0.4" pathLength="1"
+              style={`animation-delay: ${b.delay}s`}>
+          <title>{b.title}</title>
+        </line>
+        {b.barbs.map((s) => (
+          <line {...s} stroke={b.color} stroke-width="0.75" opacity="0.3" pathLength="1"
+                style={`animation-delay: ${b.delay}s`} />
+        ))}
+        <circle cx={b.x2} cy={b.y2} r="2.5" fill={b.color}
+                style={`animation-delay: ${(+b.delay + 1.2).toFixed(1)}s`}>
+          <title>{b.title}</title>
+        </circle>
+        <!-- hover 热区:一条加粗的透明枝线 -->
+        <line x1={b.x1} y1={b.y1} x2={b.x2} y2={b.y2}
+              stroke="transparent" stroke-width="12" />
+        <text x={+b.x2 + b.side * 10} y={+b.y2 + 3}
+              text-anchor={b.side > 0 ? 'start' : 'end'}>{b.label}</text>
+      </a>
+    </g>
+  ))}
+  <!-- 根部羽标原点 -->
+  <circle cx={rootX} cy={rootY} r="3" fill="none" stroke="var(--accent)" stroke-width="1"
+          style="animation-delay: 0s" />
+</svg>

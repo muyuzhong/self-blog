@@ -1,0 +1,16 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="404" rail="-273.15°C · 信号丢失">
+  <div class="signal-lost content-col">
+    <div class="sys-status mono" style="margin-bottom: 32px;">
+      <span class="breath" aria-hidden="true"></span>
+      <span>信号丢失</span>
+    </div>
+    <div class="temp-big">-273.15°C</div>
+    <p style="color: var(--ink-1); margin: 24px 0 40px;">
+      绝对零度。分子停止运动,信号无法抵达这个地址。
+    </p>
+    <a class="btn" href="/">返回实验室</a>
+  </div>
+</Base>

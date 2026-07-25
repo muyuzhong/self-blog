@@ -1,0 +1,58 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { fmtTemp, tempOf, STATUS_LABEL, STATUS_COLOR } from '../lib/temp';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const rendered = await Promise.all(projects.map(async (p) => ({ p, ...(await render(p)) })));
+---
+<Base title="项目" rail="项目档案">
+  <div class="content-col">
+    <div class="post-head">
+      <div class="post-meta mono"><span>项目档案</span><span>共 {projects.length} 项</span></div>
+      <h1>项目档案</h1>
+      <p class="post-sub">问题、假设、系统,以及失败过的部分。</p>
+    </div>
+
+    {rendered.map(({ p, Content }) => {
+      const d = p.data;
+      const temp = tempOf(d.status, d.temperature);
+      return (
+        <article class="lab">
+          <div class="lab-head">
+            <span class="lab-id mono">
+              {d.id} · <span style={`color: ${STATUS_COLOR[d.status]}`}>{STATUS_LABEL[d.status]} · {fmtTemp(temp)}</span>
+            </span>
+            <span class="mono" style="color: var(--ink-2)">{d.state}</span>
+          </div>
+          <h2>{d.title}</h2>
+          <p class="lab-sub">{d.subtitle}</p>
+
+          <div class="lab-section">
+            <div class="lab-label">问题</div>
+            <p>{d.problem}</p>
+          </div>
+          <div class="lab-section">
+            <div class="lab-label">假设</div>
+            <p>{d.hypothesis}</p>
+          </div>
+          {d.system.length > 0 && (
+            <div class="lab-section">
+              <div class="lab-label">系统</div>
+              <div class="lab-sys">{d.system.map((s, i) => `${i === d.system.length - 1 ? '└──' : '├──'} ${s}`).join('\n')}</div>
+            </div>
+          )}
+          {d.next && (
+            <div class="lab-section">
+              <div class="lab-label">下一阶段</div>
+              <p>{d.next}</p>
+            </div>
+          )}
+          <div class="prose" style="margin-top: 32px;">
+            <Content />
+          </div>
+        </article>
+      );
+    })}
+  </div>
+</Base>

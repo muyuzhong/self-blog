@@ -1,0 +1,128 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import {
+  fmtDate, fmtTemp, tempOf, STATUS_LABEL, STATUS_COLOR, CATEGORY_LABEL,
+} from '../../lib/temp';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('writing');
+  const sorted = entries.sort((a, b) => a.data.published.getTime() - b.data.published.getTime());
+  return sorted.map((entry, i) => ({
+    params: { id: entry.id },
+    props: { entry, prev: sorted[i - 1], next: sorted[i + 1] },
+  }));
+}
+
+const { entry, prev, next } = Astro.props;
+const { Content, headings } = await render(entry);
+const d = entry.data;
+const temp = tempOf(d.status, d.temperature);
+const rail = `${d.id} · ${CATEGORY_LABEL[d.category]} · ${fmtTemp(temp)}`;
+const h2s = headings.filter((h) => h.depth === 2);
+---
+<Base title={d.title} description={d.excerpt} rail={rail} thermometer temp={temp}>
+  <div class={h2s.length || d.notes?.length ? 'with-margin' : ''}>
+    <article class="content-col">
+      <header class="post-head">
+        <div class="post-meta mono">
+          <span>
+            {d.id} · {CATEGORY_LABEL[d.category]}
+          </span>
+          <time datetime={d.published.toISOString()}>{fmtDate(d.published)}</time>
+        </div>
+        <h1>{d.title}</h1>
+        {d.subtitle && <p class="post-sub">{d.subtitle}</p>}
+        <div class="post-info mono">
+          {d.minutes ?? 8} 分钟阅读{d.updated && ` · 更新于 ${fmtDate(d.updated)}`}
+        </div>
+      </header>
+
+      <dl class="status-bar mono">
+        <div class="row">
+          <dt>状态</dt>
+          <dd>
+            <a href="/about/#temperature" title="了解温度系统" style={`color: ${STATUS_COLOR[d.status]}; text-decoration: none;`}>
+              {STATUS_LABEL[d.status]} · {fmtTemp(temp)}
+            </a>
+          </dd>
+        </div>
+        {d.confidence && <div class="row"><dt>置信</dt><dd>{d.confidence}</dd></div>}
+        {d.scope && <div class="row"><dt>范围</dt><dd>{d.scope}</dd></div>}
+      </dl>
+
+      <div class="prose">
+        <Content />
+      </div>
+
+      {d.tempLog && d.tempLog.length > 1 && (
+        <div class="temp-log mono">
+          温度史 — {d.tempLog.map((t) => `${fmtDate(t.date)} ${STATUS_LABEL[t.status]}`).join(' → ')}
+        </div>
+      )}
+
+      <nav class="post-nav" aria-label="相邻文章">
+        <div>
+          {prev && (
+            <a href={`/writing/${prev.id}/`}>
+              <span class="nav-id mono">← {prev.data.id}</span>
+              {prev.data.title}
+            </a>
+          )}
+        </div>
+        <div class="next">
+          {next && (
+            <a href={`/writing/${next.id}/`}>
+              <span class="nav-id mono">{next.data.id} →</span>
+              {next.data.title}
+            </a>
+          )}
+        </div>
+      </nav>
+    </article>
+
+    {(h2s.length > 0 || (d.notes && d.notes.length > 0)) && (
+      <aside class="margin-col">
+        <div class="toc">
+          {h2s.length > 0 && (
+            <>
+              <div class="lab-label">目录</div>
+              <nav class="mono">
+                {h2s.map((h) => <a href={`#${h.slug}`}>{h.text}</a>)}
+              </nav>
+            </>
+          )}
+          {d.notes?.map((n) => (
+            <div class="margin-note">
+              <span class="anchor mono">注 · {n.anchor}</span>
+              <br />{n.text}
+          </div>
+          ))}
+        </div>
+      </aside>
+    )}
+  </div>
+
+  <script>
+    /* 目录 scroll-spy:滚动到哪节,目录高亮哪节 */
+    const tocLinks = document.querySelectorAll<HTMLAnchorElement>('.margin-col .toc nav a');
+    if (tocLinks.length) {
+      const spy = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              tocLinks.forEach((l) =>
+                l.classList.toggle('active', l.hash === `#${e.target.id}`)
+              );
+            }
+          });
+        },
+        { rootMargin: '0px 0px -70% 0px' }
+      );
+      tocLinks.forEach((l) => {
+        const el = document.getElementById(decodeURIComponent(l.hash.slice(1)));
+        if (el) spy.observe(el);
+      });
+    }
+  </script>
+</Base>

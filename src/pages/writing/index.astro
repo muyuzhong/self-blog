@@ -1,0 +1,44 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import ArchiveItem from '../../components/ArchiveItem.astro';
+import { CATEGORY_LABEL } from '../../lib/temp';
+
+const entries = (await getCollection('writing')).sort(
+  (a, b) => b.data.published.getTime() - a.data.published.getTime()
+);
+const cats = Object.keys(CATEGORY_LABEL);
+---
+<Base title="文章" rail="文章档案">
+  <div class="content-col">
+    <div class="post-head">
+      <div class="post-meta mono"><span>文章档案</span><span>共 {entries.length} 篇</span></div>
+      <h1>文章</h1>
+      <p class="post-sub">完整结论、探索笔记、建造记录,以及少量别的。</p>
+    </div>
+
+    <div class="filter" role="group" aria-label="按分类过滤">
+      <button class="active" data-cat="all">全部</button>
+      {cats.map((c) => <button data-cat={c}>{CATEGORY_LABEL[c]}</button>)}
+    </div>
+
+    <ul class="archive" id="archive">
+      {entries.map((e) => <ArchiveItem entry={e} />)}
+    </ul>
+  </div>
+
+  <script>
+    /* 前端过滤(§6.2),无路由 */
+    const btns = document.querySelectorAll<HTMLButtonElement>('.filter button');
+    const items = document.querySelectorAll<HTMLElement>('#archive .archive-item');
+    btns.forEach((b) =>
+      b.addEventListener('click', () => {
+        btns.forEach((x) => x.classList.toggle('active', x === b));
+        const cat = b.dataset.cat;
+        items.forEach((it) => {
+          it.style.display = cat === 'all' || it.dataset.category === cat ? '' : 'none';
+        });
+      })
+    );
+  </script>
+</Base>

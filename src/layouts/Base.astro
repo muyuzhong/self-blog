@@ -1,0 +1,82 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import ColdRail from '../components/ColdRail.astro';
+import '../styles/tokens.css';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  rail?: string;         // 冷轨文字
+  thermometer?: boolean; // 文章页开启阅读温度计
+  temp?: number | null;  // 文章初温,用于温度计读数
+}
+const { title, description = '在噪声退去之后,记录仍然成立的东西。', rail, thermometer = false, temp } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/og.png', Astro.site);
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} · 低温笔记</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content={thermometer ? 'article' : 'website'} />
+    <meta property="og:title" content={`${title} · 低温笔记`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:site_name" content="低温笔记 LowTemp Notes" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" type="application/rss+xml" title="低温笔记" href="/rss.xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script is:inline>
+      /* 防闪烁:绘制前恢复主题 */
+      document.documentElement.dataset.theme =
+        localStorage.getItem('theme') || 'dark';
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;600&family=Noto+Serif+SC:wght@600&family=Noto+Sans+SC:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <ClientRouter />
+  </head>
+  <body>
+    {thermometer && <div class="thermometer" data-initial={temp ?? ''} aria-hidden="true" />}
+    {rail && <ColdRail text={rail} />}
+    <div class="shell">
+      <SiteHeader />
+      <main>
+        <slot />
+      </main>
+      <SiteFooter />
+    </div>
+    {thermometer && (
+      <script>
+        /* 阅读温度计(§1.2):JS 只写 --read-progress,颜色由 CSS 完成;
+           hover 读数 = 初温随阅读深度降 2°C */
+        const bar = document.querySelector<HTMLElement>('.thermometer');
+        const update = () => {
+          const h = document.documentElement;
+          const max = h.scrollHeight - h.clientHeight;
+          const p = max > 0 ? Math.min(1, scrollY / max) : 0;
+          h.style.setProperty('--read-progress', String(p));
+          const initial = parseFloat(bar?.dataset.initial ?? '');
+          if (bar && !Number.isNaN(initial)) {
+            bar.title = `阅读深度 · ${(initial - 2 * p).toFixed(1)}°C`;
+          }
+        };
+        addEventListener('scroll', update, { passive: true });
+        addEventListener('astro:page-load', update);
+        update();
+      </script>
+    )}
+  </body>
+</html>
