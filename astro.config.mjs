@@ -6,4 +6,12 @@ export default defineConfig({
   // RSS 和 sitemap 依赖此域名
   site: 'https://muyuzhong.xyz',
   integrations: [sitemap()],
+  markdown: {
+    shikiConfig: {
+      themes: {
+        light: 'github-light',
+        dark: 'github-dark',
+      },
+    },
+  },
 });

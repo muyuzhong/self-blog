@@ -8,6 +8,13 @@ const entries = (await getCollection('writing')).sort(
   (a, b) => b.data.published.getTime() - a.data.published.getTime()
 );
 const cats = Object.keys(CATEGORY_LABEL);
+
+const statusCounts = {
+  stable: entries.filter((e) => e.data.status === 'stable').length,
+  tested: entries.filter((e) => e.data.status === 'tested').length,
+  exploring: entries.filter((e) => e.data.status === 'exploring').length,
+  draft: entries.filter((e) => e.data.status === 'draft').length,
+};
 ---
 <Base title="文章" rail="文章档案">
   <div class="content-col">
@@ -17,28 +24,78 @@ const cats = Object.keys(CATEGORY_LABEL);
       <p class="post-sub">完整结论、探索笔记、建造记录,以及少量别的。</p>
     </div>
 
-    <div class="filter" role="group" aria-label="按分类过滤">
-      <button class="active" data-cat="all">全部</button>
-      {cats.map((c) => <button data-cat={c}>{CATEGORY_LABEL[c]}</button>)}
+    <!-- 灵感 1: 物态相变谱系过滤 (Inspired by Maggie Appleton) -->
+    <div class="filter-group">
+      <div class="filter category-filter" role="group" aria-label="按主题过滤">
+        <span class="filter-label mono">主题：</span>
+        <button class="active" data-cat="all">全部主题</button>
+        {cats.map((c) => <button data-cat={c}>{CATEGORY_LABEL[c]}</button>)}
+      </div>
+
+      <div class="filter phase-filter" role="group" aria-label="按物态过滤">
+        <span class="filter-label mono">物态：</span>
+        <button class="active phase-btn" data-phase="all">全部物态</button>
+        <button class="phase-btn" data-phase="stable" style="--dot-c: var(--teal)">
+          <span class="phase-dot" style="background: var(--teal)"></span> 4.2°C 结晶 ({statusCounts.stable})
+        </button>
+        <button class="phase-btn" data-phase="tested" style="--dot-c: var(--accent)">
+          <span class="phase-dot" style="background: var(--accent)"></span> 8.4°C 验证 ({statusCounts.tested})
+        </button>
+        <button class="phase-btn" data-phase="exploring" style="--dot-c: var(--blue)">
+          <span class="phase-dot" style="background: var(--blue)"></span> 14.0°C 探索 ({statusCounts.exploring})
+        </button>
+        {statusCounts.draft > 0 && (
+          <button class="phase-btn" data-phase="draft" style="--dot-c: var(--mauve)">
+            <span class="phase-dot" style="background: var(--mauve)"></span> 19.5°C 气态 ({statusCounts.draft})
+          </button>
+        )}
+      </div>
     </div>
 
     <ul class="archive" id="archive">
       {entries.map((e) => <ArchiveItem entry={e} />)}
     </ul>
+    <div id="empty-state" class="empty-state mono" style="display: none;">
+      当前所选主题与物态交集下暂无已冷却记录。
+    </div>
   </div>
 
   <script>
-    /* 前端过滤(§6.2),无路由。astro:page-load:视图切换后重新绑定新 DOM */
+    /* 双维矩阵过滤(主题 x 物态相变). astro:page-load:视图切换后重新绑定新 DOM */
     document.addEventListener('astro:page-load', () => {
-      const btns = document.querySelectorAll<HTMLButtonElement>('.filter button');
+      const catBtns = document.querySelectorAll<HTMLButtonElement>('.category-filter button');
+      const phaseBtns = document.querySelectorAll<HTMLButtonElement>('.phase-filter button');
       const items = document.querySelectorAll<HTMLElement>('#archive .archive-item');
-      btns.forEach((b) =>
+      const empty = document.getElementById('empty-state');
+
+      let activeCat = 'all';
+      let activePhase = 'all';
+
+      const applyFilters = () => {
+        let visible = 0;
+        items.forEach((it) => {
+          const matchCat = activeCat === 'all' || it.dataset.category === activeCat;
+          const matchPhase = activePhase === 'all' || it.dataset.status === activePhase;
+          const match = matchCat && matchPhase;
+          it.style.display = match ? '' : 'none';
+          if (match) visible++;
+        });
+        if (empty) empty.style.display = visible === 0 ? 'block' : 'none';
+      };
+
+      catBtns.forEach((b) =>
         b.addEventListener('click', () => {
-          btns.forEach((x) => x.classList.toggle('active', x === b));
-          const cat = b.dataset.cat;
-          items.forEach((it) => {
-            it.style.display = cat === 'all' || it.dataset.category === cat ? '' : 'none';
-          });
+          catBtns.forEach((x) => x.classList.toggle('active', x === b));
+          activeCat = b.dataset.cat || 'all';
+          applyFilters();
+        })
+      );
+
+      phaseBtns.forEach((b) =>
+        b.addEventListener('click', () => {
+          phaseBtns.forEach((x) => x.classList.toggle('active', x === b));
+          activePhase = b.dataset.phase || 'all';
+          applyFilters();
         })
       );
     });

@@ -33,22 +33,60 @@ const logs = (await getCollection('log')).sort(
     </div>
     <div>
       <Crystal />
-      <p class="crystal-caption mono">每一篇文章是一条枝,温度是它的颜色 —— 可点击</p>
+      <p class="crystal-caption mono">同心等温轨道 · 每一篇文章是一个物态质点 —— 可点击</p>
     </div>
   </section>
 
   <section class="section">
     <div class="section-head">
       <span class="section-title mono">当前研究 / 02</span>
+      <a class="section-more" href="/projects/">档案 →</a>
     </div>
-    <div class="research-card">
-      <h3>Coding Agent Harness</h3>
-      <p>研究面向真实代码库的上下文管理、最小变更与增量验证。</p>
-      <dl class="stat-rows mono">
-        <div class="row"><dt>状态</dt><dd>开发中</dd></div>
-        <div class="row"><dt>方向</dt><dd>AST / 语义上下文 / 安全变更</dd></div>
-        <div class="row"><dt>更新</dt><dd>2026.07</dd></div>
-      </dl>
+    <a href="/projects/" style="color: inherit; text-decoration: none; display: block;">
+      <div class="research-card spotlight-card">
+        <h3>Coding Agent Harness</h3>
+        <p>研究面向真实代码库的上下文管理、最小变更与增量验证。</p>
+        <dl class="stat-rows mono">
+          <div class="row"><dt>状态</dt><dd>开发中</dd></div>
+          <div class="row"><dt>方向</dt><dd>AST / 语义上下文 / 安全变更</dd></div>
+          <div class="row"><dt>更新</dt><dd>2026.08</dd></div>
+        </dl>
+      </div>
+    </a>
+  </section>
+
+  <!-- 灵感 2: 开着车库门做研究 · 未解假设看板 (Inspired by Andy Matuschak) -->
+  <section class="section">
+    <div class="section-head">
+      <span class="section-title mono">验证中的假设 / 03</span>
+      <span class="section-more mono" style="opacity: 0.65; letter-spacing: 0.08em;">OPEN HYPOTHESES</span>
+    </div>
+    <div class="hypotheses-grid">
+      <div class="hypothesis-card spotlight-card">
+        <div class="hypo-meta mono">
+          <span class="hypo-id">HYPO-01</span>
+          <span class="hypo-temp" style="color: var(--teal)">7.2°C · 验证中</span>
+        </div>
+        <h4>基于作用域的 AST 符号级差分能否替代全量上下文重放？</h4>
+        <p>在多轮 Coding Agent 交互中，如果单次验证耗时超过 200ms，Agent 的自愈循环就会被打破。假设仅投影被修改符号的引用拓扑即可达到 99% 的静态自愈率。</p>
+        <div class="hypo-status mono">
+          <span class="hypo-badge">用例覆盖 18/24</span>
+          <span class="hypo-metric">耗时 28ms · 稳定</span>
+        </div>
+      </div>
+
+      <div class="hypothesis-card spotlight-card">
+        <div class="hypo-meta mono">
+          <span class="hypo-id">HYPO-02</span>
+          <span class="hypo-temp" style="color: var(--accent)">11.5°C · 假说形成</span>
+        </div>
+        <h4>长上下文注意力稀释是否存在不可逆的临界相变点？</h4>
+        <p>当历史输入中不相干噪声超过 60% 时，模型遵循初始硬性约束的失效率不是线性递增，而是呈现断崖式突变。严格控制输入端信噪比远胜于在输出端打补丁。</p>
+        <div class="hypo-status mono">
+          <span class="hypo-badge">基准测试中</span>
+          <span class="hypo-metric">64k/128k 边界</span>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -73,7 +111,7 @@ const logs = (await getCollection('log')).sort(
           <span class="lab-id mono">{p.data.id}</span>
           <span class="mono" style="color: var(--ink-2)">{p.data.state}</span>
         </div>
-        <h2>{p.data.title}</h2>
+        <h2><a href="/projects/" style="color: inherit;">{p.data.title}</a></h2>
         <p class="lab-sub">{p.data.subtitle}</p>
       </div>
     ))}

@@ -43,6 +43,22 @@ Skill 的评价对象不应该是文本本身,而应该是它对 Agent 行为产
 2. **对照运行**。同一批任务,分别在有无 Skill 的条件下运行,比较输出。评价指标只有两个:目标行为的出现率,和非目标行为的抑制率。
 3. **小步修改,增量重跑**。每次只改一处,只重跑受影响的样本。
 
+```ts
+// eval-pipeline.ts
+interface EvalTrace {
+  task: string;
+  withSkill: boolean;
+  targetHit: boolean;
+  sideEffects: string[];
+}
+
+function evaluateSkillDelta(baseline: EvalTrace[], tuned: EvalTrace[]): number {
+  const delta = tuned.filter((t) => t.targetHit).length - baseline.filter((b) => b.targetHit).length;
+  return delta / baseline.length;
+}
+```
+
+
 <div class="note decision">
 <div class="note-label">ENGINEERING DECISION</div>
 

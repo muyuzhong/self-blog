@@ -18,6 +18,12 @@ const path = Astro.url.pathname;
     {nav.map((n) => (
       <a href={n.href} aria-current={path.startsWith(n.href) ? 'page' : undefined}>{n.label}</a>
     ))}
+    <button id="cmd-toggle-btn" class="cmd-trigger-nav" type="button" aria-label="全站搜索 (⌘K)" title="全站搜索 (⌘K)">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="7" cy="7" r="5" />
+        <path d="M11 11L14.5 14.5" />
+      </svg>
+    </button>
     <button id="theme-toggle" class="theme-toggle" type="button" aria-label="切换明暗模式">浅色</button>
   </nav>
 </header>

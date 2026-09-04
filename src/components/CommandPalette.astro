@@ -1,0 +1,327 @@
+---
+/* LowTemp Notes — Command Palette (全局命令面板与极速检索) */
+---
+
+<div id="cmd-palette" class="cmd-palette" aria-hidden="true">
+  <div class="cmd-backdrop"></div>
+  <div class="cmd-card mono">
+    <div class="cmd-header">
+      <svg class="cmd-search-icon" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="7" cy="7" r="5" />
+        <path d="M11 11L14.5 14.5" />
+      </svg>
+      <input
+        type="text"
+        id="cmd-input"
+        class="cmd-input"
+        placeholder="搜索全站文章、项目、日志，或输入指令 (>主题, >禅定)..."
+        autocomplete="off"
+        spellcheck="false"
+        aria-label="全站搜索命令"
+      />
+      <button type="button" class="cmd-close-btn" aria-label="关闭搜索">ESC</button>
+    </div>
+
+    <div class="cmd-filter-tabs" id="cmd-filter-tabs">
+      <button type="button" class="cmd-tab active" data-filter="all">全部</button>
+      <button type="button" class="cmd-tab" data-filter="writing">文章</button>
+      <button type="button" class="cmd-tab" data-filter="project">项目</button>
+      <button type="button" class="cmd-tab" data-filter="log">日志</button>
+      <button type="button" class="cmd-tab" data-filter="action">指令</button>
+    </div>
+
+    <div class="cmd-results" id="cmd-results" role="listbox">
+      <!-- 动态渲染搜索结果与默认列表 -->
+    </div>
+
+    <div class="cmd-footer">
+      <div class="cmd-hints">
+        <span><kbd>↑</kbd><kbd>↓</kbd> 选择</span>
+        <span><kbd>↵</kbd> 打开</span>
+        <span><kbd>Esc</kbd> 退出</span>
+      </div>
+      <div class="cmd-meta">低温极速检索</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* 全局命令面板与极速检索控制器 */
+  interface SearchItem {
+    type: 'writing' | 'project' | 'log' | 'action';
+    id: string;
+    slug?: string;
+    title: string;
+    subtitle?: string;
+    excerpt?: string;
+    category?: string;
+    status?: string;
+    temp?: string;
+    tags?: string[];
+    url: string;
+    date?: string;
+    body?: string;
+    handler?: () => void;
+  }
+
+  let searchIndex: SearchItem[] = [];
+  let isLoaded = false;
+  let activeFilter = 'all';
+  let selectedIndex = 0;
+  let currentFilteredList: SearchItem[] = [];
+
+  // 预载索引
+  const loadIndex = async () => {
+    if (isLoaded) return;
+    try {
+      const res = await fetch('/search-index.json');
+      if (res.ok) {
+        const data = await res.json();
+        searchIndex = data;
+        isLoaded = true;
+      }
+    } catch (e) {
+      console.warn('Failed to load search-index.json', e);
+    }
+  };
+
+  // 内置快捷指令
+  const getActions = (): SearchItem[] => [
+    {
+      type: 'action',
+      id: 'ACT-THEME',
+      title: '切换 明亮 / 深色 主题',
+      subtitle: '即刻切换全站黑白底色调',
+      category: '系统',
+      url: '#',
+      handler: () => {
+        const root = document.documentElement;
+        const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+        root.dataset.theme = next;
+        localStorage.setItem('theme', next);
+      },
+    },
+    {
+      type: 'action',
+      id: 'ACT-ZEN',
+      title: '进入/退出 禅定极简模式 (Zen Mode)',
+      subtitle: '消除页面四周噪声，视口段落高亮聚焦',
+      category: '阅读',
+      url: '#',
+      handler: () => {
+        const zenBtn = document.getElementById('zen-toggle-btn');
+        if (zenBtn) {
+          zenBtn.click();
+        } else {
+          // 若不在文章内，跳转至最新文章
+          window.location.href = '/writing/ltn-024-skill-evaluation/';
+        }
+      },
+    },
+    {
+      type: 'action',
+      id: 'ACT-KBD',
+      title: '查看 全站键盘漫游指南',
+      subtitle: '呼出完整键盘快捷键一览',
+      category: '帮助',
+      url: '#',
+      handler: () => {
+        const modal = document.getElementById('kbd-modal');
+        if (modal) {
+          modal.classList.add('visible');
+          modal.setAttribute('aria-hidden', 'false');
+        }
+      },
+    },
+    {
+      type: 'action',
+      id: 'ACT-RSS',
+      title: '打开 RSS 订阅源 (Full Feed)',
+      subtitle: '获取低温笔记全文 RSS 2.0 XML',
+      category: '订阅',
+      url: '/rss.xml',
+    },
+  ];
+
+  // 渲染搜索结果
+  const renderResults = () => {
+    const resultsContainer = document.getElementById('cmd-results');
+    const input = document.getElementById('cmd-input') as HTMLInputElement;
+    if (!resultsContainer || !input) return;
+
+    const query = input.value.trim().toLowerCase();
+    let list: SearchItem[] = [];
+
+    if (!query) {
+      if (activeFilter === 'action') {
+        list = getActions();
+      } else if (activeFilter === 'writing') {
+        list = searchIndex.filter((item) => item.type === 'writing');
+      } else if (activeFilter === 'project') {
+        list = searchIndex.filter((item) => item.type === 'project');
+      } else if (activeFilter === 'log') {
+        list = searchIndex.filter((item) => item.type === 'log');
+      } else {
+        // 默认总览：快捷指令 + 最新文章
+        const actions = getActions().slice(0, 3);
+        const recentWriting = searchIndex.filter((item) => item.type === 'writing').slice(0, 4);
+        list = [...actions, ...recentWriting];
+      }
+    } else {
+      // 模糊匹配
+      const allItems = [...getActions(), ...searchIndex];
+      list = allItems.filter((item) => {
+        if (activeFilter !== 'all' && item.type !== activeFilter) return false;
+
+        const text = `${item.id} ${item.title} ${item.subtitle || ''} ${item.excerpt || ''} ${(item.tags || []).join(' ')} ${item.body || ''}`.toLowerCase();
+        return text.includes(query);
+      });
+    }
+
+    currentFilteredList = list;
+    if (selectedIndex >= list.length) selectedIndex = Math.max(0, list.length - 1);
+
+    if (list.length === 0) {
+      resultsContainer.innerHTML = `
+        <div class="cmd-empty">
+          <p>未找到包含 "${query}" 的相关内容</p>
+        </div>
+      `;
+      return;
+    }
+
+    resultsContainer.innerHTML = list
+      .map((item, idx) => {
+        const isSelected = idx === selectedIndex;
+        return `
+          <div
+            class="cmd-item ${isSelected ? 'selected' : ''}"
+            role="option"
+            data-index="${idx}"
+            aria-selected="${isSelected}"
+          >
+            <div class="cmd-item-head">
+              <span class="cmd-type-badge ${item.type}">${item.category || item.type.toUpperCase()}</span>
+              <span class="cmd-item-id">${item.id}</span>
+              ${item.temp ? `<span class="cmd-item-temp">${item.temp}</span>` : ''}
+              ${item.status ? `<span class="cmd-item-status">${item.status}</span>` : ''}
+            </div>
+            <div class="cmd-item-title">${item.title}</div>
+            ${item.subtitle ? `<div class="cmd-item-sub">${item.subtitle}</div>` : ''}
+            ${item.excerpt ? `<div class="cmd-item-excerpt">${item.excerpt}</div>` : ''}
+          </div>
+        `;
+      })
+      .join('');
+
+    const activeEl = resultsContainer.querySelector('.cmd-item.selected');
+    activeEl?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  };
+
+  const openPalette = async () => {
+    const palette = document.getElementById('cmd-palette');
+    const input = document.getElementById('cmd-input') as HTMLInputElement;
+    if (!palette) return;
+
+    await loadIndex();
+    selectedIndex = 0;
+
+    palette.classList.add('visible');
+    palette.setAttribute('aria-hidden', 'false');
+
+    setTimeout(() => {
+      input?.focus();
+      input?.select();
+      renderResults();
+    }, 60);
+  };
+
+  const closePalette = () => {
+    const palette = document.getElementById('cmd-palette');
+    if (!palette) return;
+    palette.classList.remove('visible');
+    palette.setAttribute('aria-hidden', 'true');
+  };
+
+  // 全局导出方法
+  (window as any).openCommandPalette = openPalette;
+  (window as any).closeCommandPalette = closePalette;
+
+  // 初始化交互绑定
+  document.addEventListener('astro:page-load', () => {
+    loadIndex(); // 预热加载
+
+    const palette = document.getElementById('cmd-palette');
+    const input = document.getElementById('cmd-input') as HTMLInputElement;
+
+    // 搜索框输入
+    input?.addEventListener('input', () => {
+      selectedIndex = 0;
+      renderResults();
+    });
+
+    // 过滤标签切换
+    document.querySelectorAll('.cmd-tab').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.cmd-tab').forEach((t) => t.classList.remove('active'));
+        tab.classList.add('active');
+        activeFilter = tab.getAttribute('data-filter') || 'all';
+        selectedIndex = 0;
+        renderResults();
+      });
+    });
+
+    // 搜索框按键导航
+    input?.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (currentFilteredList.length > 0) {
+          selectedIndex = (selectedIndex + 1) % currentFilteredList.length;
+          renderResults();
+        }
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (currentFilteredList.length > 0) {
+          selectedIndex = (selectedIndex - 1 + currentFilteredList.length) % currentFilteredList.length;
+          renderResults();
+        }
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        const item = currentFilteredList[selectedIndex];
+        if (item) {
+          closePalette();
+          if (item.handler) {
+            item.handler();
+          } else if (item.url && item.url !== '#') {
+            window.location.href = item.url;
+          }
+        }
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        closePalette();
+      }
+    });
+
+    // 结果项鼠标点击
+    document.getElementById('cmd-results')?.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      const itemEl = target.closest('.cmd-item') as HTMLElement;
+      if (itemEl) {
+        const idx = parseInt(itemEl.dataset.index || '0', 10);
+        const item = currentFilteredList[idx];
+        if (item) {
+          closePalette();
+          if (item.handler) {
+            item.handler();
+          } else if (item.url && item.url !== '#') {
+            window.location.href = item.url;
+          }
+        }
+      }
+    });
+
+    // 遮罩点击退出
+    palette?.querySelector('.cmd-backdrop')?.addEventListener('click', closePalette);
+    palette?.querySelector('.cmd-close-btn')?.addEventListener('click', closePalette);
+  });
+</script>

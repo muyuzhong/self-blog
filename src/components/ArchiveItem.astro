@@ -8,7 +8,7 @@ const d = entry.data;
 const temp = tempOf(d.status, d.temperature);
 const deprecated = d.status === 'deprecated';
 ---
-<li class="archive-item" data-category={d.category}>
+<li class="archive-item spotlight-card" data-category={d.category} data-status={d.status}>
   <a href={`/writing/${entry.id}/`}>
     <div class="archive-meta mono">
       <span>
